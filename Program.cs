@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace Cis
 {
@@ -10,11 +9,9 @@ namespace Cis
         {
             Test test = new Test(1, "one", true);
 
-            string rron = RronConvert.SerializeObject<Test>(test);
-            File.WriteAllText("Test.rron", rron);
-
-            RronConvert.SerializeToFile<Test>(test, "Test.cis");
-            Test postTest = (Test) RronConvert.DeserializeFromFile<Test>("Test.cis");
+            RronConvert.SerializeObjectToFile<Test>(test, "Test.rron");
+            Test postTest = RronConvert.DeserializeObjectFromFile<Test>("Test.rron");
+            
             Console.WriteLine($"{postTest.Number}, {postTest.Word}, {postTest.Boolean}");
         }
     }
