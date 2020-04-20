@@ -45,6 +45,7 @@ namespace Inflex.Rron
             StringWriter stringWriter = new StringWriter();
             stringWriter.WriteLine($"[{typeof(T).Name}: {string.Join(", ", properties.Select(e => e.Name))}]");
             stringWriter.WriteLine($"{string.Join(", ", properties.Select(e => e.GetValue(value)))}");
+            Console.WriteLine(properties.Select(e => e.GetValue(value)));
             stringWriter.Flush();
             return stringWriter.ToString();
         }
