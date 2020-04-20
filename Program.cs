@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json.Serialization;
 
 namespace Cis
 {
@@ -22,6 +23,7 @@ namespace Cis
             inflexSerializer.Serialize(fileStream, data);
             fileStream.Close();
         }
+        
         private static object CustomDeserialize(Type type, string path)
         {
             object obj = null;
@@ -35,21 +37,5 @@ namespace Cis
 
             return obj;
         }
-    }
-
-    public class Test
-    {
-        public Test() { }
-
-        public Test(int number, string word, bool boolean)
-        {
-            Number = number;
-            Word = word;
-            Boolean = boolean;
-        }
-
-        public int Number { get; set; }
-        public string Word { get; set; }
-        public bool Boolean { get; set; }
     }
 }

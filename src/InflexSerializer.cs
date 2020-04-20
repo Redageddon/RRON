@@ -27,12 +27,10 @@ namespace CustomInflexSerializer
 
                     string key = keyValue.First();
                     string value = keyValue.Last();
-                    
                     PropertyInfo propertyInfo = _type.GetProperty(key);
                     
-                    if (propertyInfo != null) break;
+                    if (propertyInfo == null) break;
                     TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
-                    
                     propertyInfo.SetValue(obj, typeConverter.ConvertFromString(value), null);
                     
                 }
@@ -42,13 +40,16 @@ namespace CustomInflexSerializer
 
         public void Serialize(Stream serializationStream, object graph)
         {
-            List<PropertyInfo> properties = _type.GetProperties().ToList();
+            var properties = _type.GetProperties();
             StreamWriter streamWriter = new StreamWriter(serializationStream);
-            streamWriter.WriteLine($"[{_type.Name}]");
-            foreach (PropertyInfo propertyInfo in properties)
+
+            string typeRow = $"[{_type.Name}: {string.Join(", ", properties.Select(e => e.Name))}]";
+
+            streamWriter.WriteLine(typeRow);
+            /*foreach (PropertyInfo propertyInfo in properties)
             {
                 streamWriter.WriteLine(string.Format($"{propertyInfo.Name}:{propertyInfo.GetValue(graph)}"));
-            }
+            }*/
             
             streamWriter.Flush();
         }
