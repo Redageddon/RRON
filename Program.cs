@@ -17,7 +17,7 @@ namespace Cis
 
         private static void CustomSerializer(Type type, object data, string path)
         {
-            InflexSerializer inflexSerializer = new InflexSerializer(type);
+            InflexSerializer<Test> inflexSerializer = new InflexSerializer<Test>();
             if (File.Exists(path))File.Delete(path);
             FileStream fileStream = File.Create(path);
             inflexSerializer.Serialize(fileStream, data);
@@ -27,7 +27,7 @@ namespace Cis
         private static object CustomDeserialize(Type type, string path)
         {
             object obj = null;
-            InflexSerializer inflexSerializer = new InflexSerializer(type);
+            InflexSerializer<Test> inflexSerializer = new InflexSerializer<Test>();
             if (File.Exists(path))
             {
                 FileStream fileStream = File.OpenRead(path);

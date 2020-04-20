@@ -1,38 +1,33 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace CustomInflexSerializer
 {
-    public class InflexSerializer : IFormatter
+    public class InflexSerializer<T> : IFormatter
     {
-        private readonly Type _type;
-        public InflexSerializer(Type type) => _type = type;
-
         public object Deserialize(Stream serializationStream)
         {
-            object obj = Activator.CreateInstance(_type);
+            object obj = Activator.CreateInstance(typeof(T));
             using (StreamReader reader = new StreamReader(serializationStream))
             { 
-                reader.ReadLine();
-                string contents = reader.ReadToEnd();
-                List<string> pairs = contents.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries).ToList();
-                foreach (string pair in pairs)
-                {
-                    string[] keyValue = pair.Split(':');
+                string firstRow = reader.ReadLine();
 
-                    string key = keyValue.First();
-                    string value = keyValue.Last();
-                    PropertyInfo propertyInfo = _type.GetProperty(key);
-                    
-                    if (propertyInfo == null) break;
-                    TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
-                    propertyInfo.SetValue(obj, typeConverter.ConvertFromString(value), null);
-                    
+                string match    = Regex.Match(firstRow, $@"\[{typeof(T).Name}: ([^]]*)\]").Groups[1].Value;
+                string contents = reader.ReadToEnd();
+                
+                IEnumerable<PropertyInfo> keys = match.Split(", ").Select(name => typeof(T).GetProperty(name)).ToList();
+                IEnumerable<string> values = contents.Split(", ").ToList();
+                
+                for (int i = 0; i < keys.Count(); i++)
+                {
+                    keys.ElementAt(i).SetValue(obj, TypeDescriptor.GetConverter(keys.ElementAt(i).PropertyType).ConvertFromString(values.ElementAt(i)));
                 }
             }
             return obj;
@@ -40,17 +35,12 @@ namespace CustomInflexSerializer
 
         public void Serialize(Stream serializationStream, object graph)
         {
-            var properties = _type.GetProperties();
+            PropertyInfo[] properties = typeof(T).GetProperties();
             StreamWriter streamWriter = new StreamWriter(serializationStream);
 
-            string typeRow = $"[{_type.Name}: {string.Join(", ", properties.Select(e => e.Name))}]";
+            streamWriter.WriteLine($"[{typeof(T).Name}: {string.Join(", ", properties.Select(e => e.Name))}]");
+            streamWriter.WriteLine($"{string.Join(", ", properties.Select(e => e.GetValue(graph)))}");
 
-            streamWriter.WriteLine(typeRow);
-            /*foreach (PropertyInfo propertyInfo in properties)
-            {
-                streamWriter.WriteLine(string.Format($"{propertyInfo.Name}:{propertyInfo.GetValue(graph)}"));
-            }*/
-            
             streamWriter.Flush();
         }
 
