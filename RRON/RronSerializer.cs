@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Cis
+namespace Inflex.Rron
 {
     public class RronSerializer
     {
