@@ -11,7 +11,7 @@ namespace Inflex.Rron
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// /// <param name="path">The serialized object's save path.</param>
-        public static void SerializeObjectToFile<T>(object value, string path) => File.WriteAllText(path,  Converter.Serialize<T>(value));
+        public static void SerializeObjectToFile(object value, string path) => File.WriteAllText(path,  Converter.Serialize(value));
 
         /// <summary>
         /// Deserializes the RRON to the specified type.
