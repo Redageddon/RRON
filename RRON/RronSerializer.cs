@@ -46,48 +46,78 @@ namespace Inflex.Rron
         /// <returns>A JSON string representation of the object.</returns>
         public string Serialize(object value)
         {
-            WriteHeader(value.GetType().Name, CreateLine(value, true));
-            WriteFollowers(CreateLine(value, false));
+            Test(value);
+            //WriteHeader(value.GetType().Name, CreateLine(value, true));
+            //WriteFollowers(CreateLine(value, false));
 
-            _textWriter.Flush();
+            _textWriter.Dispose();
             return _textWriter.ToString();
         }
 
-        private IEnumerable<string> CreateLine(object value, bool header)
+        /*private IEnumerable<string> CreateLine(object value, bool header)
         {
             List<string> items = new List<string>();
             foreach (PropertyInfo property in value.GetType().GetProperties())
             {
-                switch (GetPropertyInfoType(property))
+                object propValue = property.GetValue(value);
+                string propName  = property.Name;
+                Type propType    = property.PropertyType;
+                bool isString    = propType == typeof(string);
+                
+                if (typeof(IEnumerable).IsAssignableFrom(propType) && !isString)
                 {
-                    case true:
-                        items.Add(header ? $"<{property.Name}>" : $"<{string.Join(", ", (property.GetValue(value) as IEnumerable).Cast<object>())}>");
-                        break;
-                    case false:
-                        items.Add($"[{property.Name}]");
-                        break;
-                    case null:
-                        items.Add(header ? property.Name : property.GetValue(value).ToString());
-                        break;
+                    items.Add(header ? $"<{propName}>" : $"<{string.Join(", ", (propValue as IEnumerable).Cast<object>())}>");
+                }
+                else if (propType.IsClass && !isString)
+                {
+                    items.Add($"[{propName}]");
+                }
+                else
+                {
+                    items.Add(header ? propName : propValue.ToString());
                 }
             }
 
             return items;
-        }
+        }*/
 
-        private bool? GetPropertyInfoType(PropertyInfo property)
+        public void Test(object value)
         {
-            if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType) && property.PropertyType != typeof(string)) return true;
+            List<PropertyInfo> properties = value.GetType().GetProperties().ToList();
+            List<object> values = new List<object>();
+            List<object> names = new List<object>();
+            List<object> classes = new List<object>();
 
-            if (property.PropertyType.IsClass && property.PropertyType != typeof(string)) return false;
+            foreach (PropertyInfo property in properties)
+            {
+                if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
+                {
+                    List<object> items = (property.GetValue(value) as IEnumerable).Cast<object>().ToList();
+                    values.Add(items[0].GetType().Namespace == "System" ? $"<{string.Join(", ", items)}>" : $"<[{property.GetValue(value)}]>");
+                }
+                else if (property.GetValue(value).GetType().Namespace != "System")
+                {
+                    classes.Add(property.GetValue(value));
+                    values.Add($"[{property.GetValue(value)}]");
+                }
+                else
+                {
+                    values.Add(property.GetValue(value));
+                }
+                names.Add(property.Name);
+            }
 
-            return null;
+            WriteHeader(value.GetType().Name, names);
+            WriteFollowers(values);
+            _textWriter.WriteLine();
+            foreach (object item in classes)
+            {
+                Test(item);
+            }
         }
 
-        private void WriteHeader(string name, IEnumerable<string> list) => _textWriter.WriteLine($"[{name}: {string.Join(", ", list)}]");
+        private void WriteHeader(string name, IEnumerable<object> list) => _textWriter.WriteLine($"[{name}: {string.Join(", ", list)}]");
 
-        private void WriteFollowers(IEnumerable<string> followers) => _textWriter.Write(string.Join(", ", followers));
-
-        private void WriteFollower(object follower) => _textWriter.Write(follower);
+        private void WriteFollowers(IEnumerable<object> followers) => _textWriter.WriteLine(string.Join(", ", followers));
     }
 }

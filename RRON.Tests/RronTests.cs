@@ -7,13 +7,14 @@ namespace RRON.Tests
     public class RronTests
     {
         private const string Path = "Test.rron";
-        private readonly TestClass _test = new TestClass(1, "one", true, 10.2f, 20.4d, new ClassInClassTest(1), new []{1, 2 ,3});
+        private readonly TestClass _test = new TestClass(1, "one", true, 10.2f, 20.4d, new []{1, 2 ,3},new ClassInClassTest(1,2,3));
         
         [TestMethod]
         public void TestForFileSaving()
         {
-            TestClass test = new TestClass(1, "one", true, 10.2f, 20.4d, new ClassInClassTest(1), new []{1,2,3});
+            TestClass test = new TestClass(1, "one", true, 10.2f, 20.4d, new[] {1, 2, 3}, new ClassInClassTest(1,2,3));
             RronConvert.SerializeObjectToFile(test, "TestFile.rron");
+            Assert.IsTrue(false);
         }
 
         /*[TestMethod]
