@@ -2,7 +2,8 @@
 
 public class TestClass
 {
-    public TestClass(int number, string word, bool boolean, float f, double d, List<ClassInClassTest> tests)
+    public TestClass() { }
+    public TestClass(int number, string word, bool boolean, float f, double d, List<ClassInClassTest> tests, ClassInClassTest c)
     {
         Number = number;
         Word = word;
@@ -10,9 +11,8 @@ public class TestClass
         Float = f;
         Double = d;
         Test = tests;
+        Test2 = c;
     }
-    
-    public TestClass() { }
 
     public int Number { get; set; }
     public string Word { get; set; }
@@ -20,11 +20,12 @@ public class TestClass
     public float Float { get; set; }
     public double Double { get; set; }
     public List<ClassInClassTest> Test { get; set; }
-
+    public ClassInClassTest Test2 { get; set; }
 }
 
 public class ClassInClassTest
 {
+    public ClassInClassTest() { }
     public ClassInClassTest(int t1, int t2, int t3)
     {
         Test1 = t1;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -11,8 +10,6 @@ namespace Inflex.Rron
 {
     public class RronSerializer
     {
-        private readonly TextWriter _textWriter = new StringWriter();
-
         /// <summary>
         /// Deserializes the RRON to the specified type.
         /// </summary>
@@ -21,22 +18,66 @@ namespace Inflex.Rron
         /// <returns>The deserialized object from the JSON string.</returns>
         public T Deserialize<T>(Stream serializationStream)
         {
-            object instance = Activator.CreateInstance(typeof(T));
+            Type type = typeof(T);
+            T instance = (T) Activator.CreateInstance(type);
+
             using (StreamReader reader = new StreamReader(serializationStream))
             {
-                string firstRow = reader.ReadLine();
-                string match = Regex.Match(firstRow, $@"\[{typeof(T).Name}: ([^]]*)\]").Groups[1].Value;
-                string contents = reader.ReadToEnd();
-                IEnumerable<PropertyInfo> keys = match.Split(", ").Select(name => typeof(T).GetProperty(name)).ToList();
-                IEnumerable<string> values = contents.Split(", ").ToList();
-                for (int i = 0; i < keys.Count(); i++)
+                string currentLine = reader.ReadLine();
+                foreach (PropertyInfo property in type.GetProperties())
                 {
-                    keys.ElementAt(i).SetValue(instance,
-                        TypeDescriptor.GetConverter(keys.ElementAt(i).PropertyType).ConvertFromString(values.ElementAt(i)));
+                    // Ignores all empty spaces at the beginning of the file
+                    while (string.IsNullOrWhiteSpace(currentLine))
+                    {
+                        currentLine = reader.ReadLine();
+                    }
+
+                    // Check if property is list
+                    if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
+                    {
+                        currentLine = reader.ReadLine();
+
+                        // Create an empty list of the type to hold
+                        IList objects = (IList) Activator.CreateInstance(property.PropertyType);
+
+                        // Checks for "[...]" or ": " or empty line, loops if those aren't found
+                        for (; !Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": ") && !string.IsNullOrWhiteSpace(currentLine); currentLine = reader.ReadLine())
+                        {
+                            object properties = StringToProperties(currentLine, property.PropertyType.GetGenericArguments()[0]);
+                            objects.Add(properties);
+                        }
+
+                        // Fills the instance list with things from file
+                        property.SetValue(instance, objects);
+                    }
+                    // Checks for a custom class
+                    else if (property.PropertyType.Namespace != "System")
+                    {
+                        currentLine = reader.ReadLine();
+                        object item = StringToProperties(currentLine, property.PropertyType);
+                        type.GetProperty(property.Name).SetValue(instance, item);
+                    }
+                    // Default property
+                    else
+                    {
+                        object item = TypeDescriptor.GetConverter(property.PropertyType).ConvertFromString(currentLine.Split(": ").Last());
+                        type.GetProperty(property.Name).SetValue(instance, item);
+                        currentLine = reader.ReadLine();
+                    }
                 }
             }
 
-            return (T) instance;
+            return instance;
+        }
+
+        // Takes a string and converts it to the specified type
+        private static object StringToProperties(string line, Type type)
+        {
+            string[] strArray = line.Split(", ");
+            object[] objArray = new object[strArray.Length];
+            for (int index = 0; index < type.GetProperties().Length; ++index)
+                objArray[index] = TypeDescriptor.GetConverter(type.GetProperties()[index].PropertyType).ConvertFromString(strArray[index]);
+            return Activator.CreateInstance(type, objArray);
         }
 
         /// <summary>
@@ -46,30 +87,38 @@ namespace Inflex.Rron
         /// <returns>A JSON string representation of the object.</returns>
         public string Serialize(object value)
         {
-            WriteLines(value);
-            return _textWriter.ToString();
-        }
-
-        private void WriteLines(object value)
-        {
+            using TextWriter textWriter = new StringWriter();
             foreach (PropertyInfo property in value.GetType().GetProperties())
             {
+                // Check if property is list
                 if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
                 {
                     IEnumerator item = (property.GetValue(value) as IEnumerable).GetEnumerator();
                     item.MoveNext();
-                    
-                    _textWriter.WriteLine($"[{item.Current.GetType().Name}]");
+                    textWriter.WriteLine();
+                    textWriter.WriteLine(
+                        $"[{property.Name}: {string.Join(", ", item.Current.GetType().GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
                     do
-                    { 
-                        _textWriter.WriteLine(string.Join(", ", item.Current.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(item.Current))));
+                    {
+                        textWriter.WriteLine(string.Join(", ",
+                            item.Current.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(item.Current))));
                     } while (item.MoveNext());
                 }
+                // Checks for a custom class
+                else if (property.GetValue(value).GetType().Namespace != "System")
+                {
+                    textWriter.WriteLine();
+                    textWriter.WriteLine($"[{property.Name}: {string.Join(", ", property.PropertyType.GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
+                    textWriter.WriteLine(string.Join(", ", property.PropertyType.GetProperties().Select(propertyInfo => propertyInfo.GetValue(property.GetValue(value)))));
+                }
+                // Default property
                 else
                 {
-                    _textWriter.WriteLine($"{property.Name}: {property.GetValue(value)}");
+                    textWriter.WriteLine($"{property.Name}: {property.GetValue(value)}");
                 }
             }
+
+            return textWriter.ToString();
         }
     }
 }
