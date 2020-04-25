@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>RRON</RootNamespace>
         <LangVersion>8.0</LangVersion>
         <Author>Rubiksmaster02</Author>
