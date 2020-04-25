@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Inflex.Rron;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -7,14 +8,17 @@ namespace RRON.Tests
     public class RronTests
     {
         private const string Path = "Test.rron";
-        private readonly TestClass _test = new TestClass(1, "one", true, 10.2f, 20.4d, new []{1, 2 ,3},new ClassInClassTest(1,2,3));
+        private readonly TestClass _test = new TestClass(1, "one", true, 10.2f, 20.4d, new List<ClassInClassTest>()
+        {
+            new ClassInClassTest(1, 2, 3),
+            new ClassInClassTest(4, 5, 6),
+            new ClassInClassTest(7, 8, 9),
+        });
         
         [TestMethod]
         public void TestForFileSaving()
         {
-            TestClass test = new TestClass(1, "one", true, 10.2f, 20.4d, new[] {1, 2, 3}, new ClassInClassTest(1,2,3));
-            RronConvert.SerializeObjectToFile(test, "TestFile.rron");
-            Assert.IsTrue(false);
+            RronConvert.SerializeObjectToFile(_test, "TestFile.rron");
         }
 
         /*[TestMethod]

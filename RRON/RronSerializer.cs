@@ -46,78 +46,30 @@ namespace Inflex.Rron
         /// <returns>A JSON string representation of the object.</returns>
         public string Serialize(object value)
         {
-            Test(value);
-            //WriteHeader(value.GetType().Name, CreateLine(value, true));
-            //WriteFollowers(CreateLine(value, false));
-
-            _textWriter.Dispose();
+            WriteLines(value);
             return _textWriter.ToString();
         }
 
-        /*private IEnumerable<string> CreateLine(object value, bool header)
+        private void WriteLines(object value)
         {
-            List<string> items = new List<string>();
             foreach (PropertyInfo property in value.GetType().GetProperties())
-            {
-                object propValue = property.GetValue(value);
-                string propName  = property.Name;
-                Type propType    = property.PropertyType;
-                bool isString    = propType == typeof(string);
-                
-                if (typeof(IEnumerable).IsAssignableFrom(propType) && !isString)
-                {
-                    items.Add(header ? $"<{propName}>" : $"<{string.Join(", ", (propValue as IEnumerable).Cast<object>())}>");
-                }
-                else if (propType.IsClass && !isString)
-                {
-                    items.Add($"[{propName}]");
-                }
-                else
-                {
-                    items.Add(header ? propName : propValue.ToString());
-                }
-            }
-
-            return items;
-        }*/
-
-        public void Test(object value)
-        {
-            List<PropertyInfo> properties = value.GetType().GetProperties().ToList();
-            List<object> values = new List<object>();
-            List<object> names = new List<object>();
-            List<object> classes = new List<object>();
-
-            foreach (PropertyInfo property in properties)
             {
                 if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
                 {
-                    List<object> items = (property.GetValue(value) as IEnumerable).Cast<object>().ToList();
-                    values.Add(items[0].GetType().Namespace == "System" ? $"<{string.Join(", ", items)}>" : $"<[{property.GetValue(value)}]>");
-                }
-                else if (property.GetValue(value).GetType().Namespace != "System")
-                {
-                    classes.Add(property.GetValue(value));
-                    values.Add($"[{property.GetValue(value)}]");
+                    IEnumerator item = (property.GetValue(value) as IEnumerable).GetEnumerator();
+                    item.MoveNext();
+                    
+                    _textWriter.WriteLine($"[{item.Current.GetType().Name}]");
+                    do
+                    { 
+                        _textWriter.WriteLine(string.Join(", ", item.Current.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(item.Current))));
+                    } while (item.MoveNext());
                 }
                 else
                 {
-                    values.Add(property.GetValue(value));
+                    _textWriter.WriteLine($"{property.Name}: {property.GetValue(value)}");
                 }
-                names.Add(property.Name);
-            }
-
-            WriteHeader(value.GetType().Name, names);
-            WriteFollowers(values);
-            _textWriter.WriteLine();
-            foreach (object item in classes)
-            {
-                Test(item);
             }
         }
-
-        private void WriteHeader(string name, IEnumerable<object> list) => _textWriter.WriteLine($"[{name}: {string.Join(", ", list)}]");
-
-        private void WriteFollowers(IEnumerable<object> followers) => _textWriter.WriteLine(string.Join(", ", followers));
     }
 }

@@ -1,26 +1,26 @@
-﻿public class TestClass
+﻿using System.Collections.Generic;
+
+public class TestClass
 {
-    public TestClass(int number, string word, bool boolean, float f, double d,int[] t, ClassInClassTest c)
+    public TestClass(int number, string word, bool boolean, float f, double d, List<ClassInClassTest> tests)
     {
         Number = number;
         Word = word;
         Boolean = boolean;
         Float = f;
         Double = d;
-        Tet = t;
-        Test = c;
+        Test = tests;
     }
     
     public TestClass() { }
-    
 
     public int Number { get; set; }
     public string Word { get; set; }
     public bool Boolean { get; set; }
     public float Float { get; set; }
     public double Double { get; set; }
-    public int[] Tet { get; set; }
-    public ClassInClassTest Test { get; set; }
+    public List<ClassInClassTest> Test { get; set; }
+
 }
 
 public class ClassInClassTest
