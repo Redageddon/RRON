@@ -9,7 +9,6 @@ namespace RRON.Tests
     public class RronTests
     {
         private const string Path = "Test.rron";
-        private const string Path2 = "Test2.rron";
 
         private readonly TestClass _test = new TestClass(1, "one", true, 10.2f, 20.4d, new List<ClassInClassTest>
             {
@@ -30,7 +29,6 @@ namespace RRON.Tests
         {
             TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
             TestAll(postTest);
-            Assert.Fail();
         }
 
         [TestMethod]

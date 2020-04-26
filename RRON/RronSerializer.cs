@@ -37,19 +37,17 @@ namespace Inflex.Rron
                     {
                         continue;
                     }
-
+                    
                     // Check if property is list
                     if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
                     {
                         currentLine = reader.ReadLine();
-
                         // Create an empty list of the type to hold
                         IList objects = (IList) Activator.CreateInstance(property.PropertyType);
-                        
                         if (property.PropertyType.GetGenericArguments()[0].Namespace == "System")
                         {
+                            
                             string[] strArray = currentLine.Split(new[]{ ", " }, StringSplitOptions.None);
-
                             foreach (string @string in strArray)
                             {
                                 objects.Add(TypeDescriptor.GetConverter(property.PropertyType.GetGenericArguments()[0]).ConvertFromString(@string));
@@ -58,10 +56,11 @@ namespace Inflex.Rron
                         else
                         {
                             // Checks for "[...]" or ": " or empty line, loops if those aren't found
-                            for (; !string.IsNullOrWhiteSpace(currentLine) && !Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "); currentLine = reader.ReadLine())
+                            while (!string.IsNullOrWhiteSpace(currentLine) && !Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "))
                             {
                                 object properties = StringToProperties(currentLine, property.PropertyType.GetGenericArguments()[0]);
                                 objects.Add(properties);
+                                currentLine = reader.ReadLine();
                             }
                         }
 
@@ -74,6 +73,7 @@ namespace Inflex.Rron
                         currentLine = reader.ReadLine();
                         object item = StringToProperties(currentLine, property.PropertyType);
                         type.GetProperty(property.Name).SetValue(instance, item);
+                        currentLine = reader.ReadLine();
                     }
                     // Default property
                     else
@@ -84,7 +84,7 @@ namespace Inflex.Rron
                     }
                 }
             }
-
+            
             return instance;
         }
 
