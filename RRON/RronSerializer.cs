@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -16,8 +15,9 @@ namespace Inflex.Rron
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
         /// <param name="serializationStream">The RRON stream to deserialize.</param>
+        /// <param name="ignoreOptions">The properties, by name, that are to be ignored.</param>
         /// <returns>The deserialized object from the JSON string.</returns>
-        public T Deserialize<T>(Stream serializationStream)
+        public T Deserialize<T>(Stream serializationStream, string[] ignoreOptions = null)
         {
             Type type = typeof(T);
             T instance = (T) Activator.CreateInstance(type);
@@ -31,6 +31,11 @@ namespace Inflex.Rron
                     while (string.IsNullOrWhiteSpace(currentLine))
                     {
                         currentLine = reader.ReadLine();
+                    }
+
+                    if (ignoreOptions != null && ignoreOptions.Any(property.Name.Contains))
+                    {
+                        continue;
                     }
 
                     // Check if property is list
@@ -97,13 +102,24 @@ namespace Inflex.Rron
         /// Serializes the specified object to a JSON string.
         /// </summary>
         /// <param name="value">The object to serialize.</param>
+        /// <param name="ignoreOptions">The properties, by name, that are to be ignored.</param>
         /// <returns>A JSON string representation of the object.</returns>
-        public string Serialize(object value)
+        public string Serialize(object value, string[] ignoreOptions = null)
         {
             using (TextWriter textWriter = new StringWriter())
             {
                 foreach (PropertyInfo property in value.GetType().GetProperties())
                 {
+                    if (ignoreOptions != null && ignoreOptions.Any(property.Name.Contains))
+                    {
+                        //currentLine = reader.ReadLine();
+                    }
+                    
+                    if (ignoreOptions != null && ignoreOptions.Any(property.Name.Contains))
+                    {
+                        continue;
+                    }
+                    
                     // Check if property is list
                     if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
                     {

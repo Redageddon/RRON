@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using Inflex.Rron;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -31,18 +29,7 @@ namespace RRON.Tests
         {
             //TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
             //TestAll(postTest);
-            Level prePath = RronConvert.DeserializeObjectFromFile<Level>(Path);
-            Console.WriteLine(prePath.Artist);
-            Console.WriteLine(prePath.Background);
-            Console.WriteLine(prePath.Creator);
-            Console.WriteLine(prePath.Enemies);
-            Console.WriteLine(prePath.Icon);
-            Console.WriteLine(prePath.Id);
-            Console.WriteLine(prePath.Lives);
-            Console.WriteLine(prePath.Path);
-            Console.WriteLine(prePath.Speeds);
-            Console.WriteLine(prePath.Title);
-            Console.WriteLine(prePath.SongFile);
+            Level prePath = RronConvert.DeserializeObjectFromFile<Level>(Path, new[]{"Id", "Path"});
             Assert.Fail();
         }
 
