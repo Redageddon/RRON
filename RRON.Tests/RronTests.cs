@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using Inflex.Rron;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,20 +21,21 @@ namespace RRON.Tests
         {
             TestAll(_test);
             RronConvert.SerializeObjectToFile(_test, Path);
+            Assert.Fail();
         }
 
         [TestMethod]
         public void DeserializeObjectFromFile()
         {
-            TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
-            TestAll(postTest);
+            //TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
+            //TestAll(postTest);
         }
 
         [TestMethod]
         public void DeserializeObjectFromString()
         {
-            TestClass postTest = RronConvert.DeserializeObjectFromString<TestClass>(File.ReadAllText(Path));
-            TestAll(postTest);
+            //TestClass postTest = RronConvert.DeserializeObjectFromString<TestClass>(File.ReadAllText(Path));
+            //TestAll(postTest);
         }
 
         private static void TestAll(TestClass test)
