@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Inflex.Rron;
@@ -9,32 +10,47 @@ namespace RRON.Tests
     public class RronTests
     {
         private const string Path = "Test.rron";
+        private const string Path2 = "Test2.rron";
+
         private readonly TestClass _test = new TestClass(1, "one", true, 10.2f, 20.4d, new List<ClassInClassTest>
-        {
-            new ClassInClassTest(1, 2, 3),
-            new ClassInClassTest(4, 5, 6)
-        }, 
-            new ClassInClassTest(1,1,1));
+            {
+                new ClassInClassTest(1, 2, 3),
+                new ClassInClassTest(4, 5, 6)
+            }, new ClassInClassTest(1, 1, 1), 
+            new List<int> {1,2,3});
 
         [TestMethod]
         public void SerializeObjectToFile()
         {
-            TestAll(_test);
-            RronConvert.SerializeObjectToFile(_test, Path);
+            //TestAll(_test);
+            //RronConvert.SerializeObjectToFile(_test, Path);
         }
 
         [TestMethod]
         public void DeserializeObjectFromFile()
         {
-            TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>("Test.rron");
-            TestAll(postTest);
+            //TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
+            //TestAll(postTest);
+            Level prePath = RronConvert.DeserializeObjectFromFile<Level>(Path);
+            Console.WriteLine(prePath.Artist);
+            Console.WriteLine(prePath.Background);
+            Console.WriteLine(prePath.Creator);
+            Console.WriteLine(prePath.Enemies);
+            Console.WriteLine(prePath.Icon);
+            Console.WriteLine(prePath.Id);
+            Console.WriteLine(prePath.Lives);
+            Console.WriteLine(prePath.Path);
+            Console.WriteLine(prePath.Speeds);
+            Console.WriteLine(prePath.Title);
+            Console.WriteLine(prePath.SongFile);
+            Assert.Fail();
         }
 
         [TestMethod]
         public void DeserializeObjectFromString()
         {
-            TestClass postTest = RronConvert.DeserializeObjectFromString<TestClass>(File.ReadAllText(Path));
-            TestAll(postTest);
+            //TestClass postTest = RronConvert.DeserializeObjectFromString<TestClass>(File.ReadAllText(Path));
+            //TestAll(postTest);
         }
 
         private static void TestAll(TestClass test)
@@ -54,6 +70,9 @@ namespace RRON.Tests
             Assert.AreEqual(test.Test2.Test1, 1);
             Assert.AreEqual(test.Test2.Test2, 1);
             Assert.AreEqual(test.Test2.Test3, 1);
+            Assert.AreEqual(test.List[0], 1);
+            Assert.AreEqual(test.List[1], 2);
+            Assert.AreEqual(test.List[2], 3);
         }
     }
 }
