@@ -3,7 +3,7 @@
 public class TestClass
 {
     public TestClass() { }
-    public TestClass(int number, string word, bool boolean, float f, double d, List<ClassInClassTest> tests, ClassInClassTest c, List<int> list)
+    public TestClass(int number, string word, bool boolean, float f, double d, List<ClassInClassTest> tests, ClassInClassTest c, List<int> list, List<string> strings)
     {
         Number = number;
         Word = word;
@@ -13,6 +13,7 @@ public class TestClass
         Test = tests;
         Test2 = c;
         List = list;
+        Strings = strings;
     }
 
     public int Number { get; set; }
@@ -23,6 +24,7 @@ public class TestClass
     public List<ClassInClassTest> Test { get; set; }
     public ClassInClassTest Test2 { get; set; }
     public List<int> List { get; set; }
+    public List<string> Strings { get; set; }
 }
 
 public class ClassInClassTest

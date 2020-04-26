@@ -14,7 +14,7 @@ namespace RRON.Tests
                 new ClassInClassTest(1, 2, 3),
                 new ClassInClassTest(4, 5, 6)
             }, new ClassInClassTest(1, 1, 1), 
-            new List<int> {1,2,3});
+            new List<int> {1,2,3}, new List<string>(){"hello", "there"});
 
         [TestMethod]
         public void SerializeObjectToFile()

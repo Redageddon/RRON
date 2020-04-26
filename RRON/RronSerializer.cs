@@ -111,46 +111,42 @@ namespace Inflex.Rron
                 {
                     Type propertyType = property.PropertyType;
                     object propertyValue = property.GetValue(value);
+                    string separator;
 
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
-                        List<object> item = (propertyValue as IEnumerable).Cast<object>().ToList();
-                        textWriter.WriteLine();
-                        Type listType = propertyType.GetGenericArguments()[0];
+                        List<object> itemList = (propertyValue as IEnumerable).Cast<object>().ToList();
+                        Type listType = propertyType.GetGenericArguments()[0]; 
                         
-                        if (listType.Namespace == "System")
+                        if (listType.Namespace == nameof(System))
                         {
                             textWriter.WriteLine($"[{property.Name}]");
-                            if (listType == typeof(string))
-                            {
-                                textWriter.WriteLine($"<{string.Join(@"\,", item)}>");
-                            }
-                            else
-                            {
-                                textWriter.WriteLine(string.Join(", ", item));
-                            }
+                            separator = listType == typeof(string) ? @"\," : ", ";
+                            textWriter.WriteLine(string.Join(separator, itemList));
                         }
                         else
                         {
-                            textWriter.WriteLine($"[{property.Name}: {string.Join(", ", item.First().GetType().GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
-                            foreach (object obj in item)
+                            separator = ", ";
+                            textWriter.WriteLine($"[{property.Name}: {string.Join(separator, itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
+                            foreach (object obj in itemList)
                             {
-                                textWriter.WriteLine(string.Join(", ", obj.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(obj))));
+                                textWriter.WriteLine(string.Join(separator, obj.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(obj))));
                             }
                         }
                     }
-                    else if (propertyType.Namespace != "System")
+                    else if (propertyType.Namespace != nameof(System))
                     {
-                        textWriter.WriteLine();
+                        separator = ", ";
                         textWriter.WriteLine(
-                            $"[{property.Name}: {string.Join(", ", propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
-                        textWriter.WriteLine(string.Join(", ",
+                            $"[{property.Name}: {string.Join(separator, propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
+                        textWriter.WriteLine(string.Join(separator,
                             propertyType.GetProperties().Select(propertyInfo => propertyInfo.GetValue(propertyValue))));
                     }
                     else
                     {
-                        textWriter.WriteLine($"{property.Name}: {propertyValue}");
+                        textWriter.Write($"{property.Name}: {propertyValue}");
                     }
+                    textWriter.WriteLine();
                 }
 
                 return textWriter.ToString();
