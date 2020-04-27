@@ -113,41 +113,42 @@ namespace Inflex.Rron
                     Type propertyType = property.PropertyType;
                     object propertyValue = property.GetValue(value);
                     string propertyName = property.Name;
-                    string separator = "";
-                    List<object> writeObjects = new List<object>();
+                    string separator = ", ";
+                    object header = null;
+                    List<object> followerObjects = new List<object>();
 
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
                         List<object> itemList = (propertyValue as IEnumerable).Cast<object>().ToList();
                         Type listType = propertyType.GetGenericArguments()[0];
 
-                        if (listType.Namespace == nameof(System))
+                        if (listType.Namespace != nameof(System))
                         {
-                            textWriter.WriteLine($"[{propertyName}]");
-                            separator = listType == typeof(string) ? @"\," : ", ";
-                            writeObjects.Add(itemList);
+                            header = itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name);
+                            followerObjects.AddRange(itemList.Select(obj => obj.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(obj))));
                         }
                         else
                         {
-                            separator = ", ";
-                            textWriter.WriteLine($"[{propertyName}: {string.Join(separator, itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
-                            writeObjects.AddRange(itemList.Select(obj => obj.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(obj))));
+                            textWriter.WriteLine($"[{propertyName}]");
+                            if (listType == typeof(string)) separator = @"\,";
+                            followerObjects.Add(itemList);
                         }
                     }
                     else if (propertyType.Namespace != nameof(System))
                     {
-                        separator = ", ";
-                        textWriter.WriteLine($"[{propertyName}: {string.Join(separator, propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
-                        writeObjects.Add(propertyType.GetProperties().Select(propertyInfo => propertyInfo.GetValue(propertyValue)));
+                        header = propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name);
+                        followerObjects.Add(propertyType.GetProperties().Select(propertyInfo => propertyInfo.GetValue(propertyValue)));
                     }
                     else
                     {
                         textWriter.Write($"{propertyName}: {propertyValue}");
                     }
+
+                    if (header != null) textWriter.WriteLine($"[{propertyName}: {string.Join(separator, (IEnumerable<object>) header)}]");
                     
-                    foreach (object obj in writeObjects)
+                    foreach (object follower in followerObjects)
                     {
-                        textWriter.WriteLine(string.Join(separator, (IEnumerable<object>)obj));
+                        textWriter.WriteLine(string.Join(separator, (IEnumerable<object>)follower));
                     }
 
                     textWriter.WriteLine();
