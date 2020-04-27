@@ -23,72 +23,71 @@ namespace Inflex.Rron
             Type type = typeof(T);
             T instance = (T) Activator.CreateInstance(type);
 
-            using (StreamReader reader = new StreamReader(serializationStream))
+            StreamReader streamReader = new StreamReader(serializationStream);
+            string noBlankLines = Regex.Replace(streamReader.ReadToEnd(), @"^\s+[\r\n]*", string.Empty, RegexOptions.Multiline);
+            streamReader.Dispose();
+            using (StringReader reader = new StringReader(noBlankLines))
             {
                 string currentLine = reader.ReadLine();
-                foreach (PropertyInfo property in type.GetProperties())
+                foreach (PropertyInfo property in type.GetProperties().Where(property => ignoreOptions == null || !ignoreOptions.Any(property.Name.Contains)))
                 {
-                    // Ignores all empty spaces at the beginning of the file
-                    while (string.IsNullOrWhiteSpace(currentLine))
+                    object value;
+                    bool throughWhile = false;
+                    Type propertyType = property.PropertyType;
+                    
+                    if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
                         currentLine = reader.ReadLine();
-                    }
-
-                    if (ignoreOptions != null && ignoreOptions.Any(property.Name.Contains))
-                    {
-                        continue;
-                    }
-
-                    // Check if property is list
-                    if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
-                    {
-                        currentLine = reader.ReadLine();
-                        // Create an empty list of the type to hold
-                        IList objects = (IList) Activator.CreateInstance(property.PropertyType);
-                        if (property.PropertyType.GetGenericArguments()[0].Namespace == "System")
+                        
+                        List<object> objects = new List<object>();
+                        Type listType = propertyType.GetGenericArguments()[0];
+                        
+                        if (listType.Namespace != "System")
                         {
-                            string[] strArray = currentLine.Split(new[] {", "}, StringSplitOptions.None);
-                            foreach (string @string in strArray)
+                            while (!Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "))
                             {
-                                objects.Add(TypeDescriptor.GetConverter(property.PropertyType.GetGenericArguments()[0]).ConvertFromString(@string));
+                                objects.Add(StringToProperties(currentLine, listType));
+                                currentLine = reader.ReadLine();
                             }
+                            throughWhile = true;
                         }
                         else
                         {
-                            // Checks for "[...]" or ": " or empty line, loops if those aren't found
-                            while (!string.IsNullOrWhiteSpace(currentLine) && !Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "))
-                            {
-                                object properties = StringToProperties(currentLine, property.PropertyType.GetGenericArguments()[0]);
-                                objects.Add(properties);
-                                currentLine = reader.ReadLine();
-                            }
+                            string separator = ", ";
+                            if (listType == typeof(string)) separator = "\\,";
+                            string[] strArray = currentLine.Split(new[] {separator}, StringSplitOptions.None);
+                            objects.AddRange(strArray.Select(@string => TypeDescriptor.GetConverter(listType).ConvertFromString(@string)));
                         }
-
-                        // Fills the instance list with things from file
-                        property.SetValue(instance, objects);
+                        value = ObjectListToTypeList(objects, listType);
                     }
-                    // Checks for a custom class
-                    else if (property.PropertyType.Namespace != "System")
+                    else if (propertyType.Namespace != "System")
                     {
                         currentLine = reader.ReadLine();
-                        object item = StringToProperties(currentLine, property.PropertyType);
-                        type.GetProperty(property.Name).SetValue(instance, item);
-                        currentLine = reader.ReadLine();
+                        value = StringToProperties(currentLine, propertyType);
                     }
-                    // Default property
                     else
                     {
-                        object item = TypeDescriptor.GetConverter(property.PropertyType).ConvertFromString(currentLine.Split(new[] {": "}, StringSplitOptions.None).Last());
-                        type.GetProperty(property.Name).SetValue(instance, item);
-                        currentLine = reader.ReadLine();
+                        value = TypeDescriptor.GetConverter(propertyType).ConvertFromString(currentLine.Split(new[] {": "}, StringSplitOptions.None).Last());
                     }
+                    
+                    property.SetValue(instance, value);
+                    if (!throughWhile) currentLine = reader.ReadLine();
                 }
             }
 
             return instance;
         }
 
-        // Takes a string and converts it to the specified type
+        private static object ObjectListToTypeList(IEnumerable<object> items, Type type)
+        {
+            MethodInfo castMethod   = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))  .MakeGenericMethod(type);
+            MethodInfo toListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList)).MakeGenericMethod(type);
+
+            IEnumerable<object> itemsToCast = items.Select(item => Convert.ChangeType(item, type));
+            object castedItems = castMethod.Invoke(null, new object[] { itemsToCast });
+            return toListMethod.Invoke(null, new[] { castedItems });
+        }
+        
         private static object StringToProperties(string line, Type type)
         {
             string[] strArray = line.Split(new[] {", "}, StringSplitOptions.None);
@@ -122,36 +121,36 @@ namespace Inflex.Rron
                         List<object> itemList = (propertyValue as IEnumerable).Cast<object>().ToList();
                         Type listType = propertyType.GetGenericArguments()[0];
 
-                        if (listType.Namespace != nameof(System))
+                        if (listType.Namespace != "System")
                         {
                             header = itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name);
                             followerObjects.AddRange(itemList.Select(obj => obj.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(obj))));
                         }
                         else
                         {
-                            textWriter.WriteLine($"[{propertyName}]");
-                            if (listType == typeof(string)) separator = @"\,";
+                            textWriter.WriteLine("\n[" + propertyName + "]");
+                            if (listType == typeof(string)) separator = "\\,";
                             followerObjects.Add(itemList);
                         }
                     }
-                    else if (propertyType.Namespace != nameof(System))
+                    else if (propertyType.Namespace != "System")
                     {
                         header = propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name);
                         followerObjects.Add(propertyType.GetProperties().Select(propertyInfo => propertyInfo.GetValue(propertyValue)));
                     }
                     else
                     {
-                        textWriter.Write($"{propertyName}: {propertyValue}");
+                        textWriter.WriteLine("{0}: {1}", propertyName, propertyValue);
                     }
 
-                    if (header != null) textWriter.WriteLine($"[{propertyName}: {string.Join(separator, (IEnumerable<object>) header)}]");
+                    if (header != null) textWriter.WriteLine("\n[" + propertyName + ": " + string.Join(separator, (IEnumerable<object>) header) + "]");
                     
                     foreach (object follower in followerObjects)
                     {
                         textWriter.WriteLine(string.Join(separator, (IEnumerable<object>)follower));
                     }
 
-                    textWriter.WriteLine();
+                    //textWriter.WriteLine();
                 }
 
                 return textWriter.ToString();

@@ -14,21 +14,21 @@ namespace RRON.Tests
                 new ClassInClassTest(1, 2, 3),
                 new ClassInClassTest(4, 5, 6)
             }, new ClassInClassTest(1, 1, 1), 
-            new List<int> {1,2,3}, new List<string>(){"hello", "there"});
+            new List<int> {1,2,3}, new List<string> {"hello", "there"});
 
         [TestMethod]
         public void SerializeObjectToFile()
         {
             TestAll(_test);
             RronConvert.SerializeObjectToFile(_test, Path);
-            Assert.Fail();
         }
 
         [TestMethod]
         public void DeserializeObjectFromFile()
         {
-            //TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
-            //TestAll(postTest);
+            TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
+            TestAll(postTest);
+            //Assert.Fail();
         }
 
         [TestMethod]
@@ -58,6 +58,8 @@ namespace RRON.Tests
             Assert.AreEqual(test.List[0], 1);
             Assert.AreEqual(test.List[1], 2);
             Assert.AreEqual(test.List[2], 3);
+            Assert.AreEqual(test.Strings[0], "hello");
+            Assert.AreEqual(test.Strings[1], "there");
         }
     }
 }
