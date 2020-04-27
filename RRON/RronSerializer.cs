@@ -38,7 +38,7 @@ namespace Inflex.Rron
                     {
                         continue;
                     }
-                    
+
                     // Check if property is list
                     if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
                     {
@@ -47,7 +47,7 @@ namespace Inflex.Rron
                         IList objects = (IList) Activator.CreateInstance(property.PropertyType);
                         if (property.PropertyType.GetGenericArguments()[0].Namespace == "System")
                         {
-                            string[] strArray = currentLine.Split(new[]{ ", " }, StringSplitOptions.None);
+                            string[] strArray = currentLine.Split(new[] {", "}, StringSplitOptions.None);
                             foreach (string @string in strArray)
                             {
                                 objects.Add(TypeDescriptor.GetConverter(property.PropertyType.GetGenericArguments()[0]).ConvertFromString(@string));
@@ -78,19 +78,20 @@ namespace Inflex.Rron
                     // Default property
                     else
                     {
-                        object item = TypeDescriptor.GetConverter(property.PropertyType).ConvertFromString(currentLine.Split(new[]{ ": " }, StringSplitOptions.None).Last());
+                        object item = TypeDescriptor.GetConverter(property.PropertyType).ConvertFromString(currentLine.Split(new[] {": "}, StringSplitOptions.None).Last());
                         type.GetProperty(property.Name).SetValue(instance, item);
                         currentLine = reader.ReadLine();
                     }
                 }
             }
+
             return instance;
         }
 
         // Takes a string and converts it to the specified type
         private static object StringToProperties(string line, Type type)
         {
-            string[] strArray = line.Split(new[]{ ", " }, StringSplitOptions.None);
+            string[] strArray = line.Split(new[] {", "}, StringSplitOptions.None);
             object[] objArray = new object[strArray.Length];
             for (int index = 0; index < type.GetProperties().Length; ++index)
                 objArray[index] = TypeDescriptor.GetConverter(type.GetProperties()[index].PropertyType).ConvertFromString(strArray[index]);
@@ -111,41 +112,44 @@ namespace Inflex.Rron
                 {
                     Type propertyType = property.PropertyType;
                     object propertyValue = property.GetValue(value);
-                    string separator;
+                    string propertyName = property.Name;
+                    string separator = "";
+                    List<object> writeObjects = new List<object>();
 
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
                         List<object> itemList = (propertyValue as IEnumerable).Cast<object>().ToList();
-                        Type listType = propertyType.GetGenericArguments()[0]; 
-                        
+                        Type listType = propertyType.GetGenericArguments()[0];
+
                         if (listType.Namespace == nameof(System))
                         {
-                            textWriter.WriteLine($"[{property.Name}]");
+                            textWriter.WriteLine($"[{propertyName}]");
                             separator = listType == typeof(string) ? @"\," : ", ";
-                            textWriter.WriteLine(string.Join(separator, itemList));
+                            writeObjects.Add(itemList);
                         }
                         else
                         {
                             separator = ", ";
-                            textWriter.WriteLine($"[{property.Name}: {string.Join(separator, itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
-                            foreach (object obj in itemList)
-                            {
-                                textWriter.WriteLine(string.Join(separator, obj.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(obj))));
-                            }
+                            textWriter.WriteLine($"[{propertyName}: {string.Join(separator, itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
+                            writeObjects.AddRange(itemList.Select(obj => obj.GetType().GetProperties().Select(propertyInfo => propertyInfo.GetValue(obj))));
                         }
                     }
                     else if (propertyType.Namespace != nameof(System))
                     {
                         separator = ", ";
-                        textWriter.WriteLine(
-                            $"[{property.Name}: {string.Join(separator, propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
-                        textWriter.WriteLine(string.Join(separator,
-                            propertyType.GetProperties().Select(propertyInfo => propertyInfo.GetValue(propertyValue))));
+                        textWriter.WriteLine($"[{propertyName}: {string.Join(separator, propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name))}]");
+                        writeObjects.Add(propertyType.GetProperties().Select(propertyInfo => propertyInfo.GetValue(propertyValue)));
                     }
                     else
                     {
-                        textWriter.Write($"{property.Name}: {propertyValue}");
+                        textWriter.Write($"{propertyName}: {propertyValue}");
                     }
+                    
+                    foreach (object obj in writeObjects)
+                    {
+                        textWriter.WriteLine(string.Join(separator, (IEnumerable<object>)obj));
+                    }
+
                     textWriter.WriteLine();
                 }
 
