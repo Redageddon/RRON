@@ -3,17 +3,17 @@
 public class TestClass
 {
     public TestClass() { }
-    public TestClass(int number, string word, bool boolean, float f, double d, List<ClassInClassTest> tests, ClassInClassTest c, List<int> list, List<string> strings)
+    public TestClass(int number, string word, bool boolean, float @float, double @double, List<ClassInClassTest> classInClassList, ClassInClassTest classInClass, List<int> nonStringList, List<string> stringList)
     {
         Number = number;
         Word = word;
         Boolean = boolean;
-        Float = f;
-        Double = d;
-        Test = tests;
-        Test2 = c;
-        List = list;
-        Strings = strings;
+        Float = @float;
+        Double = @double;
+        ClassInClassList = classInClassList;
+        ClassInClass = classInClass;
+        NonStringList = nonStringList;
+        StringList = stringList;
     }
 
     public int Number { get; set; }
@@ -21,23 +21,31 @@ public class TestClass
     public bool Boolean { get; set; }
     public float Float { get; set; }
     public double Double { get; set; }
-    public List<ClassInClassTest> Test { get; set; }
-    public ClassInClassTest Test2 { get; set; }
-    public List<int> List { get; set; }
-    public List<string> Strings { get; set; }
+    public List<ClassInClassTest> ClassInClassList { get; set; }
+    public ClassInClassTest ClassInClass { get; set; }
+    public List<int> NonStringList { get; set; }
+    public List<string> StringList { get; set; }
 }
 
 public class ClassInClassTest
 {
     public ClassInClassTest() { }
-    public ClassInClassTest(int t1, int t2, int t3)
+    public ClassInClassTest(int inNumber, string inWord, bool inBoolean, float inFloat, double inDouble, List<int> inNonStringList, List<string> inStringList)
     {
-        Test1 = t1;
-        Test2 = t2;
-        Test3 = t3;
+        InNumber = inNumber;
+        InWord = inWord;
+        InBoolean = inBoolean;
+        InFloat = inFloat;
+        InDouble = inDouble;
+        InNonStringList = inNonStringList;
+        InStringList = inStringList;
     }
-
-    public int Test1 { get; set; }
-    public int Test2 { get; set; }
-    public int Test3 { get; set; }
+    
+    public int InNumber { get; set; }
+    public string InWord { get; set; }
+    public bool InBoolean { get; set; }
+    public float InFloat { get; set; }
+    public double InDouble { get; set; }
+    public List<int> InNonStringList { get; set; }
+    public List<string> InStringList { get; set; }
 }
