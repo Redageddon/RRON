@@ -26,7 +26,6 @@ namespace Inflex.Rron
 
             StreamReader streamReader = new StreamReader(serializationStream);
             string noBlankLines = Regex.Replace(streamReader.ReadToEnd(), @"^\s+[\r\n]*", string.Empty, RegexOptions.Multiline);
-            streamReader.Dispose();
             using (StringReader reader = new StringReader(noBlankLines))
             {
                 string currentLine = reader.ReadLine();
@@ -45,7 +44,8 @@ namespace Inflex.Rron
                         
                         if (listType.Namespace != "System")
                         {
-                            while (!Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "))
+                            Console.WriteLine(currentLine);
+                            while (currentLine != null && !Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "))
                             {
                                 objects.Add(StringToProperties(currentLine, listType));
                                 currentLine = reader.ReadLine();
@@ -75,7 +75,7 @@ namespace Inflex.Rron
                     if (!throughWhile) currentLine = reader.ReadLine();
                 }
             }
-
+            streamReader.Dispose();
             return instance;
         }
         

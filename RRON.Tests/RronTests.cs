@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using Inflex.Rron;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,6 +8,7 @@ namespace RRON.Tests
     public class RronTests
     {
         private const string Path = "Test.rron";
+        private const string Path2 = "Test2.rron";
 
         private readonly TestClass _testClass = new TestClass(1, "one", true, 10.2f, 20.4d, new List<ClassInClassTest>
             {
@@ -22,29 +22,22 @@ namespace RRON.Tests
         [TestMethod]
         public void SerializeObjectToFile()
         {
-            TestAll(_testClass);
-            RronConvert.SerializeObjectToFile(_testClass, Path);
+            //TestAll(_testClass);
+            //RronConvert.SerializeObjectToFile(_testClass, Path, new []{"Number"});
         }
 
         [TestMethod]
         public void DeserializeObjectFromFile()
         {
-            TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
-            TestAll(postTest);
-        }
-
-        [TestMethod]
-        public void DeserializeObjectFromString()
-        {
-            TestClass postTest = RronConvert.DeserializeObjectFromString<TestClass>(File.ReadAllText(Path));
+            TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path, new []{"Number", "Word"});
             TestAll(postTest);
         }
 
         private static void TestAll(TestClass test)
         {
             Assert.AreEqual(Path, "Test.rron");
-            Assert.AreEqual(test.Number, 1);
-            Assert.AreEqual(test.Word, "one");
+            Assert.AreEqual(test.Number, 0);
+            Assert.AreEqual(test.Word, null);
             Assert.AreEqual(test.Boolean, true);
             Assert.AreEqual(test.Float, 10.2f);
             Assert.AreEqual(test.Double, 20.4d);
