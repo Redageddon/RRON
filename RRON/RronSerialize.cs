@@ -28,6 +28,7 @@ namespace Inflex.Rron
                     object header = null;
                     List<object> followerObjects = new List<object>();
 
+                    
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
                         List<object> itemList = (propertyValue as IEnumerable).Cast<object>().ToList();
@@ -45,7 +46,7 @@ namespace Inflex.Rron
                             followerObjects.Add(itemList);
                         }
                     }
-                    else if (propertyType.Namespace != "System")
+                    else if (propertyType.Namespace != "System" && !propertyType.IsEnum)
                     {
                         header = propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name);
                         followerObjects.Add(propertyType.GetProperties().Select(info => GetNestedValues(info, propertyValue)));

@@ -34,7 +34,7 @@ namespace Inflex.Rron
                     object value;
                     bool throughWhile = false;
                     Type propertyType = property.PropertyType;
-                    
+
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
                         currentLine = reader.ReadLine();
