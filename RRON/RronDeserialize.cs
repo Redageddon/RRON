@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Inflex.Rron
@@ -90,11 +91,68 @@ namespace Inflex.Rron
         
         private static object StringToProperties(string line, Type type)
         {
-            string[] strArray = line.Split(new[] {", "}, StringSplitOptions.None);
-            object[] objArray = new object[strArray.Length];
+            List<string> strList = StringSplitter(line);
+
+            object[] objArray = new object[strList.Count];
             for (int index = 0; index < type.GetProperties().Length; ++index)
-                objArray[index] = TypeDescriptor.GetConverter(type.GetProperties()[index].PropertyType).ConvertFromString(strArray[index]);
+            {
+                if (typeof(ICollection).IsAssignableFrom(type.GetProperties()[index].PropertyType))
+                {
+                    Type listType = type.GetProperties()[index].PropertyType.GetGenericArguments()[0];
+                    string[] strArray = listType == typeof(string) 
+                        ? strList[index].Split(new[] {"\\,"}, StringSplitOptions.None) 
+                        : strList[index].Split(new[] {","}, StringSplitOptions.None);
+                    
+                    IEnumerable<object> asd = strArray.Select(@string => TypeDescriptor.GetConverter(listType).ConvertFromString(@string));
+                    objArray[index] = ObjectListToTypeList(asd, listType);
+                }
+                else
+                {
+                    objArray[index] = TypeDescriptor.GetConverter(type.GetProperties()[index].PropertyType).ConvertFromString(strList[index]);
+                }
+            }
             return Activator.CreateInstance(type, objArray);
+        }
+
+        private static List<string> StringSplitter(string line)
+        {
+            List<string> list = new List<string>();
+            StringBuilder builder = new StringBuilder();
+            bool listStart = false;
+
+            foreach (char @char in line)
+            {
+                switch (@char)
+                {
+                    case '<':
+                        listStart = true;
+                        break;
+                    case '>':
+                        listStart = false;
+                        break;
+                    case ' ':
+                        break;
+                    case ',':
+                        if (!listStart)
+                        {
+                            list.Add(builder.ToString());
+                            builder.Clear();
+                        }
+                        else goto default;
+
+                        break;
+                    default:
+                        builder.Append(@char);
+                        break;
+                }
+            }
+            
+            if (builder.Length > 0)
+            {
+                list.Add(builder.ToString());
+            }
+
+            return list;
         }
     }
 }

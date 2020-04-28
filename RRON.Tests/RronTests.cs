@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Inflex.Rron;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,32 +12,32 @@ namespace RRON.Tests
 
         private readonly TestClass _testClass = new TestClass(1, "one", true, 10.2f, 20.4d, new List<ClassInClassTest>
             {
-                new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1,2,3}, new List<string> {"hello", "there"}),
-                new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1,2,3}, new List<string> {"hello", "there"})
-
-            }, new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1,2,3}, new List<string> {"hello", "there"}), 
-            new List<int> {1,2,3}, new List<string> {"hello", "there"});
+                new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1, 2, 3}, new List<string> {"hello", "there"}),
+                new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1, 2, 3}, new List<string> {"hello", "there"})
+            },
+            new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1, 2, 3}, new List<string> {"hello", "there"}),
+            new List<int> {1, 2, 3},
+            new List<string> {"hello", "there"});
 
         [TestMethod]
         public void SerializeObjectToFile()
         {
             TestAll(_testClass);
             RronConvert.SerializeObjectToFile(_testClass, Path);
-            Assert.Fail();
         }
 
         [TestMethod]
         public void DeserializeObjectFromFile()
         {
-            //TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
-            //TestAll(postTest);
+            TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
+            TestAll(postTest);
         }
 
         [TestMethod]
         public void DeserializeObjectFromString()
         {
-            //TestClass postTest = RronConvert.DeserializeObjectFromString<TestClass>(File.ReadAllText(Path));
-            //TestAll(postTest);
+            TestClass postTest = RronConvert.DeserializeObjectFromString<TestClass>(File.ReadAllText(Path));
+            TestAll(postTest);
         }
 
         private static void TestAll(TestClass test)

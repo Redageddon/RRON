@@ -36,20 +36,7 @@ namespace Inflex.Rron
                         if (listType.Namespace != "System")
                         {
                             header = itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name);
-                            followerObjects.AddRange(itemList.Select(obj => obj.GetType().GetProperties().Select(info =>
-                            {
-                                if (typeof(ICollection).IsAssignableFrom(info.PropertyType))
-                                {
-                                    IEnumerable<object> innerItemList = (info.GetValue(obj) as IEnumerable).Cast<object>();
-                                    if (info.PropertyType.GetGenericArguments()[0] == typeof(string))
-                                    {
-                                        return "<" + string.Join("\\,", innerItemList) + ">";
-                                    }
-                                    return "<" + string.Join(", ", innerItemList) + ">";
-                                
-                                }
-                                return info.GetValue(obj);
-                            })));
+                            followerObjects.AddRange(itemList.Select(obj => obj.GetType().GetProperties().Select(info => GetNestedValues(info, obj))));
                         }
                         else
                         {
@@ -61,20 +48,7 @@ namespace Inflex.Rron
                     else if (propertyType.Namespace != "System")
                     {
                         header = propertyType.GetProperties().Select(propertyInfo => propertyInfo.Name);
-                        
-                        followerObjects.Add(propertyType.GetProperties().Select(info =>
-                        {
-                            if (typeof(ICollection).IsAssignableFrom(info.PropertyType))
-                            {
-                                IEnumerable<object> innerItemList = (info.GetValue(propertyValue) as IEnumerable).Cast<object>();
-                                if (info.PropertyType.GetGenericArguments()[0] == typeof(string))
-                                {
-                                    return "<" + string.Join("\\,", innerItemList) + ">";
-                                }
-                                return "<" + string.Join(", ", innerItemList) + ">";
-                            }
-                            return info.GetValue(propertyValue);
-                        }));
+                        followerObjects.Add(propertyType.GetProperties().Select(info => GetNestedValues(info, propertyValue)));
                     }
                     else
                     {
@@ -91,6 +65,16 @@ namespace Inflex.Rron
 
                 return textWriter.ToString();
             }
+        }
+
+        private static object GetNestedValues(PropertyInfo info, object propertyValue)
+        {
+            if (!typeof(ICollection).IsAssignableFrom(info.PropertyType)) return info.GetValue(propertyValue);
+            
+            IEnumerable<object> innerItemList = (info.GetValue(propertyValue) as IEnumerable).Cast<object>();
+            return info.PropertyType.GetGenericArguments()[0] == typeof(string)
+                ? "<" + string.Join("\\,", innerItemList) + ">"
+                : "<" + string.Join(", ", innerItemList) + ">";
         }
     }
 }
