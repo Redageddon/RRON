@@ -5,8 +5,7 @@ namespace RRON.Tests
     public enum TestEnum
     {
         Name1 = 0,
-        Name2 = 1,
-        Name3 = 2
+        Name2 = 1
     }
 
     public class TestClass
@@ -14,7 +13,7 @@ namespace RRON.Tests
         public TestClass() { }
 
         public TestClass(int number, string word, bool boolean, float @float, double @double, List<ClassInClassTest> classInClassList, ClassInClassTest classInClass, List<int> nonStringList,
-            List<string> stringList, TestEnum @enum)
+            List<string> stringList,TestEnum @enum , List<TestEnum> enumList)
         {
             Number = number;
             Word = word;
@@ -26,6 +25,7 @@ namespace RRON.Tests
             NonStringList = nonStringList;
             StringList = stringList;
             Enum = @enum;
+            EnumList = enumList;
         }
 
         public int Number { get; set; }
@@ -38,13 +38,14 @@ namespace RRON.Tests
         public List<int> NonStringList { get; set; }
         public List<string> StringList { get; set; }
         public TestEnum Enum { get; set; }
+        public List<TestEnum> EnumList { get; set; }
     }
 
     public class ClassInClassTest
     {
         public ClassInClassTest() { }
 
-        public ClassInClassTest(int inNumber, string inWord, bool inBoolean, float inFloat, double inDouble, List<int> inNonStringList, List<string> inStringList, TestEnum @enum)
+        public ClassInClassTest(int inNumber, string inWord, bool inBoolean, float inFloat, double inDouble, List<int> inNonStringList, List<string> inStringList, TestEnum @enum, List<TestEnum> enumList)
         {
             InNumber = inNumber;
             InWord = inWord;
@@ -54,6 +55,7 @@ namespace RRON.Tests
             InNonStringList = inNonStringList;
             InStringList = inStringList;
             Enum = @enum;
+            EnumList = enumList;
         }
 
         public int InNumber { get; set; }
@@ -64,5 +66,6 @@ namespace RRON.Tests
         public List<int> InNonStringList { get; set; }
         public List<string> InStringList { get; set; }
         public TestEnum Enum { get; set; }
+        public List<TestEnum> EnumList { get; set; }
     }
 }

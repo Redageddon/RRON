@@ -31,6 +31,7 @@ namespace Inflex.Rron
                 string currentLine = reader.ReadLine();
                 foreach (PropertyInfo property in type.GetProperties().Where(property => ignoreOptions == null || !ignoreOptions.Any(property.Name.Contains)))
                 {
+                    Console.WriteLine(property);
                     object value;
                     bool throughWhile = false;
                     Type propertyType = property.PropertyType;
@@ -42,9 +43,8 @@ namespace Inflex.Rron
                         List<object> objects = new List<object>();
                         Type listType = propertyType.GetGenericArguments()[0];
                         
-                        if (listType.Namespace != "System")
+                        if (listType.Namespace != "System" && !listType.IsEnum)
                         {
-                            Console.WriteLine(currentLine);
                             while (currentLine != null && !Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "))
                             {
                                 objects.Add(StringToProperties(currentLine, listType));
@@ -61,7 +61,7 @@ namespace Inflex.Rron
                         }
                         value = ObjectListToTypeList(objects, listType);
                     }
-                    else if (propertyType.Namespace != "System")
+                    else if (propertyType.Namespace != "System" && !propertyType.IsEnum)
                     {
                         currentLine = reader.ReadLine();
                         value = StringToProperties(currentLine, propertyType);
@@ -102,7 +102,6 @@ namespace Inflex.Rron
                     string[] strArray = listType == typeof(string) 
                         ? strList[index].Split(new[] {"\\,"}, StringSplitOptions.None) 
                         : strList[index].Split(new[] {","}, StringSplitOptions.None);
-                    
                     IEnumerable<object> asd = strArray.Select(@string => TypeDescriptor.GetConverter(listType).ConvertFromString(@string));
                     objArray[index] = ObjectListToTypeList(asd, listType);
                 }
