@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Inflex.Rron;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,14 +10,13 @@ namespace RRON.Tests
     public class RronTests
     {
         private const string Path = "Test.rron";
-        private const string Path2 = "test.txt";
 
         [TestMethod]
         public void SerializeObjectToFile()
         {
             List<ClassInClassTest> list = new List<ClassInClassTest>();
             
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 list.Add(new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1, 2, 3}, new List<string> {"hello", "there"}, TestEnum.Name1,
                     new List<TestEnum> {TestEnum.Name1, TestEnum.Name2}));
@@ -26,18 +27,49 @@ namespace RRON.Tests
                 new List<int> {1, 2, 3},
                 new List<string> {"hello", "there"}, TestEnum.Name1, new List<TestEnum>{TestEnum.Name1, TestEnum.Name2});
             
-            TestAll(testClass);
-            RronConvert.SerializeObjectToFile(testClass, Path);
+            TestAllValues(testClass);
+            TestTime(() => RronConvert.SerializeObjectToFile(testClass, Path));
         }
 
         [TestMethod]
         public void DeserializeObjectFromFile()
         {
             TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
-            TestAll(postTest);
+            TestAllValues(postTest);
         }
 
-        private static void TestAll(TestClass test)
+        private static void TestTime(Action action)
+        {
+            long shortest = long.MaxValue;
+            long longest = long.MinValue;
+            long total = 0L;
+            Stopwatch stopwatch = new Stopwatch();
+            const int iterationCount = 1000;
+
+            for (int i = 0; i < iterationCount; i++)
+            {
+                stopwatch.Restart();
+                action.Invoke();
+                stopwatch.Stop();
+
+                long time = stopwatch.ElapsedMilliseconds;
+                total += time;
+                if (longest < time)
+                {
+                    longest = time;
+                }
+                if (shortest > time)
+                {
+                    shortest = time;
+                }
+            }
+
+            Debug.WriteLine($"Shortest time: {shortest}ms");
+            Debug.WriteLine($"Longest time: {longest}ms");
+            Debug.WriteLine($"Average time: {total * 1.0 / iterationCount}ms");
+        }
+
+        private static void TestAllValues(TestClass test)
         {
             Assert.AreEqual(Path, "Test.rron");
             Assert.AreEqual(test.Number, 1);
@@ -61,19 +93,6 @@ namespace RRON.Tests
             Assert.AreEqual(test.ClassInClassList[0].Enum, TestEnum.Name1);
             Assert.AreEqual(test.ClassInClassList[0].EnumList[0], TestEnum.Name1);
             Assert.AreEqual(test.ClassInClassList[0].EnumList[1], TestEnum.Name2);
-            Assert.AreEqual(test.ClassInClassList[1].InNumber, 1);
-            Assert.AreEqual(test.ClassInClassList[1].InWord, "one");
-            Assert.AreEqual(test.ClassInClassList[1].InBoolean, true);
-            Assert.AreEqual(test.ClassInClassList[1].InFloat, 10.0f);
-            Assert.AreEqual(test.ClassInClassList[1].InDouble, 20.4d);
-            Assert.AreEqual(test.ClassInClassList[1].InNonStringList[0], 1);
-            Assert.AreEqual(test.ClassInClassList[1].InNonStringList[1], 2);
-            Assert.AreEqual(test.ClassInClassList[1].InNonStringList[2], 3);
-            Assert.AreEqual(test.ClassInClassList[1].InStringList[0], "hello");
-            Assert.AreEqual(test.ClassInClassList[1].InStringList[1], "there");
-            Assert.AreEqual(test.ClassInClassList[1].Enum, TestEnum.Name1);
-            Assert.AreEqual(test.ClassInClassList[1].EnumList[0], TestEnum.Name1);
-            Assert.AreEqual(test.ClassInClassList[1].EnumList[1], TestEnum.Name2);
             Assert.AreEqual(test.ClassInClass.InNumber, 1);
             Assert.AreEqual(test.ClassInClass.InWord, "one");
             Assert.AreEqual(test.ClassInClass.InBoolean, true);
