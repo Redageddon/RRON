@@ -27,15 +27,16 @@ namespace RRON.Tests
                 new List<int> {1, 2, 3},
                 new List<string> {"hello", "there"}, TestEnum.Name1, new List<TestEnum>{TestEnum.Name1, TestEnum.Name2});
             
-            TestAllValues(testClass);
-            TestTime(() => RronConvert.SerializeObjectToFile(testClass, Path));
+            TestAll(testClass);
+            RronConvert.SerializeObjectToFile(testClass, Path);
+            //TestTime(() => );
         }
 
         [TestMethod]
         public void DeserializeObjectFromFile()
         {
-            TestClass postTest = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
-            TestAllValues(postTest);
+            TestClass test = RronConvert.DeserializeObjectFromFile<TestClass>(Path);
+            TestAll(test);
         }
 
         private static void TestTime(Action action)
@@ -69,7 +70,7 @@ namespace RRON.Tests
             Debug.WriteLine($"Average time: {total * 1.0 / iterationCount}ms");
         }
 
-        private static void TestAllValues(TestClass test)
+        private static void TestAll(TestClass test)
         {
             Assert.AreEqual(Path, "Test.rron");
             Assert.AreEqual(test.Number, 1);

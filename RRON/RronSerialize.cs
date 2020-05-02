@@ -27,6 +27,7 @@ namespace Inflex.Rron
                     string separator = ", ";
                     object header = null;
                     List<object> followerObjects = new List<object>();
+                    bool customList = false;
 
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
@@ -39,6 +40,7 @@ namespace Inflex.Rron
                             header = itemList[0].GetType().GetProperties().Select(propertyInfo => propertyInfo.Name);
                             
                             followerObjects.AddRange(itemList.Select(obj => obj.GetType().GetProperties().Select(info => GetNestedValues(info, obj))));
+                            customList = true;
                         }
                         else
                         {
@@ -57,12 +59,23 @@ namespace Inflex.Rron
                         textWriter.WriteLine("{0}: {1}", propertyName, propertyValue);
                     }
 
-                    if (header != null) textWriter.WriteLine("\n[" + propertyName + ": " + string.Join(separator, (IEnumerable<object>) header) + "]");
+                    if (customList)
+                    {
+                        if (header != null) textWriter.WriteLine("\n[[" + propertyName + ": " + string.Join(separator, (IEnumerable<object>) header) + "]");
+                    }
+                    else
+                    {
+                        if (header != null) textWriter.WriteLine("\n[" + propertyName + ": " + string.Join(separator, (IEnumerable<object>) header) + "]");
+                        header = null;
+                    }
+
+                    
 
                     foreach (object follower in followerObjects)
                     {
                         textWriter.WriteLine(string.Join(separator, (IEnumerable<object>) follower));
                     }
+                    if(header != null) textWriter.WriteLine("]");
                 }
 
                 return textWriter.ToString();

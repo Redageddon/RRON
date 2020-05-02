@@ -33,12 +33,12 @@ namespace RRON.Tests
         public bool Boolean { get; set; }
         public float Float { get; set; }
         public double Double { get; set; }
-        public List<ClassInClassTest> ClassInClassList { get; set; }
+        public List<ClassInClassTest> ClassInClassList { get; set; } = new List<ClassInClassTest>();
         public ClassInClassTest ClassInClass { get; set; }
-        public List<int> NonStringList { get; set; }
-        public List<string> StringList { get; set; }
+        public List<int> NonStringList { get; set; } = new List<int>();
+        public List<string> StringList { get; set; } = new List<string>();
         public TestEnum Enum { get; set; }
-        public List<TestEnum> EnumList { get; set; }
+        public List<TestEnum> EnumList { get; set; } = new List<TestEnum>();
     }
 
     public class ClassInClassTest
@@ -63,9 +63,9 @@ namespace RRON.Tests
         public bool InBoolean { get; set; }
         public float InFloat { get; set; }
         public double InDouble { get; set; }
-        public List<int> InNonStringList { get; set; }
-        public List<string> InStringList { get; set; }
+        public List<int> InNonStringList { get; set; } = new List<int>();
+        public List<string> InStringList { get; set; } = new List<string>();
         public TestEnum Enum { get; set; }
-        public List<TestEnum> EnumList { get; set; }
+        public List<TestEnum> EnumList { get; set; } = new List<TestEnum>();
     }
 }

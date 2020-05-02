@@ -12,6 +12,14 @@ namespace Inflex.Rron
 {
     public partial class RronSerializer
     {
+        private enum LineType
+        {
+            CustomClassCollection,
+            CustomClass,
+            Collection,
+            Value
+        }
+
         /// <summary>
         /// Deserializes the RRON to the specified type.
         /// </summary>
@@ -29,133 +37,204 @@ namespace Inflex.Rron
 
             using (StringReader reader = new StringReader(noBlankLines))
             {
-                string currentLine = reader.ReadLine();
-
-                foreach (PropertyInfo property in type.GetProperties().Where(property => ignoreOptions == null || !ignoreOptions.Any(property.Name.Contains)))
+                string currentLine;
+                while ((currentLine = reader.ReadLine()) != null)
                 {
-                    object value;
-                    bool throughWhile = false;
-                    Type propertyType = property.PropertyType;
-
-                    if (typeof(ICollection).IsAssignableFrom(propertyType))
+                    switch (GetLineType(currentLine))
                     {
-                        currentLine = reader.ReadLine();
-                        List<object> objects = new List<object>();
-                        Type listType = propertyType.GetGenericArguments()[0];
-
-                        if (listType.Namespace != "System" && !listType.IsEnum)
-                        {
-                            while (currentLine != null && !Regex.IsMatch(currentLine, "^\\[.*?\\]$") && !currentLine.Contains(": "))
-                            {
-                                objects.Add(StringToProperties(currentLine, listType));
-                                currentLine = reader.ReadLine();
-                            }
-
-                            throughWhile = true;
-                        }
-                        else
-                        {
-                            string[] strArray = listType == typeof(string)
-                                ? currentLine.Split(new[] {"\\,"}, StringSplitOptions.None)
-                                : currentLine.Split(new[] {", "}, StringSplitOptions.None);
-                            objects.AddRange(strArray.Select(@string => TypeDescriptor.GetConverter(listType).ConvertFromString(@string)));
-                        }
-
-                        value = ObjectListToTypeList(objects, listType);
+                        case LineType.CustomClassCollection:
+                            DeserializeCustomClassCollection(currentLine, reader, ref instance);
+                            break;
+                        case LineType.CustomClass:
+                            DeserializeCustomClass(currentLine, reader, ref instance);
+                            break;
+                        case LineType.Collection:
+                            DeserializeCollection(currentLine, reader, ref instance);
+                            break;
+                        case LineType.Value:
+                            DeserializeValue(currentLine, ref instance);
+                            break;
                     }
-                    else if (propertyType.Namespace != "System" && !propertyType.IsEnum)
-                    {
-                        currentLine = reader.ReadLine();
-                        value = StringToProperties(currentLine, propertyType);
-                    }
-                    else
-                    {
-                        value = TypeDescriptor.GetConverter(propertyType).ConvertFromString(currentLine.Split(new[] {": "}, StringSplitOptions.None).Last());
-                    }
-
-                    property.SetValue(instance, value);
-                    if (!throughWhile) currentLine = reader.ReadLine();
                 }
             }
 
-            streamReader.Dispose();
             return instance;
         }
 
-        private static object ObjectListToTypeList(IEnumerable<object> items, Type type)
+        private static void DeserializeCustomClassCollection<T>(string currentLine, StringReader reader, ref T instance)
         {
-            MethodInfo castMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast)).MakeGenericMethod(type);
-            MethodInfo toListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList)).MakeGenericMethod(type);
+            int index = 2;
+            string propertyName = FromIndexToChar(currentLine, ref index, ':');
+            index += 2;
+            string[] propertyProperties = FromIndexToChar(currentLine, ref index, ']').Split(new[] {", "}, StringSplitOptions.None);
 
-            IEnumerable<object> itemsToCast = items.Select(item => Convert.ChangeType(item, type));
-            object castedItems = castMethod.Invoke(null, new object[] {itemsToCast});
-            return toListMethod.Invoke(null, new[] {castedItems});
+            PropertyInfo listStart = typeof(T).GetProperty(propertyName);
+            Type currentLineInfoType = listStart.PropertyType.GetGenericArguments()[0];
+
+            object semiInstance = Activator.CreateInstance(currentLineInfoType);
+            object setter = typeof(T).GetProperty(propertyName).GetValue(instance);
+
+            while ((currentLine = reader.ReadLine()) != null && currentLine != "]")
+            {
+                object valToSet = SetByLine(currentLine, propertyProperties, currentLineInfoType, semiInstance);
+                listStart.PropertyType.GetMethod("Add").Invoke(setter, new[] {valToSet});
+            }
         }
 
-        private static object StringToProperties(string line, Type type)
+        private static void DeserializeCustomClass<T>(string currentLine, StringReader reader, ref T instance)
         {
-            List<string> strList = StringSplitter(line);
+            int index = 1;
+            string propertyName = FromIndexToChar(currentLine, ref index, ':');
+            index += 2;
+            string[] propertyProperties = FromIndexToChar(currentLine, ref index, ']').Split(new[] {", "}, StringSplitOptions.None);
 
-            object[] objArray = new object[strList.Count];
-            for (int index = 0; index < type.GetProperties().Length; ++index)
+            PropertyInfo currentLineInfo = typeof(T).GetProperty(propertyName);
+            object semiInstance = Activator.CreateInstance(currentLineInfo.PropertyType);
+
+            currentLine = reader.ReadLine();
+            object valToSet = SetByLine(currentLine, propertyProperties, currentLineInfo.PropertyType, semiInstance);
+            currentLineInfo.SetValue(instance, valToSet);
+        }
+
+        private static void DeserializeCollection<T>(string currentLine, StringReader reader, ref T instance)
+        {
+            int index = 1;
+            string propertyName = FromIndexToChar(currentLine, ref index, ']');
+            object setter = typeof(T).GetProperty(propertyName).GetValue(instance);
+            PropertyInfo listStart = typeof(T).GetProperty(propertyName);
+
+
+            currentLine = reader.ReadLine();
+            Type listType = listStart.PropertyType.GetGenericArguments()[0];
+            string[] values = StringSplitter(currentLine, listType == typeof(string));
+            foreach (string item in values)
             {
-                if (typeof(ICollection).IsAssignableFrom(type.GetProperties()[index].PropertyType))
+                listStart.PropertyType.GetMethod("Add").Invoke(setter, new[] {TypeDescriptor.GetConverter(listType).ConvertFromString(item)});
+            }
+        }
+
+        private static void DeserializeValue<T>(string currentLine, ref T instance)
+        {
+            int index = 0;
+            string name = FromIndexToChar(currentLine, ref index, ':');
+            string value = currentLine.Replace(name + ": ", "");
+            typeof(T).GetProperty(name).SetValue(instance, TypeDescriptor.GetConverter(typeof(T).GetProperty(name).PropertyType).ConvertFromString(value));
+        }
+
+        private static object SetByLine(string currentLine, string[] propertyProperties, Type currentLineInfoType, object semiInstance)
+        {
+            string[] values = StringSplitter(currentLine);
+
+            for (int i = 0; i < propertyProperties.Length; i++)
+            {
+                PropertyInfo currentProperty = currentLineInfoType.GetProperty(propertyProperties[i]);
+
+                if (typeof(ICollection).IsAssignableFrom(currentProperty.PropertyType))
                 {
-                    Type listType = type.GetProperties()[index].PropertyType.GetGenericArguments()[0];
-                    string[] strArray = listType == typeof(string)
-                        ? strList[index].Split(new[] {"\\,"}, StringSplitOptions.None)
-                        : strList[index].Split(new[] {","}, StringSplitOptions.None);
-                    IEnumerable<object> asd = strArray.Select(@string => TypeDescriptor.GetConverter(listType).ConvertFromString(@string));
-                    objArray[index] = ObjectListToTypeList(asd, listType);
+                    Type listType = currentProperty.PropertyType.GetGenericArguments()[0];
+                    string[] innerValues = StringSplitter(values[i], listType == typeof(string));
+                    object setter = semiInstance.GetType().GetProperty(currentProperty.Name).GetValue(semiInstance);
+                    for (int j = 0; j < innerValues.Length; j++)
+                    {
+                        string val = innerValues[j];
+                        setter.GetType().GetMethod("Add").Invoke(setter, new[] {TypeDescriptor.GetConverter(listType).ConvertFromString(val)});
+                    }
                 }
                 else
                 {
-                    objArray[index] = TypeDescriptor.GetConverter(type.GetProperties()[index].PropertyType).ConvertFromString(strList[index]);
+                    object value = TypeDescriptor.GetConverter(currentProperty.PropertyType).ConvertFromString(values[i]);
+                    semiInstance.GetType().GetProperty(currentProperty.Name).SetValue(semiInstance, value);
                 }
             }
 
-            return Activator.CreateInstance(type, objArray);
+            return semiInstance;
         }
 
-        private static List<string> StringSplitter(string line)
+        private static LineType GetLineType(string input)
+        {
+            if (input[0] == '[' && input[input.Length - 1] == ']')
+            {
+                if (input[1] == '[')
+                {
+                    return LineType.CustomClassCollection;
+                }
+
+                return input.Contains(':') ? LineType.CustomClass : LineType.Collection;
+            }
+
+            return LineType.Value;
+        }
+
+        private static string FromIndexToChar(string line, ref int index, char readTo)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            for (; index < line.Length; index++)
+            {
+                if (line[index] == readTo) break;
+                builder.Append(line[index]);
+            }
+
+            return builder.ToString();
+        }
+
+        private static string[] StringSplitter(string line, bool isString = false)
         {
             List<string> list = new List<string>();
             StringBuilder builder = new StringBuilder();
-            bool listStart = false;
+            bool listOpen = false;
 
-            foreach (char @char in line)
+            for (int index = 0; index < line.Length; index++)
             {
-                switch (@char)
+                char character = line[index];
+                switch (character)
                 {
                     case '<':
-                        listStart = true;
+                        listOpen = true;
                         break;
                     case '>':
-                        listStart = false;
+                        listOpen = false;
                         break;
                     case ' ':
                         break;
                     case ',':
-                        if (!listStart)
+                        if (isString)
                         {
-                            list.Add(builder.ToString());
-                            builder.Clear();
+                            if (line[index - 1] == '\\')
+                            {
+                                if (!listOpen)
+                                {
+                                    builder.Length--;
+                                    list.Add(builder.ToString());
+                                    builder.Clear();
+                                }
+                                else goto default;
+                            }
+                            else
+                            {
+                                goto default;
+                            }
                         }
-                        else goto default;
+                        else
+                        {
+                            if (!listOpen)
+                            {
+                                list.Add(builder.ToString());
+                                builder.Clear();
+                            }
+                            else goto default;
+                        }
 
                         break;
+
                     default:
-                        builder.Append(@char);
+                        builder.Append(character);
                         break;
                 }
             }
 
-            if (builder.Length > 0)
-            {
-                list.Add(builder.ToString());
-            }
-
-            return list;
+            if (builder.Length > 0) list.Add(builder.ToString());
+            return list.ToArray();
         }
     }
 }
