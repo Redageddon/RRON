@@ -27,10 +27,9 @@ namespace Inflex.Rron
         /// <param name="serializationStream">The RRON stream to deserialize.</param>
         /// <param name="ignoreOptions">The properties, by name, that are to be ignored.</param>
         /// <returns>The deserialized object from the JSON string.</returns>
-        public T Deserialize<T>(Stream serializationStream, string[] ignoreOptions = null)
+        public T Deserialize<T>(Stream serializationStream) where T : new()
         {
-            Type type = typeof(T);
-            T instance = (T) Activator.CreateInstance(type);
+            T instance = new T();
 
             StreamReader streamReader = new StreamReader(serializationStream);
             string noBlankLines = Regex.Replace(streamReader.ReadToEnd(), @"^\s+[\r\n]*", string.Empty, RegexOptions.Multiline);
@@ -61,7 +60,7 @@ namespace Inflex.Rron
             return instance;
         }
 
-        private static void DeserializeCustomClassCollection<T>(string currentLine, StringReader reader, ref T instance)
+        private static void DeserializeCustomClassCollection<T>(string currentLine, TextReader reader, ref T instance)
         {
             int index = 2;
             string propertyName = FromIndexToChar(currentLine, ref index, ':');
@@ -70,18 +69,18 @@ namespace Inflex.Rron
 
             PropertyInfo listStart = typeof(T).GetProperty(propertyName);
             Type currentLineInfoType = listStart.PropertyType.GetGenericArguments()[0];
-
-            object semiInstance = Activator.CreateInstance(currentLineInfoType);
+            
             object setter = typeof(T).GetProperty(propertyName).GetValue(instance);
 
             while ((currentLine = reader.ReadLine()) != null && currentLine != "]")
             {
+                object semiInstance = Activator.CreateInstance(currentLineInfoType);
                 object valToSet = SetByLine(currentLine, propertyProperties, currentLineInfoType, semiInstance);
                 listStart.PropertyType.GetMethod("Add").Invoke(setter, new[] {valToSet});
             }
         }
 
-        private static void DeserializeCustomClass<T>(string currentLine, StringReader reader, ref T instance)
+        private static void DeserializeCustomClass<T>(string currentLine, TextReader reader, ref T instance)
         {
             int index = 1;
             string propertyName = FromIndexToChar(currentLine, ref index, ':');
@@ -96,7 +95,7 @@ namespace Inflex.Rron
             currentLineInfo.SetValue(instance, valToSet);
         }
 
-        private static void DeserializeCollection<T>(string currentLine, StringReader reader, ref T instance)
+        private static void DeserializeCollection<T>(string currentLine, TextReader reader, ref T instance)
         {
             int index = 1;
             string propertyName = FromIndexToChar(currentLine, ref index, ']');
@@ -121,22 +120,20 @@ namespace Inflex.Rron
             typeof(T).GetProperty(name).SetValue(instance, TypeDescriptor.GetConverter(typeof(T).GetProperty(name).PropertyType).ConvertFromString(value));
         }
 
-        private static object SetByLine(string currentLine, string[] propertyProperties, Type currentLineInfoType, object semiInstance)
+        private static object SetByLine(string currentLine, IReadOnlyList<string> propertyProperties, Type currentLineInfoType, object semiInstance)
         {
             string[] values = StringSplitter(currentLine);
 
-            for (int i = 0; i < propertyProperties.Length; i++)
+            for (int i = 0; i < propertyProperties.Count; i++)
             {
                 PropertyInfo currentProperty = currentLineInfoType.GetProperty(propertyProperties[i]);
-
                 if (typeof(ICollection).IsAssignableFrom(currentProperty.PropertyType))
                 {
                     Type listType = currentProperty.PropertyType.GetGenericArguments()[0];
                     string[] innerValues = StringSplitter(values[i], listType == typeof(string));
                     object setter = semiInstance.GetType().GetProperty(currentProperty.Name).GetValue(semiInstance);
-                    for (int j = 0; j < innerValues.Length; j++)
+                    foreach (string val in innerValues)
                     {
-                        string val = innerValues[j];
                         setter.GetType().GetMethod("Add").Invoke(setter, new[] {TypeDescriptor.GetConverter(listType).ConvertFromString(val)});
                     }
                 }

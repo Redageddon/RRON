@@ -11,12 +11,12 @@ namespace RRON.Tests
     {
         private const string Path = "Test.rron";
 
-        [TestMethod]
+        /*[TestMethod]
         public void SerializeObjectToFile()
         {
             List<ClassInClassTest> list = new List<ClassInClassTest>();
             
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 2; i++)
             {
                 list.Add(new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1, 2, 3}, new List<string> {"hello", "there"}, TestEnum.Name1,
                     new List<TestEnum> {TestEnum.Name1, TestEnum.Name2}));
@@ -26,10 +26,6 @@ namespace RRON.Tests
                 new ClassInClassTest(1, "one", true, 10.0f, 20.4d, new List<int> {1, 2, 3}, new List<string> {"hello", "there"}, TestEnum.Name1, new List<TestEnum>{TestEnum.Name1, TestEnum.Name2}),
                 new List<int> {1, 2, 3},
                 new List<string> {"hello", "there"}, TestEnum.Name1, new List<TestEnum>{TestEnum.Name1, TestEnum.Name2});
-            
-            TestAll(testClass);
-            RronConvert.SerializeObjectToFile(testClass, Path);
-            //TestTime(() => );
         }
 
         [TestMethod]
@@ -73,7 +69,7 @@ namespace RRON.Tests
         private static void TestAll(TestClass test)
         {
             Assert.AreEqual(Path, "Test.rron");
-            Assert.AreEqual(test.Number, 1);
+            //Assert.AreEqual(test.Number, 1);
             Assert.AreEqual(test.Word, "one");
             Assert.AreEqual(test.Boolean, true);
             Assert.AreEqual(test.Float, 10.2f);
@@ -83,6 +79,8 @@ namespace RRON.Tests
             Assert.AreEqual(test.EnumList[1], TestEnum.Name2);
             Assert.AreEqual(test.ClassInClassList[0].InNumber, 1);
             Assert.AreEqual(test.ClassInClassList[0].InWord, "one");
+            Assert.AreEqual(test.ClassInClassList[1].InNumber, 2);
+            Assert.AreEqual(test.ClassInClassList[1].InWord, "two");
             Assert.AreEqual(test.ClassInClassList[0].InBoolean, true);
             Assert.AreEqual(test.ClassInClassList[0].InFloat, 10.0f);
             Assert.AreEqual(test.ClassInClassList[0].InDouble, 20.4d);
@@ -109,6 +107,11 @@ namespace RRON.Tests
             Assert.AreEqual(test.NonStringList[2], 3);
             Assert.AreEqual(test.StringList[0], "hello");
             Assert.AreEqual(test.StringList[1], "there");
+        }*/
+        [TestMethod]
+        public void Deserizlize()
+        {
+            BeatMap beatMap = RronConvert.DeserializeObjectFromFile<BeatMap>("data.rron");
         }
     }
 }

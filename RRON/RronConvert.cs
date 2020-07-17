@@ -28,16 +28,7 @@ namespace Inflex.Rron
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
         /// <param name="path">The path to deserialize from.</param>
         /// <returns>The deserialized object from the path.</returns>
-        public static T DeserializeObjectFromFile<T>(string path) => Converter.Deserialize<T>(File.OpenRead(path));
-
-        /// <summary>
-        /// Deserializes the RRON to the specified type.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
-        /// <param name="path">The path to deserialize from.</param>
-        /// <param name="ignoreOptions">The properties, by name, that are to be ignored.</param>
-        /// <returns>The deserialized object from the path.</returns>
-        public static T DeserializeObjectFromFile<T>(string path, string[] ignoreOptions) => Converter.Deserialize<T>(File.OpenRead(path), ignoreOptions);
+        public static T DeserializeObjectFromFile<T>(string path)where T : new() => Converter.Deserialize<T>(File.OpenRead(path));
 
         /// <summary>
         /// Deserializes the RRON to the specified type.
@@ -45,6 +36,6 @@ namespace Inflex.Rron
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
         /// <param name="value">The RRON to deserialize.</param>
         /// <returns>The deserialized object from the RRON string.</returns>
-        public static T DeserializeObjectFromString<T>(string value) => Converter.Deserialize<T>(new MemoryStream(Encoding.ASCII.GetBytes(value)));
+        public static T DeserializeObjectFromString<T>(string value)where T : new() => Converter.Deserialize<T>(new MemoryStream(Encoding.ASCII.GetBytes(value)));
     }
 }
