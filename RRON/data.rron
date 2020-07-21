@@ -1,0 +1,17 @@
+SkinName: Default
+FullscreenMode: ExclusiveFullScreen
+VSyncIndex: Off
+Volume: 100
+ElementsSize: 100
+IncomingSpeed: 100
+
+[Resolution: Width, Height, RefreshRate]
+1920, 1080, 60
+
+[[Resolutions: Width, Height, RefreshRate]
+1920, 1080, 60
+1, 2, 3
+]
+
+[Keys]
+W, A, S, D
