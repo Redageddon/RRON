@@ -1,8 +1,8 @@
-namespace RRON.StringDeconstructor
+namespace RRON.StringDestructors
 {
-    public static partial class StringDeconstructor
+    public static partial class StringDestructor
     {
-        public static void ClassCollectionDeconstruction(this string input, out string name, out string[] propertyNames, out string[][] propertyValues)
+        public static void ComplexCollectionDeconstruction(this string input, out string name, out string[] propertyNames, out string[][] propertyValues)
         {
             string[] rows = input.GetRowsWithName(out name);
 

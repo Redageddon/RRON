@@ -33,15 +33,15 @@ namespace RRON
         {
             foreach (PropertyInfo propertyInfo in type.GetProperties())
             {
-                yield return propertyInfo.GetValue(source).ToString();
+                yield return propertyInfo.GetValue(source)?.ToString() ?? "";
             }
         }
         
         public static IEnumerable<string> GetCollectionValues(this object source)
         {
-            foreach (object variable in (IList)source)
+            foreach (object? variable in (IList)source)
             {
-                yield return variable.ToString();
+                yield return variable?.ToString() ?? "";
             }
         }
 

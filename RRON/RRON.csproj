@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <!--<Nullable>Enable</Nullable>-->
+        <Nullable>Enable</Nullable>
         <LangVersion>8</LangVersion>
     </PropertyGroup>
 

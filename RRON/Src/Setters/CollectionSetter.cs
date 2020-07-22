@@ -1,5 +1,5 @@
 ﻿using System;
-using RRON.StringDeconstructor;
+using RRON.StringDestructors;
 
 namespace RRON.Setters
 {
@@ -8,13 +8,13 @@ namespace RRON.Setters
         public static void SetCollection<T>(this string match, ref T instance)
         {
             match.CollectionDeconstruction(out string name, out string[] values);
-            property = Type.GetProperty(name);
+            property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(property)} should not be null");
             
-            Type containedType = property.PropertyType.IsGenericType
+            Type containedType = (property.PropertyType.IsGenericType
                 ? property.PropertyType.GetGenericArguments()[0]
-                : property.PropertyType.GetElementType();
+                : property.PropertyType.GetElementType()) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(containedType)} should not be null");
 
-            Type.GetProperty(name).SetValue(instance, values.Convert(containedType, property.PropertyType));
+            property.SetValue(instance, values.Convert(containedType, property.PropertyType));
         }
     }
 }

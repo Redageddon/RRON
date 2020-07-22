@@ -1,8 +1,8 @@
 using System;
 
-namespace RRON.StringDeconstructor
+namespace RRON.StringDestructors
 {
-    public static partial class StringDeconstructor
+    public static partial class StringDestructor
     {
         private static string[] GetRowsWithName(this string input, out string name)
         {

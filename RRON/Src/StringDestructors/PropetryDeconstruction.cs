@@ -1,6 +1,6 @@
-namespace RRON.StringDeconstructor
+namespace RRON.StringDestructors
 {
-    public static partial class StringDeconstructor
+    public static partial class StringDestructor
     {
         public static void PropertyDeconstruction(this string input, out string name, out string value)
         {
