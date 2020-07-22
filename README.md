@@ -5,8 +5,7 @@ it is meant for things like settings and beatmap storage
 
 properties :
 ```
-old-- Name: value
-new-- (Name: value)
+Name: value
 ```
 value Lists/Enums: 
 ```
