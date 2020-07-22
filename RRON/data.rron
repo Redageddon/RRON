@@ -2,7 +2,6 @@ Bool: True
 Byte: 1
 Sbyte: 2
 Char: 3
-Decimal: 4.0
 Double: 5.0
 Float: 6.0
 Int: 7
@@ -24,7 +23,7 @@ Enum: A
 18, 19
 
 [IntList]
-19, 20
+20, 21
 
 [EnumArray]
 A, B
@@ -50,4 +49,20 @@ C, D
 [[ClassList: I, E]
 37, 38
 39, 40
+]
+
+[IntEnumerable]
+41, 42
+
+[EnumEnumerable]
+A, B
+
+[[StructEnumerable: A, B]
+43, 44
+45, 46
+]
+
+[[ClassEnumerable: I, E]
+47, 48
+49, 50
 ]

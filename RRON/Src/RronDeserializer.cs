@@ -8,7 +8,7 @@ namespace RRON
     {
         private static readonly Regex ClassCollectionRx = new Regex(@"\[\[.*[^\]]*\]",       RegexOptions.Compiled);
         private static readonly Regex ClassRx           = new Regex(@"(?<!\[)\[\w*\:.*\n.*", RegexOptions.Compiled);
-        private static readonly Regex CollectionRx      = new Regex(@"\[\w*\]\s.*",          RegexOptions.Compiled | RegexOptions.Multiline);
+        private static readonly Regex CollectionRx      = new Regex(@"\[\w*\]\s+[\w, ]*",          RegexOptions.Compiled);
         private static readonly Regex PropertyRx        = new Regex(@"^\w*\:.*",     RegexOptions.Compiled | RegexOptions.Multiline);
 
         public static T Deserialize<T>(string text) 
@@ -30,7 +30,6 @@ namespace RRON
             foreach (Match match in CollectionRx.Matches(text))
             {
                 match.Value.SetCollection(ref instance);
-                Console.WriteLine("g: " + match.Value);
             }
 
             foreach (Match match in PropertyRx.Matches(text))

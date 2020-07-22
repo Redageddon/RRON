@@ -18,14 +18,15 @@ namespace RRON
             {
                 if (ignoreOptions == null || !property.Name.IsIn(ignoreOptions))
                 {
+                    
                     Type propertyType = property.PropertyType;
                     object propertyValue = property.GetValue(source) ?? throw new NullReferenceException($"{nameof(propertyValue)} should not be null");
 
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
                         Type containedType = (propertyType.IsArray
-                            ? propertyType.GetElementType()
-                            : propertyType.GetGenericArguments()[0]) ?? throw new NullReferenceException($"{nameof(containedType)} should not be null");
+                                                 ? propertyType.GetElementType()
+                                                 : propertyType.GetGenericArguments()[0]) ?? throw new NullReferenceException($"{nameof(containedType)} should not be null");
                         
                         if (containedType.IsPrimitive || containedType.IsEnum)
                         {
