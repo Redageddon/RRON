@@ -1,4 +1,4 @@
-namespace RRON_new
+namespace RRON.StringDeconstructor
 {
     public static partial class StringDeconstructor
     {

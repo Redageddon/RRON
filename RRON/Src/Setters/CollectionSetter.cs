@@ -1,6 +1,7 @@
 ﻿using System;
+using RRON.StringDeconstructor;
 
-namespace RRON_new
+namespace RRON.Setters
 {
     public static partial class ValueSetter
     {
@@ -8,7 +9,7 @@ namespace RRON_new
         {
             match.CollectionDeconstruction(out string name, out string[] values);
             property = Type.GetProperty(name);
-
+            
             Type containedType = property.PropertyType.IsGenericType
                 ? property.PropertyType.GetGenericArguments()[0]
                 : property.PropertyType.GetElementType();

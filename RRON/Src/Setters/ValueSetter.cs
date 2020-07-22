@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace RRON_new
+namespace RRON.Setters
 {
     public static partial class ValueSetter
     {

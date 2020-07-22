@@ -1,17 +1,53 @@
-SkinName: Default
-FullscreenMode: ExclusiveFullScreen
-VSyncIndex: Off
-Volume: 100
-ElementsSize: 100
-IncomingSpeed: 100
+Bool: True
+Byte: 1
+Sbyte: 2
+Char: 3
+Decimal: 4.0
+Double: 5.0
+Float: 6.0
+Int: 7
+Uint: 8
+Long: 9
+Ulong: 10
+Short: 11
+Ushort: 12
+String: 13
+Enum: A
 
-[Resolution: Width, Height, RefreshRate]
-1920, 1080, 60
+[Struct: A, B]
+14.0, 15.0
 
-[[Resolutions: Width, Height, RefreshRate]
-1920, 1080, 60
-1, 2, 3
+[Class: I, E]
+16, 17
+
+[IntArray]
+18, 19
+
+[IntList]
+19, 20
+
+[EnumArray]
+A, B
+
+[EnumList]
+C, D
+
+[[StructArray: A, B]
+25, 26
+27, 28
 ]
 
-[Keys]
-W, A, S, D
+[[StructList: A, B]
+29, 30
+31, 32
+]
+
+[[ClassArray: I, E]
+33, 34
+35, 36
+]
+
+[[ClassList: I, E]
+37, 38
+39, 40
+]

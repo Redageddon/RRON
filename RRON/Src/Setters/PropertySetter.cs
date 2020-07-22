@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using RRON.StringDeconstructor;
 
-namespace RRON_new
+namespace RRON.Setters
 {
     public static partial class ValueSetter
     {
