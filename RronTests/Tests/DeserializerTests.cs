@@ -24,6 +24,7 @@ namespace RronTests.Tests
             Assert.AreEqual(1,      this.testClass.Byte);
             Assert.AreEqual(2,      this.testClass.Sbyte);
             Assert.AreEqual('3',    this.testClass.Char);
+            Assert.AreEqual(4.0m,   this.testClass.Decimal);
             Assert.AreEqual(5.0d,   this.testClass.Double);
             Assert.AreEqual(6.0f,   this.testClass.Float);
             Assert.AreEqual(7,      this.testClass.Int);

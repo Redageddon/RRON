@@ -49,7 +49,7 @@ namespace RRON
                             textWriter.WriteLine("]");
                         }
                     }
-                    else if (propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string))
+                    else if (propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string) || propertyType == typeof(decimal))
                     {
                         textWriter.WriteLine($"{property.Name}: {property.GetValue(source)}");
                     }
