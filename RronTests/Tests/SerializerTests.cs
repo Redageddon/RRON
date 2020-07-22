@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
 using RRON;
 
@@ -52,18 +53,6 @@ namespace RronTests.Tests
                 {
                     new InClass(37, 38),
                     new InClass(39, 40)
-                },
-                IntEnumerable  = new[] {41, 42},
-                EnumEnumerable = new[] {Enum.A, Enum.B},
-                StructEnumerable = new[]
-                {
-                    new Vector2(43, 44),
-                    new Vector2(45, 46)
-                },
-                ClassEnumerable = new[]
-                {
-                    new InClass(47, 48),
-                    new InClass(49, 50)
                 }
             };
             this.test = RronSerializer.Serialize(settings);
@@ -72,7 +61,7 @@ namespace RronTests.Tests
         [Test]
         public void MatchesFile()
         {
-            //File.ReadAllText("data.rron");
+            Assert.AreEqual(File.ReadAllText("data.rron"), this.test);
         }
     }
 }

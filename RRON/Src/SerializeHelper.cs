@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -36,15 +37,15 @@ namespace RRON
             }
         }
         
-        public static IEnumerable<string> GetValuesDynamically(this object source)
+        public static IEnumerable<string> GetCollectionValues(this object source)
         {
-            foreach (dynamic variable in (dynamic)source)
+            foreach (object variable in (IList)source)
             {
                 yield return variable.ToString();
             }
         }
 
-        public static string Join(this IEnumerable<string> values, string separator = ", ")
+        public static string Join(this IEnumerable<object> values, string separator = ", ")
         {
             StringBuilder builder = new StringBuilder();
             foreach (string value in values)

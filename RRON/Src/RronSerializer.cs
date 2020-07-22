@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,7 +19,6 @@ namespace RRON
             {
                 if (ignoreOptions == null || !property.Name.IsIn(ignoreOptions))
                 {
-                    
                     Type propertyType = property.PropertyType;
                     object propertyValue = property.GetValue(source) ?? throw new NullReferenceException($"{nameof(propertyValue)} should not be null");
 
@@ -31,12 +31,12 @@ namespace RRON
                         if (containedType.IsPrimitive || containedType.IsEnum)
                         {
                             textWriter.WriteLine($"{Environment.NewLine}[{property.Name}]");
-                            textWriter.WriteLine(propertyValue.GetValuesDynamically().Join());
+                            textWriter.WriteLine(propertyValue.GetCollectionValues().Join());
                         }
                         else
                         {
                             textWriter.WriteLine($"{Environment.NewLine}[[{property.Name}: {containedType.GetPropertyNames().Join()}]");
-                            foreach (object value in (dynamic)propertyValue)
+                            foreach (object value in (IList)propertyValue)
                             {
                                 textWriter.WriteLine(containedType.GetPropertyValues(value).Join());
                             }
@@ -55,8 +55,8 @@ namespace RRON
                     }
                 }
             }
-
-            return textWriter.ToString() ?? "";
+            
+            return textWriter.ToString().Trim();
         }
     }
 }

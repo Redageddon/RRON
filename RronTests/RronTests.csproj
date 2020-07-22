@@ -16,4 +16,10 @@
       <ProjectReference Include="..\RRON\RRON.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="data.rron">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

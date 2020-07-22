@@ -66,11 +66,7 @@ namespace RronTests
                          Vector2[]            structArray,
                          List<Vector2>        structList,
                          InClass[]            classArray,
-                         List<InClass>        classList,
-                         IEnumerable<int>     intEnumerable,
-                         IEnumerable<Enum>    enumEnumerable,
-                         IEnumerable<Vector2> structEnumerable,
-                         IEnumerable<InClass> classEnumerable)
+                         List<InClass>        classList)
         {
             this.Bool             = @bool;
             this.Byte             = @byte;
@@ -96,10 +92,6 @@ namespace RronTests
             this.StructList       = structList;
             this.ClassArray       = classArray;
             this.ClassList        = classList;
-            this.IntEnumerable    = intEnumerable;
-            this.EnumEnumerable   = enumEnumerable;
-            this.StructEnumerable = structEnumerable;
-            this.ClassEnumerable  = classEnumerable;
         }
 
         public bool                 Bool             { get; set; }
@@ -126,9 +118,5 @@ namespace RronTests
         public List<Vector2>        StructList       { get; set; } = new List<Vector2>();
         public InClass[]            ClassArray       { get; set; }
         public List<InClass>        ClassList        { get; set; } = new List<InClass>();
-        public IEnumerable<int>     IntEnumerable    { get; set; }
-        public IEnumerable<Enum>    EnumEnumerable   { get; set; }
-        public IEnumerable<Vector2> StructEnumerable { get; set; }
-        public IEnumerable<InClass> ClassEnumerable  { get; set; }
     }
 }

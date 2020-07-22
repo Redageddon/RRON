@@ -60,12 +60,6 @@ namespace RronTests.Tests
             
             Assert.AreEqual(Enum.C, this.testClass.EnumList[0]);
             Assert.AreEqual(Enum.D, this.testClass.EnumList[1]);
-            
-            Assert.AreEqual(41,     this.testClass.IntEnumerable.ElementAt(0));
-            Assert.AreEqual(42,     this.testClass.IntEnumerable.ElementAt(1));
-            
-            Assert.AreEqual(Enum.A, this.testClass.EnumEnumerable.ElementAt(0));
-            Assert.AreEqual(Enum.B, this.testClass.EnumEnumerable.ElementAt(1));
         }
 
         [Test]
@@ -90,16 +84,6 @@ namespace RronTests.Tests
             Assert.AreEqual(38,   this.testClass.ClassList[0].E);
             Assert.AreEqual(39,   this.testClass.ClassList[1].I);
             Assert.AreEqual(40,   this.testClass.ClassList[1].E);
-            
-            Assert.AreEqual(43, this.testClass.StructEnumerable.ElementAt(0).A);
-            Assert.AreEqual(44, this.testClass.StructEnumerable.ElementAt(0).B);
-            Assert.AreEqual(45, this.testClass.StructEnumerable.ElementAt(1).A);
-            Assert.AreEqual(46, this.testClass.StructEnumerable.ElementAt(1).B);
-            
-            Assert.AreEqual(47, this.testClass.ClassEnumerable.ElementAt(0).I);
-            Assert.AreEqual(48, this.testClass.ClassEnumerable.ElementAt(0).E);
-            Assert.AreEqual(49, this.testClass.ClassEnumerable.ElementAt(1).I);
-            Assert.AreEqual(50, this.testClass.ClassEnumerable.ElementAt(1).E);
         }
     }
 }

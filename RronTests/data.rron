@@ -2,8 +2,8 @@ Bool: True
 Byte: 1
 Sbyte: 2
 Char: 3
-Double: 5.0
-Float: 6.0
+Double: 5
+Float: 6
 Int: 7
 Uint: 8
 Long: 9
@@ -14,7 +14,7 @@ String: 13
 Enum: A
 
 [Struct: A, B]
-14.0, 15.0
+14, 15
 
 [Class: I, E]
 16, 17
@@ -49,20 +49,4 @@ C, D
 [[ClassList: I, E]
 37, 38
 39, 40
-]
-
-[IntEnumerable]
-41, 42
-
-[EnumEnumerable]
-A, B
-
-[[StructEnumerable: A, B]
-43, 44
-45, 46
-]
-
-[[ClassEnumerable: I, E]
-47, 48
-49, 50
 ]
