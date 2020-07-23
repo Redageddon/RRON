@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace RRON
+namespace RRON.Deserializer.Setters
 {
     public static class SetterHelper
     {
@@ -26,8 +26,21 @@ namespace RRON
                 _                => throw new ArgumentOutOfRangeException()
             } ?? throw new NullReferenceException($"{nameof(Convert)}: {nameof(collectionType)} should not be null");
         }
+        
+        public static object CreateComplex(this Type propertyType, string[] propertyNames, string[] propertyValues)
+        {
+            object semiInstance = Activator.CreateInstance(propertyType) ?? throw new NullReferenceException($"{nameof(CreateComplex)}: {nameof(semiInstance)} should not be null");
+            for (int i = 0; i < propertyNames.Length; i++)
+            {
+                PropertyInfo semiProperty = propertyType.GetProperty(propertyNames[i]) ?? throw new NullReferenceException($"{nameof(CreateComplex)}: {nameof(semiProperty)} should not be null");
+                object       value        = TypeDescriptor.GetConverter(semiProperty.PropertyType).ConvertFromString(propertyValues[i]);
+                semiInstance.GetType().GetProperty(semiProperty.Name)?.SetValue(semiInstance, value);   
+            }
 
-        public static IEnumerable<object> Cast(this IEnumerable<object> source, Type collectionType)
+            return semiInstance;
+        }
+
+        private static IEnumerable<object> Cast(this IEnumerable<object> source, Type collectionType)
         {
             converter = TypeDescriptor.GetConverter(collectionType);
             foreach (object item in source)
@@ -36,7 +49,7 @@ namespace RRON
             }
         }
 
-        public static TypeType GetTypeType(this Type type)
+        private static TypeType GetTypeType(this Type type)
         {
             if (type.IsArray)
             {
@@ -69,19 +82,6 @@ namespace RRON
             }
 
             throw new NotImplementedException();
-        }
-
-        public static object CreateComplex(this Type propertyType, string[] propertyNames, string[] propertyValues)
-        {
-            object semiInstance = Activator.CreateInstance(propertyType) ?? throw new NullReferenceException($"{nameof(CreateComplex)}: {nameof(semiInstance)} should not be null");
-            for (int i = 0; i < propertyNames.Length; i++)
-            {
-                PropertyInfo semiProperty = propertyType.GetProperty(propertyNames[i]) ?? throw new NullReferenceException($"{nameof(CreateComplex)}: {nameof(semiProperty)} should not be null");
-                object       value        = TypeDescriptor.GetConverter(semiProperty.PropertyType).ConvertFromString(propertyValues[i]);
-                semiInstance.GetType().GetProperty(semiProperty.Name)?.SetValue(semiInstance, value);   
-            }
-
-            return semiInstance;
         }
     }
 }

@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace RRON
+namespace RRON.Serializer
 {
     public static class RronSerializer
     {
-        public static string Serialize(object source, string[] ignoreOptions = null)
+        public static string Serialize(object source, string[] ignoreOptions = null!)
         {
             using TextWriter textWriter = new StringWriter();
 

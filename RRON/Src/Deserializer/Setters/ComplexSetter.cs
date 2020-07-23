@@ -1,13 +1,16 @@
 ﻿using System;
-using RRON.StringDestructors;
+using RRON.Deserializer.ReaderTemps;
 
-namespace RRON.Setters
+namespace RRON.Deserializer.Setters
 {
     public static partial class ValueSetter
     {
-        public static void SetComplex<T>(this string match, ref T instance)
+        public static void SetComplex<T>(this Complex complex, ref T instance)
         {
-            match.ComplexDeconstruction(out string name, out string[] propertyNames, out string[] propertyValues);
+            string name = complex.Name;
+            string[] propertyNames = complex.PropertyNames;
+            string[] propertyValues = complex.PropertyValues;
+            
             property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetComplex)}: {nameof(property)} should not be null");
             
             property.SetValue(instance, property.PropertyType.CreateComplex(propertyNames, propertyValues));

@@ -1,15 +1,14 @@
 ﻿using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RRON;
+using RRON.Deserializer;
 
 namespace RronTests.Tests
 {
     public class DeserializerTests
     {
         private TestClass testClass;
-
-
+        
         [SetUp]
         public void Setup()
         {

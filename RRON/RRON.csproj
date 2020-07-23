@@ -4,6 +4,8 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>Enable</Nullable>
         <LangVersion>8</LangVersion>
+        <RootNamespace>RRON</RootNamespace>
+        <AssemblyName>RRON</AssemblyName>
     </PropertyGroup>
 
 </Project>

@@ -1,13 +1,15 @@
 ﻿using System;
-using RRON.StringDestructors;
+using RRON.Deserializer.ReaderTemps;
 
-namespace RRON.Setters
+namespace RRON.Deserializer.Setters
 {
     public static partial class ValueSetter
     {
-        public static void SetCollection<T>(this string match, ref T instance)
+        public static void SetCollection<T>(this Collection collection, ref T instance)
         {
-            match.CollectionDeconstruction(out string name, out string[] values);
+            string name = collection.Name;
+            string[] values = collection.Values;
+            
             property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(property)} should not be null");
             
             Type containedType = (property.PropertyType.IsGenericType
