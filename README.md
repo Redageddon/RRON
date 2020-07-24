@@ -3,6 +3,8 @@ A custom serialiser I am making for Rhythm games.
 it is meant to get rid of the overhead that json provides, but isnt meant to be a catch all, like json (so it doesnt work for every object)
 it is meant for things like settings and beatmap storage
 
+RRON is a scanner parser, but i am planning on making it scannerless
+
 properties :
 ```
 Name: value
