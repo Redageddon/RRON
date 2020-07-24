@@ -1,15 +1,11 @@
 ﻿using System;
-using RRON.Deserializer.ReaderTemps;
 
 namespace RRON.Deserializer.Setters
 {
     public static partial class ValueSetter
     {
-        public static void SetCollection<T>(this Collection collection, ref T instance)
+        public static void SetCollection<T>(T instance, string name, string[] values)
         {
-            string name = collection.Name;
-            string[] values = collection.Values;
-            
             property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(property)} should not be null");
             
             Type containedType = (property.PropertyType.IsGenericType

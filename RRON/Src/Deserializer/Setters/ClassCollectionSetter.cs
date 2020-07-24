@@ -1,16 +1,11 @@
 ﻿using System;
-using RRON.Deserializer.ReaderTemps;
 
 namespace RRON.Deserializer.Setters
 {
     public static partial class ValueSetter
     {
-        public static void SetComplexCollection<T>(this ComplexCollection complexCollection, ref T instance)
+        public static void SetComplexCollection<T>(T instance, string name, string[] propertyNames, string[][] propertyValues)
         {
-            var name = complexCollection.Name;
-            var propertyNames = complexCollection.PropertyNames;
-            var propertyValues = complexCollection.PropertyValues;
-            
             property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetComplexCollection)}: {nameof(property)} should not be null");
             
             Type containedType = (property.PropertyType.IsGenericType
