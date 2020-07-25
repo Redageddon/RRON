@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RRON;
 using RRON.Deserializer;
 
 namespace RronTests.Tests
@@ -13,7 +14,7 @@ namespace RronTests.Tests
         public void Setup()
         {
             string text = File.ReadAllText("data.rron");
-            this.testClass = RronDeserializer.Deserialize<TestClass>(text);
+            this.testClass = RronConvert.DeserializeObjectFromString<TestClass>(text);
         }
 
         [Test]

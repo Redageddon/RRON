@@ -2,9 +2,9 @@
 
 namespace RRON.Deserializer
 {
-    public static class RronDeserializer
+    internal static class RronDeserializer
     {
-        public static T Deserialize<T>(string text)
+        internal static T Deserialize<T>(string text)
             where T : class, new()
         {
             T instance = new T();

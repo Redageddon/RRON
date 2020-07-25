@@ -6,9 +6,9 @@ using System.Text;
 
 namespace RRON
 {
-    public static class SerializeHelper
+    internal static class SerializeHelper
     {
-        public static bool IsIn(this string source, IEnumerable<string> checker)
+        internal static bool IsIn(this string source, IEnumerable<string> checker)
         {
             foreach (string value in checker)
             {
@@ -21,7 +21,7 @@ namespace RRON
             return false;
         }
 
-        public static IEnumerable<string> GetPropertyNames(this Type type)
+        internal static IEnumerable<string> GetPropertyNames(this Type type)
         {
             foreach (PropertyInfo propertyInfo in type.GetProperties())
             {
@@ -29,7 +29,7 @@ namespace RRON
             }
         }
         
-        public static IEnumerable<string> GetPropertyValues(this Type type, object source)
+        internal static IEnumerable<string> GetPropertyValues(this Type type, object source)
         {
             foreach (PropertyInfo propertyInfo in type.GetProperties())
             {
@@ -37,7 +37,7 @@ namespace RRON
             }
         }
         
-        public static IEnumerable<string> GetCollectionValues(this object source)
+        internal static IEnumerable<string> GetCollectionValues(this object source)
         {
             foreach (object? variable in (IList)source)
             {
@@ -45,7 +45,7 @@ namespace RRON
             }
         }
 
-        public static string Join(this IEnumerable<object> values, string separator = ", ")
+        internal static string Join(this IEnumerable<object> values, string separator = ", ")
         {
             StringBuilder builder = new StringBuilder();
             foreach (string value in values)

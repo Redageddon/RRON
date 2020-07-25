@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using RRON;
 using RRON.Serializer;
 
 namespace RronTests.Tests
@@ -56,7 +57,7 @@ namespace RronTests.Tests
                     new InClass(39, 40)
                 }
             };
-            this.test = RronSerializer.Serialize(settings);
+            this.test = RronConvert.SerializeObjectToString(settings);
         }
 
         [Test]

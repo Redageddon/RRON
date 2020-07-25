@@ -6,9 +6,9 @@ using System.Reflection;
 
 namespace RRON.Serializer
 {
-    public static class RronSerializer
+    internal static class RronSerializer
     {
-        public static string Serialize(object source, string[] ignoreOptions = null!)
+        internal static string Serialize(object source, string[] ignoreOptions = null!)
         {
             using TextWriter textWriter = new StringWriter();
 

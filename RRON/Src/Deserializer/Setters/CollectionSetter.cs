@@ -2,17 +2,17 @@
 
 namespace RRON.Deserializer.Setters
 {
-    public static partial class ValueSetter
+    internal static partial class ValueSetter
     {
-        public static void SetCollection<T>(T instance, string name, string[] values)
+        internal static void SetCollection<T>(T instance, string name, string[] values)
         {
-            property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(property)} should not be null");
+            Property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(Property)} should not be null");
             
-            Type containedType = (property.PropertyType.IsGenericType
-                ? property.PropertyType.GetGenericArguments()[0]
-                : property.PropertyType.GetElementType()) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(containedType)} should not be null");
+            Type containedType = (Property.PropertyType.IsGenericType
+                ? Property.PropertyType.GetGenericArguments()[0]
+                : Property.PropertyType.GetElementType()) ?? throw new NullReferenceException($"{nameof(SetCollection)}: {nameof(containedType)} should not be null");
 
-            property.SetValue(instance, values.Convert(containedType, property.PropertyType));
+            Property.SetValue(instance, values.Convert(containedType, Property.PropertyType));
         }
     }
 }

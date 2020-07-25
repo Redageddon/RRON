@@ -1,16 +1,17 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using RRON;
 using RRON.Deserializer;
 
 namespace RronTests
 {
-    public class DataReadTest
+    internal class DataReadTest
     {
         [Test]
         public void DataRead()
         {
             string text = File.ReadAllText("data.rron");
-            RronDeserializer.Deserialize<TestClass>(text);
+            RronConvert.DeserializeObjectFromString<TestClass>(text);
         }
     }
 }

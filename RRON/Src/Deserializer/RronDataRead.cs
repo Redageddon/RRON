@@ -4,9 +4,9 @@ using RRON.Deserializer.Setters;
 
 namespace RRON.Deserializer
 {
-    public static class RronDataRead
+    internal static class RronDataRead
     {
-        public static void DataRead<T>(string data, T instance)
+        internal static void DataRead<T>(string data, T instance)
         {
             string[] lines = data.Split(Environment.NewLine);
 
