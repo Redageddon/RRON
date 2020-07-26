@@ -14,7 +14,7 @@ namespace RRON.Serializer
 
             PropertyInfo[] properties = source.GetType().GetProperties();
 
-            foreach (PropertyInfo property in properties.OrderBy(info => info.GetMetadataToken()))
+            foreach (PropertyInfo property in properties.OrderBy(info => info.MetadataToken))
             {
                 if (ignoreOptions == null || !property.Name.IsIn(ignoreOptions))
                 {

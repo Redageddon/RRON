@@ -32,16 +32,16 @@ namespace RRON
         /// <returns>The deserialized object from the path.</returns>
         public static T DeserializeObjectFromFile<T>(string path)
             where T : class, new() =>
-            RronDeserializer.Deserialize<T>(File.ReadAllText(path));
+            RronDeserializer.Deserialize<T>(File.ReadAllLines(path));
         
         /// <summary>
         /// Deserializes the RRON to the specified type.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
-        /// <param name="data">The data to deserialize from.</param>
+        /// <param name="lines">The data to deserialize from.</param>
         /// <returns>The deserialized object from the data.</returns>
-        public static T DeserializeObjectFromString<T>(string data)
+        public static T DeserializeObjectFromString<T>(string[] lines)
             where T : class, new() =>
-            RronDeserializer.Deserialize<T>(data);
+            RronDeserializer.Deserialize<T>(lines);
     }
 }

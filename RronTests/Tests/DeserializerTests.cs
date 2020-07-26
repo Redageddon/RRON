@@ -13,7 +13,7 @@ namespace RronTests.Tests
         [SetUp]
         public void Setup()
         {
-            string text = File.ReadAllText("data.rron");
+            string[] text = File.ReadAllLines("data.rron");
             this.testClass = RronConvert.DeserializeObjectFromString<TestClass>(text);
         }
 
