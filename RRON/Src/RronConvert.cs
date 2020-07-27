@@ -12,7 +12,7 @@ namespace RRON
         /// <param name="value">The object to serialize.</param>
         /// /// <param name="ignoreOptions">The properties, by name, that are to be ignored.</param>
         /// /// <param name="path">The serialized object's save path.</param>
-        public static void SerializeObjectToFile(object value, string path, string[] ignoreOptions = null) => 
+        public static void SerializeObjectToFile(object value, string path, string[] ignoreOptions = null!) => 
             File.WriteAllText(path,  RronSerializer.Serialize(value, ignoreOptions));
         
         /// <summary>
@@ -21,7 +21,7 @@ namespace RRON
         /// <param name="value">The object to serialize.</param>
         /// /// <param name="ignoreOptions">The properties, by name, that are to be ignored.</param>
         /// <returns>The string that is serialized from the object.</returns>
-        public static string SerializeObjectToString(object value, string[] ignoreOptions = null) => 
+        public static string SerializeObjectToString(object value, string[] ignoreOptions = null!) => 
             RronSerializer.Serialize(value, ignoreOptions);
 
         /// <summary>

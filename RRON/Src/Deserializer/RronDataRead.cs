@@ -16,42 +16,30 @@ namespace RRON.Deserializer
                     continue;
                 }
 
-                if (currentLine[0] == '[')
+                string[] test = currentLine.AdvancedSplit(out bool isClass, out bool isCollection);
+                if (isClass && isCollection)
                 {
-                    if (currentLine[^1] == ']' && !currentLine.Contains(":"))
-                    {
-                        ValueSetter.SetCollection(instance, currentLine[1..^1], lines[++i].SplitOnComma());
-                    }
-                    else if (currentLine[1] != '[')
-                    {
-                        string[] decelerators = currentLine[1..^1].SplitOnColon();
+                    List<string[]> columns = new List<string[]>();
 
-                        string   name           = decelerators[0];
-                        string[] propertyNames  = decelerators[1].SplitOnComma();
-                        string[] propertyValues = lines[++i].SplitOnComma();
-                        ValueSetter.SetComplex(instance, name, propertyNames, propertyValues);
-                    }
-                    else 
+                    currentLine = lines[++i];
+                    while (!currentLine.Contains("]"))
                     {
-                        string[]       decelerators  = currentLine[2..^1].SplitOnColon();  
-                        string         name          = decelerators[0];
-                        string[]       propertyNames = decelerators[1].SplitOnComma();
-                        List<string[]> columns       = new List<string[]>();
-
+                        columns.Add(currentLine.AdvancedSplit());
                         currentLine = lines[++i];
-                        while (!currentLine.Contains("]"))
-                        {
-                            columns.Add(currentLine.SplitOnComma());
-                            currentLine = lines[++i];
-                        }
-
-                        ValueSetter.SetComplexCollection(instance, name, propertyNames, columns);
                     }
+                    ValueSetter.SetComplexCollection(instance, test[0], test[1..], columns);
+                }
+                else if (isClass)
+                {
+                    ValueSetter.SetComplex(instance, test[0], test[1..], lines[++i].AdvancedSplit());
+                }
+                else if (isCollection)
+                {
+                    ValueSetter.SetCollection(instance, test[0], lines[++i].AdvancedSplit());
                 }
                 else
                 {
-                    string[] property = currentLine.SplitOnColon();
-                    ValueSetter.SetProperty(instance, property[0], property[1]);
+                    ValueSetter.SetProperty(instance, test[0], test[1]);
                 }
             }
         }

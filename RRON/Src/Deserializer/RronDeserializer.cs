@@ -9,7 +9,7 @@ namespace RRON.Deserializer
         {
             T instance = new T();
             ValueSetter.Type = typeof(T);
-
+            
             RronDataRead.DataRead(lines, instance);
             
             return instance;

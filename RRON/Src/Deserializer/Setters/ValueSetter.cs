@@ -7,5 +7,6 @@ namespace RRON.Deserializer.Setters
     {
         public static  Type         Type { get; set; } = null!;
         internal static PropertyInfo Property = null!;
+        
     }
 }
