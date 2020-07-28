@@ -10,7 +10,7 @@ namespace RronTests
         public void DataRead()
         {
             string[] text = File.ReadAllLines("data.rron");
-            RronConvert.DeserializeObjectFromString<TestClass>(text);
+            TestClass testClass = RronConvert.DeserializeObjectFromString<TestClass>(text);
         }
     }
 }

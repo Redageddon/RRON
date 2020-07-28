@@ -1,4 +1,6 @@
-﻿using RRON.Deserializer.Setters;
+﻿using System;
+using FastMember;
+using RRON.Deserializer.Setters;
 
 namespace RRON.Deserializer
 {
@@ -8,10 +10,23 @@ namespace RRON.Deserializer
             where T : class, new()
         {
             T instance = new T();
-            ValueSetter.Type = typeof(T);
+            Type type = typeof(T);
             
-            RronDataRead.DataRead(lines, instance);
-            
+            if (ValueSetter.Type != type)
+            {
+                ValueSetter.Type = type;
+                ValueSetter.Accessor = TypeAccessor.Create(type);
+                ValueSetter.propertyTypeAccessor.Clear();
+                
+                foreach (var propertyInfo in type.GetProperties())
+                {
+                    ValueSetter.propertyTypeAccessor.Add(propertyInfo.Name, propertyInfo);
+                }
+            }
+
+            ValueSetter.Instance = instance;
+
+            RronDataRead.DataRead(lines);
             return instance;
         }
     }

@@ -1,15 +1,15 @@
 ﻿using System;
-using System.ComponentModel;
+using RRON.Helpers;
 
 namespace RRON.Deserializer.Setters
 {
     internal static partial class ValueSetter
     {
-        internal static void SetProperty<T>(T instance, string name, string value)
+        internal static void SetProperty(string name, string value)
         {
-            Property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetProperty)}: {nameof(Property)} should not be null");
-            
-            Property.SetValue(instance, TypeDescriptor.GetConverter(Property.PropertyType).ConvertFromString(value));
+            Property = propertyTypeAccessor[name] ?? throw new NullReferenceException($"{nameof(SetProperty)}: {nameof(Property)} should not be null");
+
+            Accessor[Instance, name] = Property.PropertyType.AdvancedStringConvert(value);
         }
     }
 }

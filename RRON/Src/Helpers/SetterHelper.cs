@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using FastMember;
 
-namespace RRON.Deserializer.Setters
+namespace RRON.Helpers
 {
     internal static class SetterHelper
     {
@@ -25,16 +26,19 @@ namespace RRON.Deserializer.Setters
                    ?? throw new NullReferenceException($"{nameof(Convert)}: {nameof(collectionType)} should not be null");
         }
 
-        internal static object CreateComplex(this Type propertyType, string[] propertyNames, string[] propertyValues)
+        internal static object CreateComplex(this Type propertyType, Span<string> propertyNames, Span<string> propertyValues)
         {
             object semiInstance = Activator.CreateInstance(propertyType) ?? throw new NullReferenceException($"{nameof(CreateComplex)}: {nameof(semiInstance)} should not be null");
+            TypeAccessor semiAccessor = TypeAccessor.Create(propertyType);
+            
             for (int i = 0; i < propertyNames.Length; i++)
             {
                 PropertyInfo semiProperty = propertyType.GetProperty(propertyNames[i]) ?? throw new NullReferenceException($"{nameof(CreateComplex)}: {nameof(semiProperty)} should not be null");
-                object       value        = TypeDescriptor.GetConverter(semiProperty.PropertyType).ConvertFromString(propertyValues[i]);
-                semiInstance.GetType().GetProperty(semiProperty.Name)?.SetValue(semiInstance, value);   
-            }
+                object value = semiProperty.PropertyType.AdvancedStringConvert(propertyValues[i]);
 
+                semiAccessor[semiInstance, propertyNames[i]] = value;
+            }
+            
             return semiInstance;
         }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using RRON.Helpers;
 
 namespace RRON.Serializer
 {
@@ -30,11 +31,11 @@ namespace RRON.Serializer
                         if (containedType.IsPrimitive || containedType.IsEnum)
                         {
                             textWriter.WriteLine($"{Environment.NewLine}[{property.Name}]");
-                            textWriter.WriteLine(propertyValue.GetCollectionValues().Join());
+                            textWriter.WriteLine(string.Join(", ", propertyValue.GetCollectionValues()));
                         }
                         else
                         {
-                            textWriter.WriteLine($"{Environment.NewLine}[[{property.Name}: {containedType.GetPropertyNames().Join()}]");
+                            textWriter.WriteLine($"{Environment.NewLine}[[{property.Name}: {string.Join(", ", containedType.GetPropertyNames())}]");
                             
                             foreach (object? value in (IList)propertyValue)
                             {
@@ -43,7 +44,7 @@ namespace RRON.Serializer
                                     throw new NullReferenceException($"{nameof(Serialize)}: {nameof(value)} should not be null");
                                 }
 
-                                textWriter.WriteLine(containedType.GetPropertyValues(value).Join());
+                                textWriter.WriteLine(string.Join(", ", containedType.GetPropertyValues(value)));
                             }
 
                             textWriter.WriteLine("]");
@@ -55,8 +56,8 @@ namespace RRON.Serializer
                     }
                     else
                     {
-                        textWriter.WriteLine($"{Environment.NewLine}[{property.Name}: {propertyType.GetPropertyNames().Join()}]");
-                        textWriter.WriteLine($"{propertyType.GetPropertyValues(propertyValue).Join()}");
+                        textWriter.WriteLine($"{Environment.NewLine}[{property.Name}: {string.Join(", ", propertyType.GetPropertyNames())}]");
+                        textWriter.WriteLine($"{string.Join(", ", propertyType.GetPropertyValues(propertyValue))}");
                     }
                 }
             }

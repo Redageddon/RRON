@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RRON.Deserializer.Setters;
 using RRON.Helpers;
 
@@ -6,7 +7,7 @@ namespace RRON.Deserializer
 {
     internal static class RronDataRead
     {
-        internal static void DataRead<T>(string[] lines, T instance)
+        internal static void DataRead(string[] lines)
         {
             for (int i = 0; i < lines.Length; i++)
             {
@@ -16,30 +17,32 @@ namespace RRON.Deserializer
                     continue;
                 }
 
-                string[] test = currentLine.AdvancedSplit(out bool isClass, out bool isCollection);
+                Span<string> value = currentLine.AdvancedSplit(out bool isClass, out bool isCollection);
+                string       name  = value[0];
+                
+                Span<string> propertyNames = value.Slice(1, value.Length - 1);
+
                 if (isClass && isCollection)
                 {
                     List<string[]> columns = new List<string[]>();
-
-                    currentLine = lines[++i];
-                    while (!currentLine.Contains("]"))
+                    while ((currentLine = lines[++i]) != "]")
                     {
-                        columns.Add(currentLine.AdvancedSplit());
-                        currentLine = lines[++i];
+                        columns.Add(currentLine.AdvancedSplit().ToArray());
                     }
-                    ValueSetter.SetComplexCollection(instance, test[0], test[1..], columns);
+                    
+                    ValueSetter.SetComplexCollection(name, propertyNames, columns);
                 }
                 else if (isClass)
                 {
-                    ValueSetter.SetComplex(instance, test[0], test[1..], lines[++i].AdvancedSplit());
+                    ValueSetter.SetComplex(name, propertyNames, lines[++i].AdvancedSplit());
                 }
                 else if (isCollection)
                 {
-                    ValueSetter.SetCollection(instance, test[0], lines[++i].AdvancedSplit());
+                    ValueSetter.SetCollection(name, lines[++i].AdvancedSplit());
                 }
                 else
                 {
-                    ValueSetter.SetProperty(instance, test[0], test[1]);
+                    ValueSetter.SetProperty(name, value[1]);
                 }
             }
         }

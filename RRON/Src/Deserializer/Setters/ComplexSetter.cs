@@ -1,14 +1,15 @@
 ﻿using System;
+using RRON.Helpers;
 
 namespace RRON.Deserializer.Setters
 {
     internal static partial class ValueSetter
     {
-        internal static void SetComplex<T>(T instance, string name, string[] propertyNames, string[] propertyValues)
+        internal static void SetComplex(string name, Span<string> propertyNames, Span<string> propertyValues)
         {
-           Property = Type.GetProperty(name) ?? throw new NullReferenceException($"{nameof(SetComplex)}: {nameof(Property)} should not be null");
+            Property = propertyTypeAccessor[name] ?? throw new NullReferenceException($"{nameof(SetComplex)}: {nameof(Property)} should not be null");
             
-            Property.SetValue(instance, Property.PropertyType.CreateComplex(propertyNames, propertyValues));
+            Accessor[Instance, name] = Property.PropertyType.CreateComplex(propertyNames, propertyValues);
         }
     }
 }

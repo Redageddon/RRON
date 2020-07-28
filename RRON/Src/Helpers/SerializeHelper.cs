@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace RRON
+namespace RRON.Helpers
 {
     internal static class SerializeHelper
     {
@@ -43,18 +43,6 @@ namespace RRON
             {
                 yield return variable?.ToString() ?? "";
             }
-        }
-
-        internal static string Join(this IEnumerable<object> values, string separator = ", ")
-        {
-            StringBuilder builder = new StringBuilder();
-            foreach (string value in values)
-            {
-                builder.Append(value + separator);
-            }
-            
-            builder.Remove(builder.Length - separator.Length, separator.Length);
-            return builder.ToString();
         }
     }
 }
