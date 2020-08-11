@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using FastMember;
 
@@ -11,25 +13,26 @@ namespace RRON.Helpers
     /// </summary>
     internal static class SetterHelper
     {
-        private static readonly MethodInfo CastMethod    = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast)) !;
-        private static readonly MethodInfo ToListMethod  = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList)) !;
-        private static readonly MethodInfo ToArrayMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray)) !;
+        private static readonly Type                                       EnumerableType = typeof(Enumerable);
+        private static readonly ParameterExpression                        Param          = Expression.Parameter(typeof(IEnumerable));
+        private static readonly Dictionary<Type, Func<IEnumerable, IList>> ArrayCache     = new Dictionary<Type, Func<IEnumerable, IList>>();
+        private static readonly Dictionary<Type, Func<IEnumerable, IList>> ListCache      = new Dictionary<Type, Func<IEnumerable, IList>>();
 
         /// <summary>
         ///     Changes an <see cref="IEnumerable{T}(object)"/> to a collection of a type.
         /// </summary>
-        /// <param name="items"> Collection values. </param>
+        /// <param name="source"> Collection values. </param>
         /// <param name="containedType"> The type inside of the array or generic. Ex:  <see cref="T:int[]" />, <see cref="List{T}(int)"/>. </param>
         /// <param name="collectionType"> The actual collection type. Ex: Array, List, IEnumerable. </param>
         /// <returns> A boxed representation of the output collection. </returns>
-        internal static object Convert(this IEnumerable<object> items, Type containedType, Type collectionType)
+        internal static object Convert(this IEnumerable<object> source, Type containedType, Type collectionType)
         {
-            object castedItems = CastMethod.MakeGenericMethod(containedType)
-                                           .Invoke(null, new object[] { items is IEnumerable<string> itemsAsStrings ? itemsAsStrings.Select(containedType.AdvancedStringConvert) : items });
+            if (source is IEnumerable<string> itemsAsStrings)
+            {
+                source = itemsAsStrings.Select(containedType.AdvancedStringConvert);
+            }
 
-            return collectionType.IsArray
-                ? ToArrayMethod.MakeGenericMethod(containedType).Invoke(null, new[] { castedItems })
-                : ToListMethod.MakeGenericMethod(containedType).Invoke(null, new[] { castedItems });
+            return ToIList(source, containedType, collectionType.IsArray);
         }
 
         /// <summary>
@@ -66,5 +69,39 @@ namespace RRON.Helpers
             property.PropertyType.IsArray
                 ? property.PropertyType.GetElementType()
                 : property.PropertyType.GetGenericArguments()[0];
+
+        private static IList ToIList(IEnumerable source, Type type, bool toArray)
+        {
+            if (toArray)
+            {
+                if (ArrayCache.ContainsKey(type))
+                {
+                    return ArrayCache[type](source);
+                }
+            }
+            else
+            {
+                if (ListCache.ContainsKey(type))
+                {
+                    return ListCache[type](source);
+                }
+            }
+
+            Type[]                   typeArgs   = { type };
+            MethodCallExpression     cast       = Expression.Call(EnumerableType, "Cast",                         typeArgs, Param);
+            MethodCallExpression     toIListExp = Expression.Call(EnumerableType, toArray ? "ToArray" : "ToList", typeArgs, cast);
+            Func<IEnumerable, IList> lambda     = Expression.Lambda<Func<IEnumerable, IList>>(toIListExp, Param).Compile();
+
+            if (toArray)
+            {
+                ArrayCache.Add(type, lambda);
+            }
+            else
+            {
+                ListCache.Add(type, lambda);
+            }
+
+            return lambda(source);
+        }
     }
 }
