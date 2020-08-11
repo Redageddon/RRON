@@ -61,7 +61,7 @@ namespace RRON.Helpers
         }
 
         /// <summary>
-        ///     Gets the base type of an array or generic collection
+        ///     Gets the base type of an array or generic collection.
         /// </summary>
         /// <param name="property"> The property being searched. </param>
         /// <returns> The contained type. </returns>
@@ -72,36 +72,31 @@ namespace RRON.Helpers
 
         private static IList ToIList(IEnumerable source, Type type, bool toArray)
         {
-            if (toArray)
+            if (toArray && ArrayCache.TryGetValue(type, out var arrayFunc))
             {
-                if (ArrayCache.ContainsKey(type))
-                {
-                    return ArrayCache[type](source);
-                }
+                return arrayFunc(source);
             }
-            else
+
+            if (!toArray && ListCache.TryGetValue(type, out var listFunc))
             {
-                if (ListCache.ContainsKey(type))
-                {
-                    return ListCache[type](source);
-                }
+                return listFunc(source);
             }
 
             Type[]                   typeArgs   = { type };
-            MethodCallExpression     cast       = Expression.Call(EnumerableType, "Cast",                         typeArgs, Param);
-            MethodCallExpression     toIListExp = Expression.Call(EnumerableType, toArray ? "ToArray" : "ToList", typeArgs, cast);
-            Func<IEnumerable, IList> lambda     = Expression.Lambda<Func<IEnumerable, IList>>(toIListExp, Param).Compile();
+            MethodCallExpression     castExp    = Expression.Call(EnumerableType, "Cast", typeArgs, Param);
+            MethodCallExpression     toIListExp = Expression.Call(EnumerableType, toArray ? "ToArray" : "ToList", typeArgs, castExp);
+            Func<IEnumerable, IList> lambdaExp  = Expression.Lambda<Func<IEnumerable, IList>>(toIListExp, Param).Compile();
 
             if (toArray)
             {
-                ArrayCache.Add(type, lambda);
+                ArrayCache.Add(type, lambdaExp);
             }
             else
             {
-                ListCache.Add(type, lambda);
+                ListCache.Add(type, lambdaExp);
             }
 
-            return lambda(source);
+            return lambdaExp(source);
         }
     }
 }
