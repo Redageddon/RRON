@@ -7,8 +7,17 @@ using RRON.Helpers;
 
 namespace RRON.Serializer
 {
+    /// <summary>
+    ///     The class responsible for serializing to rron.
+    /// </summary>
     internal static class RronSerializer
     {
+        /// <summary>
+        ///     Serializes an object into rron data.
+        /// </summary>
+        /// <param name="source"> The object that the values are being pulled from. </param>
+        /// <param name="ignoreOptions"> A list of property names that will be skipped in serialization. </param>
+        /// <returns> A string representing rron data. </returns>
         internal static string Serialize(object source, string[] ignoreOptions = null!)
         {
             using TextWriter textWriter = new StringWriter();
@@ -17,18 +26,20 @@ namespace RRON.Serializer
 
             foreach (PropertyInfo property in properties.OrderBy(info => info.MetadataToken))
             {
-                if (ignoreOptions == null || !property.Name.IsIn(ignoreOptions))
+                if (ignoreOptions?.Contains(property.Name) != true)
                 {
                     Type propertyType = property.PropertyType;
-                    object propertyValue = property.GetValue(source) ?? throw new NullReferenceException($"{nameof(Serialize)}: {nameof(propertyValue)} should not be null");
+
+                    object propertyValue = property.GetValue(source);
 
                     if (typeof(ICollection).IsAssignableFrom(propertyType))
                     {
-                        Type containedType = (propertyType.IsArray
-                                                 ? propertyType.GetElementType()
-                                                 : propertyType.GetGenericArguments()[0]) ?? throw new NullReferenceException($"{nameof(Serialize)}: {nameof(containedType)} should not be null");
-                        
-                        if (containedType.IsPrimitive || containedType.IsEnum)
+                        Type containedType = propertyType.IsArray
+                            ? propertyType.GetElementType()
+                            : propertyType.GetGenericArguments()[0];
+
+                        if (containedType.IsPrimitive ||
+                            containedType.IsEnum)
                         {
                             textWriter.WriteLine($"{Environment.NewLine}[{property.Name}]");
                             textWriter.WriteLine(string.Join(", ", propertyValue.GetCollectionValues()));
@@ -36,21 +47,19 @@ namespace RRON.Serializer
                         else
                         {
                             textWriter.WriteLine($"{Environment.NewLine}[[{property.Name}: {string.Join(", ", containedType.GetPropertyNames())}]");
-                            
+
                             foreach (object? value in (IList)propertyValue)
                             {
-                                if (value == null)
-                                {
-                                    throw new NullReferenceException($"{nameof(Serialize)}: {nameof(value)} should not be null");
-                                }
-
                                 textWriter.WriteLine(string.Join(", ", containedType.GetPropertyValues(value)));
                             }
 
                             textWriter.WriteLine("]");
                         }
                     }
-                    else if (propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string) || propertyType == typeof(decimal))
+                    else if (propertyType.IsPrimitive ||
+                             propertyType.IsEnum ||
+                             propertyType == typeof(string) ||
+                             propertyType == typeof(decimal))
                     {
                         textWriter.WriteLine($"{property.Name}: {property.GetValue(source)}");
                     }
@@ -61,8 +70,10 @@ namespace RRON.Serializer
                     }
                 }
             }
-            
-            return textWriter.ToString() == null ? "" : textWriter.ToString()!.Trim();
+
+            return textWriter.ToString() == null
+                ? string.Empty
+                : textWriter.ToString() !.Trim();
         }
     }
 }
