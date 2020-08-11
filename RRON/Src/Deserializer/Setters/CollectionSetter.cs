@@ -17,7 +17,6 @@ namespace RRON.Deserializer.Setters
         internal static void SetCollection(string name, Span<string> propertyValues)
         {
             PropertyInfo property = PropertyTypeAccessor[name];
-
             Type containedType = property.GetContainedType();
 
             Accessor[Instance, name] = propertyValues.ToArray().Convert(containedType, property.PropertyType);

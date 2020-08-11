@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using FastMember;
 
@@ -13,26 +12,37 @@ namespace RRON.Helpers
     /// </summary>
     internal static class SetterHelper
     {
-        private static readonly Type                                       EnumerableType = typeof(Enumerable);
-        private static readonly ParameterExpression                        Param          = Expression.Parameter(typeof(IEnumerable));
-        private static readonly Dictionary<Type, Func<IEnumerable, IList>> ArrayCache     = new Dictionary<Type, Func<IEnumerable, IList>>();
-        private static readonly Dictionary<Type, Func<IEnumerable, IList>> ListCache      = new Dictionary<Type, Func<IEnumerable, IList>>();
-
         /// <summary>
-        ///     Changes an <see cref="IEnumerable{T}(object)"/> to a collection of a type.
+        ///     Changes an <see cref="IEnumerable{T}"/> to a collection of a type.
         /// </summary>
         /// <param name="source"> Collection values. </param>
         /// <param name="containedType"> The type inside of the array or generic. Ex:  <see cref="T:int[]" />, <see cref="List{T}(int)"/>. </param>
         /// <param name="collectionType"> The actual collection type. Ex: Array, List, IEnumerable. </param>
         /// <returns> A boxed representation of the output collection. </returns>
-        internal static object Convert(this IEnumerable<object> source, Type containedType, Type collectionType)
+        public static object Convert(this IEnumerable<object> source, Type containedType, Type collectionType)
         {
             if (source is IEnumerable<string> itemsAsStrings)
             {
                 source = itemsAsStrings.Select(containedType.AdvancedStringConvert);
             }
 
-            return ToIList(source, containedType, collectionType.IsArray);
+            object[] value = source.ToArray();
+
+            if (collectionType.IsArray)
+            {
+                Array array = Array.CreateInstance(containedType, value.Length);
+                value.CopyTo(array, 0);
+
+                return array;
+            }
+
+            IList list = (IList)Activator.CreateInstance(collectionType);
+            foreach (object item in value)
+            {
+                list.Add(item);
+            }
+
+            return list;
         }
 
         /// <summary>
@@ -69,34 +79,5 @@ namespace RRON.Helpers
             property.PropertyType.IsArray
                 ? property.PropertyType.GetElementType()
                 : property.PropertyType.GetGenericArguments()[0];
-
-        private static IList ToIList(IEnumerable source, Type type, bool toArray)
-        {
-            if (toArray && ArrayCache.TryGetValue(type, out var arrayFunc))
-            {
-                return arrayFunc(source);
-            }
-
-            if (!toArray && ListCache.TryGetValue(type, out var listFunc))
-            {
-                return listFunc(source);
-            }
-
-            Type[]                   typeArgs   = { type };
-            MethodCallExpression     castExp    = Expression.Call(EnumerableType, "Cast", typeArgs, Param);
-            MethodCallExpression     toIListExp = Expression.Call(EnumerableType, toArray ? "ToArray" : "ToList", typeArgs, castExp);
-            Func<IEnumerable, IList> lambdaExp  = Expression.Lambda<Func<IEnumerable, IList>>(toIListExp, Param).Compile();
-
-            if (toArray)
-            {
-                ArrayCache.Add(type, lambdaExp);
-            }
-            else
-            {
-                ListCache.Add(type, lambdaExp);
-            }
-
-            return lambdaExp(source);
-        }
     }
 }

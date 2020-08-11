@@ -14,7 +14,7 @@ namespace RRON.Helpers
         ///     Processes a string only rron split.
         /// </summary>
         /// <param name="line"> The line being read. </param>
-        /// <returns> A <see cref="Span{T}(string)"/> representation of the current line. </returns>
+        /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
         public static Span<string> AdvancedSplit(this string line) => AdvancedSplit(line, out bool _, out bool _);
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace RRON.Helpers
         /// <param name="line"> The line being read. </param>
         /// <param name="isComplex"> The output that tells if the current line is the start of a complex. </param>
         /// <param name="isCollection"> The output that tells if the current line is the start of a collection. </param>
-        /// <returns> A <see cref="Span{T}(string)"/> representation of the current line. </returns>
+        /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
         public static Span<string> AdvancedSplit(this string line, out bool isComplex, out bool isCollection)
         {
             AdvancedSplitStorage.Clear();
