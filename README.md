@@ -5,21 +5,21 @@ it is meant for things like settings and beatmap storage
 
 RRON is a scanner parser, but i am planning on making it scannerless
 
-properties :
+Property:
 ```
 Name: value
 ```
-value Lists/Enums: 
+Collections: 
 ```
 [Name]
 value1, value2, value3, ...
 ```
-single classes:
+Complex:
 ```
 [ClassName: PropName1, PropName2, PropName3, ...]
 valueOfProp1, valueOfProp2, valueOfProp3, ...
 ```
-class lists/arrays:
+ComplexCollection:
 ```
 [[ClassName: PropName1, PropName2, PropName3, ...]
 value1ofProp1, value1ofProp2, value1ofProp3, ...
