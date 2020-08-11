@@ -20,9 +20,7 @@ namespace RRON.Deserializer.Setters
         {
             PropertyInfo property = PropertyTypeAccessor[name];
 
-            Type containedType = property.PropertyType.IsGenericType
-                ? property.PropertyType.GetGenericArguments()[0]
-                : property.PropertyType.GetElementType();
+            Type containedType = property.GetContainedType();
 
             object[] classCollection = new object[propertyValues.Count];
 

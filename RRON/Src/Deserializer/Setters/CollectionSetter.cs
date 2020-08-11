@@ -18,9 +18,7 @@ namespace RRON.Deserializer.Setters
         {
             PropertyInfo property = PropertyTypeAccessor[name];
 
-            Type containedType = property.PropertyType.IsGenericType
-                ? property.PropertyType.GetGenericArguments()[0]
-                : property.PropertyType.GetElementType();
+            Type containedType = property.GetContainedType();
 
             Accessor[Instance, name] = propertyValues.ToArray().Convert(containedType, property.PropertyType);
         }

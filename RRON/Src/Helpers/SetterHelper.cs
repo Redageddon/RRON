@@ -25,7 +25,7 @@ namespace RRON.Helpers
         internal static object Convert(this IEnumerable<object> items, Type containedType, Type collectionType)
         {
             object castedItems = CastMethod.MakeGenericMethod(containedType)
-                                           .Invoke(null, new object[] { items is IEnumerable<string> ? items.StringCast(containedType) : items });
+                                           .Invoke(null, new object[] { items is IEnumerable<string> itemsAsStrings ? itemsAsStrings.Select(containedType.AdvancedStringConvert) : items });
 
             return collectionType.IsArray
                 ? ToArrayMethod.MakeGenericMethod(containedType).Invoke(null, new[] { castedItems })
@@ -57,12 +57,14 @@ namespace RRON.Helpers
             return semiInstance;
         }
 
-        private static IEnumerable<object> StringCast(this IEnumerable<object> source, Type collectionType)
-        {
-            foreach (string item in source)
-            {
-                yield return collectionType.AdvancedStringConvert(item);
-            }
-        }
+        /// <summary>
+        ///     Gets the base type of an array or generic collection
+        /// </summary>
+        /// <param name="property"> The property being searched. </param>
+        /// <returns> The contained type. </returns>
+        internal static Type GetContainedType(this PropertyInfo property) =>
+            property.PropertyType.IsArray
+                ? property.PropertyType.GetElementType()
+                : property.PropertyType.GetGenericArguments()[0];
     }
 }

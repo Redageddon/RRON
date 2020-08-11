@@ -33,16 +33,15 @@ namespace RRON.Helpers
 
             int startRange = 0;
 
-            if (line[startRange] == '[')
+            // We know that complex collections always start with "[["
+            if (line[startRange] == '[' && line[++startRange] == '[')
             {
-                if (line[++startRange] == '[')
-                {
-                    isComplex      = true;
-                    isCollection = true;
-                    startRange++;
-                }
+                isComplex    = true;
+                isCollection = true;
+                startRange++;
             }
 
+            // Splits the line on colons and commas while ignoring whitespace and stores the values in a list.
             for (int i = 0; i < line.Length; i++)
             {
                 if (line[i] == ':' ||
@@ -60,6 +59,7 @@ namespace RRON.Helpers
                 }
             }
 
+            // Checks if the last character is a closing bracket and finishes class/complex calculations
             if (line[line.Length - 1] == ']')
             {
                 if (maybeClass)
