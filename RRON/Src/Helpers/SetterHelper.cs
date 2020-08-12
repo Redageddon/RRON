@@ -38,7 +38,7 @@ namespace RRON.Helpers
                 return array;
             }
 
-            IList list = (IList)Activator.CreateInstance(collectionType);
+            IList list = (IList)TypeInstanceFactory.GetInstanceOf(collectionType);
             foreach (object item in source)
             {
                 list.Add(item);
@@ -56,7 +56,7 @@ namespace RRON.Helpers
         /// <returns> A new instance of a complex. </returns>
         internal static object CreateComplex(this Type propertyType, IEnumerable<string> propertyNames, IEnumerable<string> propertyValues)
         {
-            object semiInstance = Activator.CreateInstance(propertyType);
+            object semiInstance = TypeInstanceFactory.GetInstanceOf(propertyType);
 
             TypeAccessor semiAccessor = TypeAccessor.Create(propertyType);
 
