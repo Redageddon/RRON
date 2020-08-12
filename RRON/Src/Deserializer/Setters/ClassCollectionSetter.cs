@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using RRON.Helpers;
 
@@ -16,17 +17,19 @@ namespace RRON.Deserializer.Setters
         /// <param name="name"> The name of the Complex collection being set to. </param>
         /// <param name="propertyNames"> All of the property names that this ComplexCollection contains. </param>
         /// <param name="propertyValues"> All of the property names' values being set to. </param>
-        internal static void SetComplexCollection(string name, Span<string> propertyNames, List<string[]> propertyValues)
+        internal static void SetComplexCollection(string name, IEnumerable<string> propertyNames, IEnumerable<IEnumerable<string>> propertyValues)
         {
             PropertyInfo property = PropertyTypeAccessor[name];
 
             Type containedType = property.GetContainedType();
 
-            object[] classCollection = new object[propertyValues.Count];
+            int propertyValuesCount = propertyValues.Count();
 
-            for (int i = 0; i < propertyValues.Count; i++)
+            object[] classCollection = new object[propertyValuesCount];
+
+            for (int i = 0; i < propertyValuesCount; i++)
             {
-                classCollection[i] = containedType.CreateComplex(propertyNames, propertyValues[i]);
+                classCollection[i] = containedType.CreateComplex(propertyNames, propertyValues.ElementAt(i));
             }
 
             Accessor[Instance, name] = classCollection.Convert(containedType, property.PropertyType);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using RRON.Helpers;
 
@@ -14,12 +15,12 @@ namespace RRON.Deserializer.Setters
         /// </summary>
         /// <param name="name"> The name of the Collection being set to. </param>
         /// <param name="propertyValues"> All values of the Collection being set to. </param>
-        internal static void SetCollection(string name, Span<string> propertyValues)
+        internal static void SetCollection(string name, IEnumerable<string> propertyValues)
         {
             PropertyInfo property = PropertyTypeAccessor[name];
             Type containedType = property.GetContainedType();
 
-            Accessor[Instance, name] = propertyValues.ToArray().Convert(containedType, property.PropertyType);
+            Accessor[Instance, name] = propertyValues.Convert(containedType, property.PropertyType);
         }
     }
 }

@@ -8,14 +8,12 @@ namespace RRON.Helpers
     /// </summary>
     public static class StringHelper
     {
-        private static readonly List<string> AdvancedSplitStorage = new List<string>();
-
         /// <summary>
         ///     Processes a string only rron split.
         /// </summary>
         /// <param name="line"> The line being read. </param>
         /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
-        public static Span<string> AdvancedSplit(this string line) => AdvancedSplit(line, out bool _, out bool _);
+        public static IEnumerable<string> AdvancedSplit(this string line) => AdvancedSplit(line, out bool _, out bool _);
 
         /// <summary>
         ///     Processes a fill data split.
@@ -24,9 +22,9 @@ namespace RRON.Helpers
         /// <param name="isComplex"> The output that tells if the current line is the start of a complex. </param>
         /// <param name="isCollection"> The output that tells if the current line is the start of a collection. </param>
         /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
-        public static Span<string> AdvancedSplit(this string line, out bool isComplex, out bool isCollection)
+        public static IEnumerable<string> AdvancedSplit(this string line, out bool isComplex, out bool isCollection)
         {
-            AdvancedSplitStorage.Clear();
+            List<string> advancedSplitStorage = new List<string>();
             isComplex      = false;
             isCollection = false;
             bool maybeClass = false;
@@ -49,7 +47,7 @@ namespace RRON.Helpers
                 {
                     maybeClass = true;
 
-                    AdvancedSplitStorage.Add(line.Substring(startRange, i - startRange));
+                    advancedSplitStorage.Add(line.Substring(startRange, i - startRange));
 
                     while (char.IsWhiteSpace(line[++i]))
                     {
@@ -71,14 +69,14 @@ namespace RRON.Helpers
                     isCollection = true;
                 }
 
-                AdvancedSplitStorage.Add(line.Substring(startRange, line.Length - startRange - 1));
+                advancedSplitStorage.Add(line.Substring(startRange, line.Length - startRange - 1));
             }
             else
             {
-                AdvancedSplitStorage.Add(line.Substring(startRange, line.Length - startRange));
+                advancedSplitStorage.Add(line.Substring(startRange, line.Length - startRange));
             }
 
-            return AdvancedSplitStorage.ToArray();
+            return advancedSplitStorage;
         }
     }
 }

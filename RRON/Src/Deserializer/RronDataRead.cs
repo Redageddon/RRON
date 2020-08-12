@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using RRON.Deserializer.Setters;
 using RRON.Helpers;
 
@@ -25,25 +25,23 @@ namespace RRON.Deserializer
                     continue;
                 }
 
-                Span<string> value = currentLine.AdvancedSplit(out bool isClass, out bool isCollection);
-                string       name  = value[0];
-
-                Span<string> propertyNames = value.Slice(1, value.Length - 1);
+                IEnumerable<string> split = currentLine.AdvancedSplit(out bool isClass, out bool isCollection);
+                string       name  = split.ElementAt(0);
 
                 if (isClass && isCollection)
                 {
-                    List<string[]> columns = new List<string[]>();
+                    List<IEnumerable<string>> columns = new List<IEnumerable<string>>();
 
                     while ((currentLine = lines[++i]) != "]")
                     {
-                        columns.Add(currentLine.AdvancedSplit().ToArray());
+                        columns.Add(currentLine.AdvancedSplit());
                     }
 
-                    ValueSetter.SetComplexCollection(name, propertyNames, columns);
+                    ValueSetter.SetComplexCollection(name, split, columns);
                 }
                 else if (isClass)
                 {
-                    ValueSetter.SetComplex(name, propertyNames, lines[++i].AdvancedSplit());
+                    ValueSetter.SetComplex(name, split, lines[++i].AdvancedSplit());
                 }
                 else if (isCollection)
                 {
@@ -51,7 +49,7 @@ namespace RRON.Deserializer
                 }
                 else
                 {
-                    ValueSetter.SetProperty(name, value[1]);
+                    ValueSetter.SetProperty(name, split.ElementAt(1));
                 }
             }
         }
