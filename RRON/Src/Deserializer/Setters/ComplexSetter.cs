@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using RRON.Helpers;
 
@@ -15,7 +16,7 @@ namespace RRON.Deserializer.Setters
         /// <param name="name"> The name of the Complex being set to. </param>
         /// <param name="propertyNames"> All of the property names that this Complex contains. </param>
         /// <param name="propertyValues"> All of the property names' values being set to. </param>
-        internal static void SetComplex(string name, Span<string> propertyNames, Span<string> propertyValues)
+        internal static void SetComplex(string name, IEnumerable<string> propertyNames, IEnumerable<string> propertyValues)
         {
             PropertyInfo property = PropertyTypeAccessor[name];
 

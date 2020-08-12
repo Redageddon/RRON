@@ -26,18 +26,20 @@ namespace RRON.Helpers
                 source = itemsAsStrings.Select(containedType.AdvancedStringConvert);
             }
 
-            object[] value = source.ToArray();
-
             if (collectionType.IsArray)
             {
-                Array array = Array.CreateInstance(containedType, value.Length);
-                value.CopyTo(array, 0);
+                Array array = Array.CreateInstance(containedType, source.Count());
+
+                for (int i = 0; i < source.Count(); i++)
+                {
+                    array.SetValue(source.ElementAt(i), i);
+                }
 
                 return array;
             }
 
             IList list = (IList)Activator.CreateInstance(collectionType);
-            foreach (object item in value)
+            foreach (object item in source)
             {
                 list.Add(item);
             }
@@ -52,19 +54,22 @@ namespace RRON.Helpers
         /// <param name="propertyNames"> The contained property names of this complex. </param>
         /// <param name="propertyValues"> The contained property values of this complex. </param>
         /// <returns> A new instance of a complex. </returns>
-        internal static object CreateComplex(this Type propertyType, Span<string> propertyNames, Span<string> propertyValues)
+        internal static object CreateComplex(this Type propertyType, IEnumerable<string> propertyNames, IEnumerable<string> propertyValues)
         {
             object semiInstance = Activator.CreateInstance(propertyType);
 
             TypeAccessor semiAccessor = TypeAccessor.Create(propertyType);
 
-            for (int i = 0; i < propertyNames.Length; i++)
+            // Offset of 1 because the first is just name
+            for (int i = 1; i < propertyNames.Count(); i++)
             {
-                PropertyInfo semiProperty = propertyType.GetProperty(propertyNames[i]);
+                string propertyNameAtIndex = propertyNames.ElementAt(i);
+                PropertyInfo semiProperty = propertyType.GetProperty(propertyNameAtIndex);
 
-                object value = semiProperty.PropertyType.AdvancedStringConvert(propertyValues[i]);
+                // '- 1' fixes offset
+                object value = semiProperty.PropertyType.AdvancedStringConvert(propertyValues.ElementAt(i - 1));
 
-                semiAccessor[semiInstance, propertyNames[i]] = value;
+                semiAccessor[semiInstance, propertyNameAtIndex] = value;
             }
 
             return semiInstance;
