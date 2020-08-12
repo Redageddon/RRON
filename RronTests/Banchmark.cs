@@ -9,10 +9,7 @@ namespace RronTests
     public class BanchmarkTest
     {
         [Test]
-        public void GetBenchmark()
-        {
-            BenchmarkRunner.Run<Benchmark>();
-        }
+        public void GetBenchmark() => BenchmarkRunner.Run<Benchmark>();
     }
 
     [MemoryDiagnoser]
@@ -21,9 +18,7 @@ namespace RronTests
         private readonly string[] text = File.ReadAllLines("data.rron");
         
         [Benchmark]
-        public void Mark()
-        {
+        public void Mark() => 
             RronConvert.DeserializeObjectFromString<TestClass>(this.text);
-        }
     }
 }
