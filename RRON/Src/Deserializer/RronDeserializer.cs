@@ -1,6 +1,5 @@
 ﻿using System;
 using FastMember;
-using RRON.Deserializer.Setters;
 
 namespace RRON.Deserializer
 {

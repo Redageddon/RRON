@@ -19,7 +19,7 @@ namespace RRON.Helpers
         /// <param name="containedType"> The type inside of the array or generic. Ex:  <see cref="T:int[]" />, <see cref="List{T}(int)"/>. </param>
         /// <param name="collectionType"> The actual collection type. Ex: Array, List, IEnumerable. </param>
         /// <returns> A boxed representation of the output collection. </returns>
-        public static object Convert(this IEnumerable<object> source, Type containedType, Type collectionType)
+        public static object CollectionConverter(this IEnumerable<object> source, Type containedType, Type collectionType)
         {
             if (source is IEnumerable<string> itemsAsStrings)
             {
@@ -80,9 +80,9 @@ namespace RRON.Helpers
         /// </summary>
         /// <param name="property"> The property being searched. </param>
         /// <returns> The contained type. </returns>
-        internal static Type GetContainedType(this PropertyInfo property) =>
-            property.PropertyType.IsArray
-                ? property.PropertyType.GetElementType()
-                : property.PropertyType.GetGenericArguments()[0];
+        internal static Type GetContainedType(this Type propertyType) =>
+            propertyType.IsArray
+                ? propertyType.GetElementType()
+                : propertyType.GetGenericArguments()[0];
     }
 }
