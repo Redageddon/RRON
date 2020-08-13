@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RRON.Deserializer.Chunks;
 using RRON.Helpers;
@@ -7,7 +8,7 @@ namespace RRON.Deserializer
 {
     internal class RronDataReader
     {
-        public List<ITypeAcessable> AccessableTypes { get; } = new List<ITypeAcessable>();
+        public Dictionary<string, Func<Type, object>> Dictionary { get; } = new Dictionary<string, Func<Type, object>>();
 
         public void SetValues(IReadOnlyList<string> lines)
         {
@@ -32,19 +33,19 @@ namespace RRON.Deserializer
                         columns.Add(currentLine.AdvancedSplit());
                     }
 
-                    this.AccessableTypes.Add(new ComplexCollection(name, split, columns));
+                    this.Dictionary.Add(name, StringTransformers.GetComplexCollection(split, columns));
                 }
                 else if (isClass)
                 {
-                    this.AccessableTypes.Add(new Complex(name, split, lines[++i].AdvancedSplit()));
+                    this.Dictionary.Add(name, StringTransformers.GetComplex(split, lines[++i].AdvancedSplit()));
                 }
                 else if (isCollection)
                 {
-                    this.AccessableTypes.Add(new Collection(name, lines[++i].AdvancedSplit()));
+                    this.Dictionary.Add(name, StringTransformers.GetCollection(lines[++i].AdvancedSplit()));
                 }
                 else
                 {
-                    this.AccessableTypes.Add(new Single(name, split.ElementAt(1)));
+                    this.Dictionary.Add(name, StringTransformers.GetSingle(split.ElementAt(1)));
                 }
             }
         }

@@ -1,5 +1,6 @@
-﻿using FastMember;
-using RRON.Deserializer.Chunks;
+﻿using System;
+using System.Collections.Generic;
+using FastMember;
 
 namespace RRON.Deserializer
 {
@@ -21,9 +22,9 @@ namespace RRON.Deserializer
         {
             ObjectAccessor accessor = ObjectAccessor.Create(instance);
 
-            foreach (ITypeAcessable complexCollection in dataReader.AccessableTypes)
+            foreach (KeyValuePair<string, Func<Type, object>> typeAccessible in dataReader.Dictionary)
             {
-                accessor[complexCollection.Name] = complexCollection.GetObject<T>();
+                accessor[typeAccessible.Key] = typeAccessible.Value(typeof(T).GetProperty(typeAccessible.Key).PropertyType);
             }
 
             return instance;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,9 +27,9 @@ namespace RRON.Helpers
             return semiInstance;
         }
 
-        internal static Type GetContainedType(this PropertyInfo property) =>
-            property.PropertyType.IsArray
-                ? property.PropertyType.GetElementType()
-                : property.PropertyType.GetGenericArguments()[0];
+        internal static Type GetContainedType(this Type propertyType) =>
+            propertyType.IsArray
+                ? propertyType.GetElementType()
+                : propertyType.GetGenericArguments()[0];
     }
 }
