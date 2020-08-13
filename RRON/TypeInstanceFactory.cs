@@ -7,7 +7,7 @@ namespace RRON
     public class TypeInstanceFactory
     {
         private static readonly Dictionary<Type, Func<object>> Constructors = new Dictionary<Type, Func<object>>();
-        private static readonly Type ObjectType = typeof(object);
+        private static readonly Type                           ObjectType   = typeof(object);
 
         public static object GetInstanceOf(Type type)
         {

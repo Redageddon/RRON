@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace RRON.Helpers
 {
@@ -13,8 +16,13 @@ namespace RRON.Helpers
         /// </summary>
         /// <param name="type"> The type being converted to. </param>
         /// <param name="value"> The string value of the type. </param>
-        /// <returns> An object of type <param name="type"/> with the value of <param name="value"/>. </returns>
-        internal static object AdvancedStringConvert(this Type type, string value)
+        /// <returns> An object of type
+        ///     <param name="type" />
+        ///     with the value of
+        ///     <param name="value" />
+        ///     .
+        /// </returns>
+        internal static object StringTypeConverter(this Type type, string value)
         {
             if (type == typeof(bool))
             {
@@ -82,6 +90,35 @@ namespace RRON.Helpers
             }
 
             return TypeDescriptor.GetConverter(type).ConvertFromString(value);
+        }
+
+        public static object CollectionConverter(this IEnumerable<object> source, Type containedType, Type collectionType)
+        {
+            if (source is IEnumerable<string> itemsAsStrings)
+            {
+                source = itemsAsStrings.Select(containedType.StringTypeConverter);
+            }
+
+            if (collectionType.IsArray)
+            {
+                Array array = Array.CreateInstance(containedType, source.Count());
+
+                for (int i = 0; i < source.Count(); i++)
+                {
+                    array.SetValue(source.ElementAt(i), i);
+                }
+
+                return array;
+            }
+
+            IList list = (IList)TypeInstanceFactory.GetInstanceOf(collectionType);
+
+            foreach (object item in source)
+            {
+                list.Add(item);
+            }
+
+            return list;
         }
     }
 }

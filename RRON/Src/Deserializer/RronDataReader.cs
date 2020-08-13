@@ -1,22 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using RRON.Deserializer.Setters;
+using RRON.Deserializer.Chunks;
 using RRON.Helpers;
 
 namespace RRON.Deserializer
 {
-    /// <summary>
-    ///     The class responsible for converting rron lines into actual data.
-    /// </summary>
-    internal static class RronDataRead
+    internal class RronDataReader
     {
-        /// <summary>
-        ///     The method responsible for converting rron lines into actual data.
-        /// </summary>
-        /// <param name="lines"> All lines of an rron file. </param>
-        internal static void DataRead(string[] lines)
+        public List<ITypeAcessable> AccessableTypes { get; } = new List<ITypeAcessable>();
+
+        public void SetValues(IReadOnlyList<string> lines)
         {
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 string currentLine = lines[i];
 
@@ -26,7 +21,7 @@ namespace RRON.Deserializer
                 }
 
                 IEnumerable<string> split = currentLine.AdvancedSplit(out bool isClass, out bool isCollection);
-                string       name  = split.ElementAt(0);
+                string              name  = split.ElementAt(0);
 
                 if (isClass && isCollection)
                 {
@@ -37,19 +32,19 @@ namespace RRON.Deserializer
                         columns.Add(currentLine.AdvancedSplit());
                     }
 
-                    ValueSetter.SetComplexCollection(name, split, columns);
+                    this.AccessableTypes.Add(new ComplexCollection(name, split, columns));
                 }
                 else if (isClass)
                 {
-                    ValueSetter.SetComplex(name, split, lines[++i].AdvancedSplit());
+                    this.AccessableTypes.Add(new Complex(name, split, lines[++i].AdvancedSplit()));
                 }
                 else if (isCollection)
                 {
-                    ValueSetter.SetCollection(name, lines[++i].AdvancedSplit());
+                    this.AccessableTypes.Add(new Collection(name, lines[++i].AdvancedSplit()));
                 }
                 else
                 {
-                    ValueSetter.SetProperty(name, split.ElementAt(1));
+                    this.AccessableTypes.Add(new Single(name, split.ElementAt(1)));
                 }
             }
         }

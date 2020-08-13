@@ -1,45 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RRON.Helpers
 {
-    /// <summary>
-    ///     The class responsible for splitting up the rron rows.
-    /// </summary>
     public static class StringHelper
     {
-        /// <summary>
-        ///     Processes a string only rron split.
-        /// </summary>
-        /// <param name="line"> The line being read. </param>
-        /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
         public static IEnumerable<string> AdvancedSplit(this string line) => AdvancedSplit(line, out bool _, out bool _);
 
-        /// <summary>
-        ///     Processes a fill data split.
-        /// </summary>
-        /// <param name="line"> The line being read. </param>
-        /// <param name="isComplex"> The output that tells if the current line is the start of a complex. </param>
-        /// <param name="isCollection"> The output that tells if the current line is the start of a collection. </param>
-        /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
         public static IEnumerable<string> AdvancedSplit(this string line, out bool isComplex, out bool isCollection)
         {
             List<string> advancedSplitStorage = new List<string>();
-            isComplex      = false;
+            isComplex    = false;
             isCollection = false;
             bool maybeClass = false;
 
             int startRange = 0;
 
-            // We know that complex collections always start with "[["
-            if (line[startRange] == '[' && line[++startRange] == '[')
+            if (line[startRange] == '[' &&
+                line[++startRange] == '[')
             {
                 isComplex    = true;
                 isCollection = true;
                 startRange++;
             }
 
-            // Splits the line on colons and commas while ignoring whitespace and stores the values in a list.
             for (int i = 0; i < line.Length; i++)
             {
                 if (line[i] == ':' ||
@@ -49,15 +32,12 @@ namespace RRON.Helpers
 
                     advancedSplitStorage.Add(line.Substring(startRange, i - startRange));
 
-                    while (char.IsWhiteSpace(line[++i]))
-                    {
-                    }
+                    while (char.IsWhiteSpace(line[++i])) { }
 
                     startRange = i;
                 }
             }
 
-            // Checks if the last character is a closing bracket and finishes class/complex calculations
             if (line[line.Length - 1] == ']')
             {
                 if (maybeClass)

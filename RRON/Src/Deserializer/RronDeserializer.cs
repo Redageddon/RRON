@@ -1,40 +1,30 @@
-﻿using System;
-using FastMember;
-using RRON.Deserializer.Setters;
+﻿using FastMember;
+using RRON.Deserializer.Chunks;
 
 namespace RRON.Deserializer
 {
-    /// <summary>
-    ///     The class responsible for starting deserialization.
-    /// </summary>
-    internal static class RronDeserializer
+    public class RronDeserializer<T>
+        where T : new()
     {
-        /// <summary>
-        ///     The method responsible for starting deserialization.
-        /// </summary>
-        /// <param name="lines"> All lines of an rron file. </param>
-        /// <typeparam name="T"> The type of object being deserialized into. </typeparam>
-        /// <returns> A new instance of <see cref="T"/> with the rron file data. </returns>
-        internal static T Deserialize<T>(string[] lines)
+        internal T Deserialize(string[] lines)
         {
-            Type type     = typeof(T);
-            T instance = (T)TypeInstanceFactory.GetInstanceOf(type);
+            RronDataReader dataRead = new RronDataReader();
+            dataRead.SetValues(lines);
 
-            if (ValueSetter.PreviousType != type)
+            T instance = new T();
+            T accessor = SetValues(instance, dataRead);
+
+            return accessor;
+        }
+
+        private static T SetValues(T instance, RronDataReader dataReader)
+        {
+            ObjectAccessor accessor = ObjectAccessor.Create(instance);
+
+            foreach (ITypeAcessable complexCollection in dataReader.AccessableTypes)
             {
-                ValueSetter.PreviousType     = type;
-                ValueSetter.Accessor = TypeAccessor.Create(type);
-                ValueSetter.PropertyTypeAccessor.Clear();
-
-                foreach (var propertyInfo in type.GetProperties())
-                {
-                    ValueSetter.PropertyTypeAccessor.Add(propertyInfo.Name, propertyInfo);
-                }
+                accessor[complexCollection.Name] = complexCollection.GetObject<T>();
             }
-
-            ValueSetter.Instance = instance;
-
-            RronDataRead.DataRead(lines);
 
             return instance;
         }

@@ -7,17 +7,8 @@ using RRON.Helpers;
 
 namespace RRON.Serializer
 {
-    /// <summary>
-    ///     The class responsible for serializing to rron.
-    /// </summary>
     internal static class RronSerializer
     {
-        /// <summary>
-        ///     Serializes an object into rron data.
-        /// </summary>
-        /// <param name="source"> The object that the values are being pulled from. </param>
-        /// <param name="ignoreOptions"> A list of property names that will be skipped in serialization. </param>
-        /// <returns> A string representing rron data. </returns>
         internal static string Serialize(object source, string[] ignoreOptions = null!)
         {
             using TextWriter textWriter = new StringWriter();
@@ -46,7 +37,7 @@ namespace RRON.Serializer
                         }
                         else
                         {
-                            textWriter.WriteLine($"{Environment.NewLine}[[{property.Name}: {string.Join(", ", containedType.GetPropertyNames())}]");
+                            textWriter.WriteLine($"{Environment.NewLine}[[{property.Name}: {string.Join(", ", containedType.GetProperties().Select(e => e.Name))}]");
 
                             foreach (object? value in (IList)propertyValue)
                             {
@@ -65,7 +56,7 @@ namespace RRON.Serializer
                     }
                     else
                     {
-                        textWriter.WriteLine($"{Environment.NewLine}[{property.Name}: {string.Join(", ", propertyType.GetPropertyNames())}]");
+                        textWriter.WriteLine($"{Environment.NewLine}[{property.Name}: {string.Join(", ", propertyType.GetProperties().Select(e => e.Name))}]");
                         textWriter.WriteLine($"{string.Join(", ", propertyType.GetPropertyValues(propertyValue))}");
                     }
                 }

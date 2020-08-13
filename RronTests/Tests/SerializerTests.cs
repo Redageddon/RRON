@@ -31,41 +31,25 @@ namespace RronTests.Tests
                 Enum     = Enum.A,
                 Struct   = new Vector2(14.0f, 15.0f),
                 Class    = new InClass(16, 17),
-                IntArray = new[]
-                {
-                    18,
-                    19,
-                },
+                IntArray = new[] { 18, 19, },
                 IntList = new List<int>
                 {
                     20,
                     21,
                 },
-                EnumArray = new[]
-                {
-                    Enum.A, 
-                    Enum.B,
-                },
+                EnumArray = new[] { Enum.A, Enum.B, },
                 EnumList = new List<Enum>
                 {
                     Enum.C,
                     Enum.D,
                 },
-                StructArray = new[] 
-                {
-                    new Vector2(25, 26), 
-                    new Vector2(27, 28), 
-                },
+                StructArray = new[] { new Vector2(25, 26), new Vector2(27, 28), },
                 StructList = new List<Vector2>
                 {
                     new Vector2(29, 30),
                     new Vector2(31, 32),
                 },
-                ClassArray = new[]
-                {
-                    new InClass(33, 34), 
-                    new InClass(35, 36),
-                },
+                ClassArray = new[] { new InClass(33, 34), new InClass(35, 36), },
                 ClassList = new List<InClass>
                 {
                     new InClass(37, 38),
