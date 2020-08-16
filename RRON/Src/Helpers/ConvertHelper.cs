@@ -13,7 +13,12 @@ namespace RRON.Helpers
         /// </summary>
         /// <param name="type"> The type being converted to. </param>
         /// <param name="value"> The string value of the type. </param>
-        /// <returns> An object of type <param name="type"/> with the value of <param name="value"/>. </returns>
+        /// <returns> An object of type
+        ///     <param name="type" />
+        ///     with the value of
+        ///     <param name="value" />
+        ///     .
+        /// </returns>
         internal static object AdvancedStringConvert(this Type type, string value)
         {
             if (type == typeof(bool))

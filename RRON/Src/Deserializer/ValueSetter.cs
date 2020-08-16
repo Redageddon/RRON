@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using FastMember;
 using RRON.Helpers;
@@ -18,7 +17,7 @@ namespace RRON.Deserializer
         internal static readonly Dictionary<string, PropertyInfo> PropertyTypeAccessor = new Dictionary<string, PropertyInfo>();
 
         /// <summary>
-        ///     Gets or sets the property <see cref="TypeAccessor"/> of the chosen generic type.
+        ///     Gets or sets the property <see cref="TypeAccessor" /> of the chosen generic type.
         /// </summary>
         /// Initialised with null suppression because it will always get set to, but the compiler doesn't know that.
         internal static TypeAccessor Accessor { get; set; } = null!;
@@ -41,18 +40,20 @@ namespace RRON.Deserializer
         /// <param name="name"> The name of the Complex collection being set to. </param>
         /// <param name="propertyNames"> All of the property names that this ComplexCollection contains. </param>
         /// <param name="propertyValues"> All of the property names' values being set to. </param>
-        internal static void SetComplexCollection(string name, IEnumerable<string> propertyNames, IEnumerable<IEnumerable<string>> propertyValues)
+        internal static void SetComplexCollection(string name,
+                                                  IReadOnlyList<string> propertyNames,
+                                                  IReadOnlyList<IReadOnlyList<string>> propertyValues)
         {
             Type propertyType = PropertyTypeAccessor[name].PropertyType;
             Type containedType = propertyType.GetContainedType();
 
-            int propertyValuesCount = propertyValues.Count();
+            var propertyValuesCount = propertyValues.Count;
 
             object[] classCollection = new object[propertyValuesCount];
 
-            for (int i = 0; i < propertyValuesCount; i++)
+            for (var i = 0; i < propertyValuesCount; i++)
             {
-                classCollection[i] = containedType.CreateComplex(propertyNames, propertyValues.ElementAt(i));
+                classCollection[i] = containedType.CreateComplex(propertyNames, propertyValues[i]);
             }
 
             Accessor[Instance, name] = classCollection.CollectionConverter(containedType, propertyType);
@@ -63,7 +64,7 @@ namespace RRON.Deserializer
         /// </summary>
         /// <param name="name"> The name of the Collection being set to. </param>
         /// <param name="propertyValues"> All values of the Collection being set to. </param>
-        internal static void SetCollection(string name, IEnumerable<string> propertyValues)
+        internal static void SetCollection(string name, IReadOnlyList<string> propertyValues)
         {
             Type propertyType = PropertyTypeAccessor[name].PropertyType;
             Accessor[Instance, name] = propertyValues.CollectionConverter(propertyType.GetContainedType(), propertyType);
@@ -75,7 +76,7 @@ namespace RRON.Deserializer
         /// <param name="name"> The name of the Complex being set to. </param>
         /// <param name="propertyNames"> All of the property names that this Complex contains. </param>
         /// <param name="propertyValues"> All of the property names' values being set to. </param>
-        internal static void SetComplex(string name, IEnumerable<string> propertyNames, IEnumerable<string> propertyValues) =>
+        internal static void SetComplex(string name, IReadOnlyList<string> propertyNames, IReadOnlyList<string> propertyValues) =>
             Accessor[Instance, name] = PropertyTypeAccessor[name].PropertyType.CreateComplex(propertyNames, propertyValues);
 
         /// <summary>

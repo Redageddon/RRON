@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using RRON.Helpers;
 
 namespace RRON.Deserializer
@@ -15,7 +14,7 @@ namespace RRON.Deserializer
         /// <param name="lines"> All lines of an rron file. </param>
         internal static void DataRead(string[] lines)
         {
-            for (int i = 0; i < lines.Length; i++)
+            for (var i = 0; i < lines.Length; i++)
             {
                 string currentLine = lines[i];
 
@@ -24,12 +23,12 @@ namespace RRON.Deserializer
                     continue;
                 }
 
-                IEnumerable<string> split = currentLine.AdvancedSplit(out bool isClass, out bool isCollection);
-                string       name  = split.ElementAt(0);
+                IReadOnlyList<string> split = currentLine.AdvancedSplit(out var isClass, out var isCollection);
+                string name = split[0];
 
                 if (isClass && isCollection)
                 {
-                    List<IEnumerable<string>> columns = new List<IEnumerable<string>>();
+                    List<IReadOnlyList<string>> columns = new List<IReadOnlyList<string>>();
 
                     while ((currentLine = lines[++i]) != "]")
                     {
@@ -48,7 +47,7 @@ namespace RRON.Deserializer
                 }
                 else
                 {
-                    ValueSetter.SetProperty(name, split.ElementAt(1));
+                    ValueSetter.SetProperty(name, split[1]);
                 }
             }
         }

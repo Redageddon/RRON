@@ -48,7 +48,7 @@ namespace RRON.Serializer
                         {
                             textWriter.WriteLine($"{Environment.NewLine}[[{property.Name}: {string.Join(", ", containedType.GetPropertyNames())}]");
 
-                            foreach (object? value in (IList)propertyValue)
+                            foreach (var value in (IList)propertyValue)
                             {
                                 textWriter.WriteLine(string.Join(", ", containedType.GetPropertyValues(value)));
                             }

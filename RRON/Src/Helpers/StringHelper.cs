@@ -12,8 +12,8 @@ namespace RRON.Helpers
         ///     Processes a string only rron split.
         /// </summary>
         /// <param name="line"> The line being read. </param>
-        /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
-        public static IEnumerable<string> AdvancedSplit(this string line) => AdvancedSplit(line, out bool _, out bool _);
+        /// <returns> A <see cref="Span{T}" /> representation of the current line. </returns>
+        public static IReadOnlyList<string> AdvancedSplit(this string line) => AdvancedSplit(line, out var _, out var _);
 
         /// <summary>
         ///     Processes a fill data split.
@@ -21,26 +21,27 @@ namespace RRON.Helpers
         /// <param name="line"> The line being read. </param>
         /// <param name="isComplex"> The output that tells if the current line is the start of a complex. </param>
         /// <param name="isCollection"> The output that tells if the current line is the start of a collection. </param>
-        /// <returns> A <see cref="Span{T}"/> representation of the current line. </returns>
-        public static IEnumerable<string> AdvancedSplit(this string line, out bool isComplex, out bool isCollection)
+        /// <returns> A <see cref="Span{T}" /> representation of the current line. </returns>
+        public static IReadOnlyList<string> AdvancedSplit(this string line, out bool isComplex, out bool isCollection)
         {
             List<string> advancedSplitStorage = new List<string>();
-            isComplex      = false;
+            isComplex = false;
             isCollection = false;
-            bool maybeClass = false;
+            var maybeClass = false;
 
-            int startRange = 0;
+            var startRange = 0;
 
             // We know that complex collections always start with "[["
-            if (line[startRange] == '[' && line[++startRange] == '[')
+            if (line[startRange] == '[' &&
+                line[++startRange] == '[')
             {
-                isComplex    = true;
+                isComplex = true;
                 isCollection = true;
                 startRange++;
             }
 
             // Splits the line on colons and commas while ignoring whitespace and stores the values in a list.
-            for (int i = 0; i < line.Length; i++)
+            for (var i = 0; i < line.Length; i++)
             {
                 if (line[i] == ':' ||
                     line[i] == ',')
@@ -49,9 +50,7 @@ namespace RRON.Helpers
 
                     advancedSplitStorage.Add(line.Substring(startRange, i - startRange));
 
-                    while (char.IsWhiteSpace(line[++i]))
-                    {
-                    }
+                    while (char.IsWhiteSpace(line[++i])) { }
 
                     startRange = i;
                 }

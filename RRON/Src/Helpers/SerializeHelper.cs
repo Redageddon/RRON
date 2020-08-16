@@ -14,7 +14,7 @@ namespace RRON.Helpers
         ///     Gets all property names from a type.
         /// </summary>
         /// <param name="type"> The type that the properties are getting from. </param>
-        /// <returns> An <see cref="IEnumerable{t}"/> of all property names. </returns>
+        /// <returns> An <see cref="IEnumerable{t}" /> of all property names. </returns>
         internal static IEnumerable<string> GetPropertyNames(this Type type)
         {
             foreach (PropertyInfo propertyInfo in type.GetProperties())
@@ -28,7 +28,7 @@ namespace RRON.Helpers
         /// </summary>
         /// <param name="type"> The type that the properties are getting from. </param>
         /// <param name="source"> The object that the values are pulled from. </param>
-        /// <returns> An <see cref="IEnumerable{t}"/> of all property values. </returns>
+        /// <returns> An <see cref="IEnumerable{t}" /> of all property values. </returns>
         internal static IEnumerable<string> GetPropertyValues(this Type type, object source)
         {
             foreach (PropertyInfo propertyInfo in type.GetProperties())
@@ -41,10 +41,10 @@ namespace RRON.Helpers
         ///     Gets all values from a boxed collection.
         /// </summary>
         /// <param name="source"> The boxed collection. </param>
-        /// <returns> An <see cref="IEnumerable{t}"/> of all collection values. </returns>
+        /// <returns> An <see cref="IEnumerable{t}" /> of all collection values. </returns>
         internal static IEnumerable<string> GetCollectionValues(this object source)
         {
-            foreach (object? variable in (IList)source)
+            foreach (var variable in (IList)source)
             {
                 yield return variable?.ToString() ?? string.Empty;
             }

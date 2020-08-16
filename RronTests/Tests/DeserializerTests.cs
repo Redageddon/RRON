@@ -11,27 +11,27 @@ namespace RronTests.Tests
         [SetUp]
         public void Setup()
         {
-            string[] text = File.ReadAllLines("data.rron");
+            var text = File.ReadAllLines("data.rron");
             this.testClass = RronConvert.DeserializeObjectFromString<TestClass>(text);
         }
 
         [Test]
         public void Singles()
         {
-            Assert.AreEqual(true,   this.testClass.Bool);
-            Assert.AreEqual(1,      this.testClass.Byte);
-            Assert.AreEqual(2,      this.testClass.Sbyte);
-            Assert.AreEqual('3',    this.testClass.Char);
-            Assert.AreEqual(4.0m,   this.testClass.Decimal);
-            Assert.AreEqual(5.0d,   this.testClass.Double);
-            Assert.AreEqual(6.0f,   this.testClass.Float);
-            Assert.AreEqual(7,      this.testClass.Int);
-            Assert.AreEqual(8,      this.testClass.Uint);
-            Assert.AreEqual(9,      this.testClass.Long);
-            Assert.AreEqual(10,     this.testClass.Ulong);
-            Assert.AreEqual(11,     this.testClass.Short);
-            Assert.AreEqual(12,     this.testClass.Ushort);
-            Assert.AreEqual("13",   this.testClass.String);
+            Assert.AreEqual(true, this.testClass.Bool);
+            Assert.AreEqual(1, this.testClass.Byte);
+            Assert.AreEqual(2, this.testClass.Sbyte);
+            Assert.AreEqual('3', this.testClass.Char);
+            Assert.AreEqual(4.0m, this.testClass.Decimal);
+            Assert.AreEqual(5.0d, this.testClass.Double);
+            Assert.AreEqual(6.0f, this.testClass.Float);
+            Assert.AreEqual(7, this.testClass.Int);
+            Assert.AreEqual(8, this.testClass.Uint);
+            Assert.AreEqual(9, this.testClass.Long);
+            Assert.AreEqual(10, this.testClass.Ulong);
+            Assert.AreEqual(11, this.testClass.Short);
+            Assert.AreEqual(12, this.testClass.Ushort);
+            Assert.AreEqual("13", this.testClass.String);
             Assert.AreEqual(Enum.A, this.testClass.Enum);
         }
 
