@@ -34,7 +34,7 @@ namespace RRON
             propertyType.CreateComplex(propertyNames, propertyValues);
 
         internal static object GetSingle(Type propertyType, string value) =>
-            propertyType.AdvancedStringConvert(value);
+            propertyType.ConvertString(value);
 
         private static object CreateComplex(this Type propertyType, IReadOnlyList<string> propertyNames, IReadOnlyList<string> propertyValues)
         {
@@ -49,13 +49,13 @@ namespace RRON
                 if (propertyType.GetProperty(propertyNameAtIndex) != null)
                 {
                     var semiProperty = propertyType.GetProperty(propertyNameAtIndex);
-                    value = semiProperty.PropertyType.AdvancedStringConvert(propertyValues[i]);
+                    value = semiProperty.PropertyType.ConvertString(propertyValues[i]);
                 }
                 else
                 {
                     // for legacy structs, or invalid data but sill allowed to pass
                     var semiField = propertyType.GetField(propertyNameAtIndex);
-                    value = semiField.FieldType.AdvancedStringConvert(propertyValues[i]);
+                    value = semiField.FieldType.ConvertString(propertyValues[i]);
                 }
 
                 semiAccessor[propertyNameAtIndex] = value;
@@ -72,7 +72,7 @@ namespace RRON
 
                 foreach (var str in itemsAsStrings)
                 {
-                    tempList.Add(containedType.AdvancedStringConvert(str));
+                    tempList.Add(containedType.ConvertString(str));
                 }
 
                 source = tempList;

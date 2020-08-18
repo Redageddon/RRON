@@ -29,20 +29,6 @@ namespace RronTests
         public int E { get; set; }
     }
 
-    /*[Serializable]
-    public struct Vector2
-    {
-        public Vector2(float a, float b)
-        {
-            this.A = a;
-            this.B = b;
-        }
-
-        public float A { get; set; }
-
-        public float B { get; set; }
-    }*/
-
     [Serializable]
     public class TestClass
     {

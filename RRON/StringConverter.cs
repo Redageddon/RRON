@@ -6,7 +6,7 @@ namespace RRON
     /// <summary>
     ///     The class responsible for string type conversion.
     /// </summary>
-    internal static class ConvertHelper
+    internal static class StringConverter
     {
         /// <summary>
         ///     Method responsible for converting a string value to a value of a type.
@@ -19,8 +19,13 @@ namespace RRON
         ///     <param name="value" />
         ///     .
         /// </returns>
-        internal static object AdvancedStringConvert(this Type type, string value)
+        internal static object ConvertString(this Type type, string value)
         {
+            if (type == typeof(string))
+            {
+                return value;
+            }
+
             if (type == typeof(bool))
             {
                 return bool.Parse(value);
@@ -84,6 +89,11 @@ namespace RRON
             if (type == typeof(ushort))
             {
                 return ushort.Parse(value);
+            }
+
+            if (type.IsEnum)
+            {
+                return Enum.Parse(type, value);
             }
 
             return TypeDescriptor.GetConverter(type).ConvertFromString(value);
