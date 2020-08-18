@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RronNew", "RRON/RRON.csproj", "{49839147-ABFB-4021-AF8B-E388565B38AE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RronTests", "RronTests\RronTests.csproj", "{15ECA930-636D-44E5-9413-3A5FA6081205}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRRON", "NRRON\NRRON.csproj", "{5EC65549-B336-433A-81D6-F998710E6A25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RRON", "RRON\RRON.csproj", "{5EC65549-B336-433A-81D6-F998710E6A25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,11 +10,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{49839147-ABFB-4021-AF8B-E388565B38AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49839147-ABFB-4021-AF8B-E388565B38AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49839147-ABFB-4021-AF8B-E388565B38AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49839147-ABFB-4021-AF8B-E388565B38AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49839147-ABFB-4021-AF8B-E388565B38AE}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{15ECA930-636D-44E5-9413-3A5FA6081205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{15ECA930-636D-44E5-9413-3A5FA6081205}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15ECA930-636D-44E5-9413-3A5FA6081205}.Release|Any CPU.ActiveCfg = Release|Any CPU

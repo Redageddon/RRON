@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace RRON.Helpers
+namespace RRON
 {
     /// <summary>
     ///     The class responsible for string type conversion.

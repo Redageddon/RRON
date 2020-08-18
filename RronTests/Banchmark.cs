@@ -15,9 +15,9 @@ namespace RronTests
     [MemoryDiagnoser]
     public class Benchmark
     {
-        private readonly string[] text = File.ReadAllLines("data.rron");
+        private readonly string text = File.ReadAllText("data.rron");
 
         [Benchmark]
-        public void Mark() => RronConvert.DeserializeObjectFromString<TestClass>(this.text);
+        public void Mark() => RronConvert.DeserializeObject<TestClass>(this.text);
     }
 }

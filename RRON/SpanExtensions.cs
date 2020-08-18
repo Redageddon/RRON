@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NRRON
+namespace RRON
 {
     public static class SpanExtensions
     {

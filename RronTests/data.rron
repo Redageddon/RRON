@@ -14,7 +14,7 @@ Ushort: 12
 String: 13
 Enum: A
 
-[Struct: A, B]
+[Struct: X, Y]
 14, 15
 
 [Class: I, E]
@@ -32,12 +32,12 @@ A, B
 [EnumList]
 C, D
 
-[[StructArray: A, B]
+[[StructArray: X, Y]
 25, 26
 27, 28
 ]
 
-[[StructList: A, B]
+[[StructList: X, Y]
 29, 30
 31, 32
 ]

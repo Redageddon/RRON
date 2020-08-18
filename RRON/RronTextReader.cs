@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using FastMember;
 
-namespace NRRON
+namespace RRON
 {
     public class RronTextReader
     {
@@ -9,7 +10,16 @@ namespace NRRON
         private const char Closing = ']';
         private const int Offset = 2;
 
-        public static void DataRead(ValueStringReader valueStringReader)
+        private readonly ObjectAccessor accessor;
+        private readonly TypeNameMap map;
+
+        public RronTextReader(ObjectAccessor accessor, TypeNameMap map)
+        {
+            this.accessor = accessor;
+            this.map = map;
+        }
+
+        public void DataRead(ValueStringReader valueStringReader)
         {
             ReadOnlySpan<char> currentLine;
 
@@ -28,19 +38,23 @@ namespace NRRON
                     if (indexOfColon == -1)
                     {
                         var (name, values) = GetCollection(currentLine, valueStringReader.ReadLine());
+                        this.accessor[name] = ValueSetter.GetCollection(this.map.GetTypeByName(name), values);
                     }
                     else if (currentLine[0] == Opening)
                     {
                         var (name, propertyNames, propertyValues) = GetComplexCollection(ref valueStringReader, currentLine, indexOfColon);
+                        this.accessor[name] = ValueSetter.GetComplexCollection(this.map.GetTypeByName(name), propertyNames, propertyValues);
                     }
                     else
                     {
                         var (name, propertyNames, propertyValues) = GetComplex(currentLine, valueStringReader.ReadLine(), indexOfColon);
+                        this.accessor[name] = ValueSetter.GetComplex(this.map.GetTypeByName(name), propertyNames, propertyValues);
                     }
                 }
                 else
                 {
                     var (name, value) = GetSingle(currentLine, indexOfColon);
+                    this.accessor[name] = ValueSetter.GetSingle(this.map.GetTypeByName(name), value);
                 }
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System;
+using FastMember;
 
-namespace NRRON
+namespace RRON
 {
     public static class RronConvert
     {
@@ -10,10 +11,12 @@ namespace NRRON
 
         public static object DeserializeObject(string value, Type type)
         {
-            RronSerializer rronSerializer = new RronSerializer();
-            RronTextReader.DataRead(new ValueStringReader(value));
+            object instance = Activator.CreateInstance(type);
 
-            return rronSerializer.Deserialize(type);
+            RronTextReader rronTextReader = new RronTextReader(ObjectAccessor.Create(instance), new TypeNameMap(type));
+            rronTextReader.DataRead(new ValueStringReader(value));
+
+            return instance;
         }
     }
 }

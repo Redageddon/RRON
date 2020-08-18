@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using NUnit.Framework;
 using RRON;
 
@@ -57,7 +58,7 @@ namespace RronTests.Tests
                 },
             };
 
-            this.test = RronConvert.SerializeObjectToString(settings);
+            this.test = RronConvert.SerializeObject(settings);
         }
 
         [Test]

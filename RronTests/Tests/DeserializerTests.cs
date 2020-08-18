@@ -11,8 +11,8 @@ namespace RronTests.Tests
         [SetUp]
         public void Setup()
         {
-            var text = File.ReadAllLines("data.rron");
-            this.testClass = RronConvert.DeserializeObjectFromString<TestClass>(text);
+            var text = File.ReadAllText("data.rron");
+            this.testClass = RronConvert.DeserializeObject<TestClass>(text);
         }
 
         [Test]
@@ -38,8 +38,8 @@ namespace RronTests.Tests
         [Test]
         public void Classes()
         {
-            Assert.AreEqual(14.0f, this.testClass.Struct.A);
-            Assert.AreEqual(15.0f, this.testClass.Struct.B);
+            Assert.AreEqual(14.0f, this.testClass.Struct.X);
+            Assert.AreEqual(15.0f, this.testClass.Struct.Y);
 
             Assert.AreEqual(16f, this.testClass.Class.I);
             Assert.AreEqual(17f, this.testClass.Class.E);
@@ -64,15 +64,15 @@ namespace RronTests.Tests
         [Test]
         public void ComplexCollections()
         {
-            Assert.AreEqual(25.0, this.testClass.StructArray[0].A);
-            Assert.AreEqual(26.0, this.testClass.StructArray[0].B);
-            Assert.AreEqual(27.0, this.testClass.StructArray[1].A);
-            Assert.AreEqual(28.0, this.testClass.StructArray[1].B);
+            Assert.AreEqual(25.0, this.testClass.StructArray[0].X);
+            Assert.AreEqual(26.0, this.testClass.StructArray[0].Y);
+            Assert.AreEqual(27.0, this.testClass.StructArray[1].X);
+            Assert.AreEqual(28.0, this.testClass.StructArray[1].Y);
 
-            Assert.AreEqual(29.0, this.testClass.StructList[0].A);
-            Assert.AreEqual(30.0, this.testClass.StructList[0].B);
-            Assert.AreEqual(31.0, this.testClass.StructList[1].A);
-            Assert.AreEqual(32.0, this.testClass.StructList[1].B);
+            Assert.AreEqual(29.0, this.testClass.StructList[0].X);
+            Assert.AreEqual(30.0, this.testClass.StructList[0].Y);
+            Assert.AreEqual(31.0, this.testClass.StructList[1].X);
+            Assert.AreEqual(32.0, this.testClass.StructList[1].Y);
 
             Assert.AreEqual(33, this.testClass.ClassArray[0].I);
             Assert.AreEqual(34, this.testClass.ClassArray[0].E);
