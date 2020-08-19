@@ -1,17 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <Nullable>Enable</Nullable>
         <LangVersion>8</LangVersion>
         <RootNamespace>RRON</RootNamespace>
         <AssemblyName>RRON</AssemblyName>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Company>Rubiksmaster02</Company>
+        <AssemblyVersion></AssemblyVersion>
+        <FileVersion></FileVersion>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageVersion>4.0.0</PackageVersion>
+        <Title>RRON</Title>
+        <Authors>Rubiksmaster02</Authors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+        <PackageReference Include="Collections.Pooled" Version="1.0.82" />
         <PackageReference Include="FastMember" Version="1.5.0" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.7" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">

@@ -3,22 +3,8 @@ using System.ComponentModel;
 
 namespace RRON
 {
-    /// <summary>
-    ///     The class responsible for string type conversion.
-    /// </summary>
     internal static class StringConverter
     {
-        /// <summary>
-        ///     Method responsible for converting a string value to a value of a type.
-        /// </summary>
-        /// <param name="type"> The type being converted to. </param>
-        /// <param name="value"> The string value of the type. </param>
-        /// <returns> An object of type
-        ///     <param name="type" />
-        ///     with the value of
-        ///     <param name="value" />
-        ///     .
-        /// </returns>
         internal static object ConvertString(this Type type, string value)
         {
             if (type == typeof(string))

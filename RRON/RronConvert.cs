@@ -12,9 +12,9 @@ namespace RRON
         public static object DeserializeObject(string value, Type type)
         {
             var accessor = ObjectAccessor.Create(Activator.CreateInstance(type));
-            var map = TypeNameMap.GetOrCreate(type);
+            var typeNameMap = TypeNameMap.GetOrCreate(type);
             var valueStringReader = new ValueStringReader(value);
-            var rronTextReader = new RronTextReader(accessor, map);
+            var rronTextReader = new RronTextReader(accessor, typeNameMap);
 
             rronTextReader.DataRead(valueStringReader);
 

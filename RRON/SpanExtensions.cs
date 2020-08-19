@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace RRON
 {
-    public static class SpanExtensions
+    internal static class SpanExtensions
     {
-        public static IReadOnlyList<string> Split(this ReadOnlySpan<char> stringAsSpan, char separator = ',', bool skipWhitespace = true, int commaCount = 0)
+        internal static IReadOnlyList<string> Split(this ReadOnlySpan<char> stringAsSpan, char separator = ',', bool skipWhitespace = true, int commaCount = 0)
         {
             if (commaCount == 0)
             {

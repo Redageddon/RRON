@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using Collections.Pooled;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace RRON
@@ -13,7 +13,7 @@ namespace RRON
                                                                             .SetAbsoluteExpiration(TimeSpan.FromSeconds(15));
 
         private static readonly MemoryCache MemoryCache = new MemoryCache(new MemoryCacheOptions { SizeLimit = 16 });
-        private readonly Dictionary<string, Type> cache = new Dictionary<string, Type>();
+        private readonly PooledDictionary<string, Type> cache = new PooledDictionary<string, Type>();
 
         private TypeNameMap(Type type)
         {
