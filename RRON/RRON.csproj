@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>Enable</Nullable>
         <LangVersion>8</LangVersion>
         <RootNamespace>RRON</RootNamespace>
@@ -9,12 +9,11 @@
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Rubiksmaster02</Company>
-        <AssemblyVersion></AssemblyVersion>
-        <FileVersion></FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageVersion>4.0.0</PackageVersion>
         <Title>RRON</Title>
         <Authors>Rubiksmaster02</Authors>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

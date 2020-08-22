@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace RronTests
 {
@@ -27,6 +26,20 @@ namespace RronTests
         public int I { get; set; }
 
         public int E { get; set; }
+    }
+    
+    [Serializable]
+    public struct Vector2
+    {
+        public Vector2(float x, float y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        public float X { get; set; }
+
+        public float Y { get; set; }
     }
 
     [Serializable]

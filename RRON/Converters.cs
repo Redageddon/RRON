@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace RRON
 {
-    internal static class StringConverter
+    internal static class Converters
     {
         internal static object ConvertString(this Type type, string value)
         {
@@ -79,10 +81,46 @@ namespace RRON
 
             if (type.IsEnum)
             {
-                return Enum.Parse(type, value);
+                return Enum.Parse(type, value, true);
             }
 
             return TypeDescriptor.GetConverter(type).ConvertFromString(value);
+        }
+
+        internal static object ConvertCollection(this IReadOnlyList<object> source, Type containedType, Type collectionType)
+        {
+            if (source is IReadOnlyList<string> itemsAsStrings)
+            {
+                var tempList = new List<object>();
+
+                foreach (var str in itemsAsStrings)
+                {
+                    tempList.Add(containedType.ConvertString(str));
+                }
+
+                source = tempList;
+            }
+
+            if (collectionType.IsArray)
+            {
+                var array = Array.CreateInstance(containedType, source.Count);
+
+                for (var i = 0; i < source.Count; i++)
+                {
+                    array.SetValue(source[i], i);
+                }
+
+                return array;
+            }
+
+            var list = (IList)Activator.CreateInstance(collectionType);
+
+            foreach (var item in source)
+            {
+                list.Add(item);
+            }
+
+            return list;
         }
     }
 }

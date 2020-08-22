@@ -5,7 +5,12 @@ namespace RRON
 {
     public static class RronConvert
     {
-        public static string SerializeObject(object value, string[] ignoreOptions = null!) => string.Empty;
+        public static string SerializeObject(object value, string[] ignoreOptions = null!)
+        {
+            var serializer = new RronSerializer(value, ignoreOptions);
+
+            return serializer.Serialize();
+        }
 
         public static T DeserializeObject<T>(string value) => (T)DeserializeObject(value, typeof(T));
 
@@ -13,10 +18,11 @@ namespace RRON
         {
             var accessor = ObjectAccessor.Create(Activator.CreateInstance(type));
             var typeNameMap = TypeNameMap.GetOrCreate(type);
-            var valueStringReader = new ValueStringReader(value);
-            var rronTextReader = new RronTextReader(accessor, typeNameMap);
 
-            rronTextReader.DataRead(valueStringReader);
+            var valueStringReader = new ValueStringReader(value);
+            var rronDeserializer = new RronDeserializer(accessor, typeNameMap);
+
+            rronDeserializer.DataRead(valueStringReader);
 
             return accessor.Target;
         }

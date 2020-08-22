@@ -4,7 +4,7 @@ using FastMember;
 
 namespace RRON
 {
-    public class RronTextReader
+    public class RronDeserializer
     {
         private const char Opening = '[';
         private const char Closing = ']';
@@ -13,7 +13,7 @@ namespace RRON
         private readonly ObjectAccessor accessor;
         private readonly TypeNameMap map;
 
-        public RronTextReader(ObjectAccessor accessor, TypeNameMap map)
+        public RronDeserializer(ObjectAccessor accessor, TypeNameMap map)
         {
             this.accessor = accessor;
             this.map = map;
