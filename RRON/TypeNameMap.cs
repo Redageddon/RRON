@@ -1,9 +1,9 @@
-﻿using System;
-using Collections.Pooled;
-using Microsoft.Extensions.Caching.Memory;
-
-namespace RRON
+﻿namespace RRON
 {
+    using System;
+    using Collections.Pooled;
+    using Microsoft.Extensions.Caching.Memory;
+
     /// <summary>
     ///     Caches a mapping of type names to their type.
     /// </summary>

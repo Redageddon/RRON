@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace RRON
+﻿namespace RRON
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
     internal static class Converters
     {
         internal static object ConvertString(this Type type, string value)

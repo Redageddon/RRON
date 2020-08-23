@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using FastMember;
-
-namespace RRON
+﻿namespace RRON
 {
+    using System;
+    using System.Collections.Generic;
+    using FastMember;
+
     internal static class ValueSetter
     {
         internal static object GetComplexCollection(
@@ -34,6 +34,11 @@ namespace RRON
         internal static object GetSingle(Type propertyType, string value) =>
             propertyType.ConvertString(value);
 
+        internal static Type GetContainedType(this Type propertyType) =>
+            (propertyType.IsArray
+                ? propertyType.GetElementType()
+                : propertyType.GetGenericArguments()[0]) ?? throw new ArgumentNullException();
+
         private static object CreateComplex(this Type propertyType, IReadOnlyList<string> propertyNames, IReadOnlyList<string> propertyValues)
         {
             var semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType));
@@ -48,10 +53,5 @@ namespace RRON
 
             return semiAccessor.Target;
         }
-
-        internal static Type GetContainedType(this Type propertyType) =>
-            (propertyType.IsArray
-                ? propertyType.GetElementType()
-                : propertyType.GetGenericArguments()[0]) ?? throw new ArgumentNullException();
     }
 }

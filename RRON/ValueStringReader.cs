@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace RRON
+﻿namespace RRON
 {
+    using System;
+
     /// <summary>
     ///     A limited string reader based on spans.
     /// </summary>

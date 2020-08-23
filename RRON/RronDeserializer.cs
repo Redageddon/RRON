@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using FastMember;
-
-namespace RRON
+﻿namespace RRON
 {
+    using System;
+    using System.Collections.Generic;
+    using FastMember;
+
     /// <summary>
     ///     The class responsible for deserializing rron data.
     /// </summary>

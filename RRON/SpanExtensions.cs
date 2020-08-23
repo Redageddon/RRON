@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace RRON
+﻿namespace RRON
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     ///      Houses Split.
     /// </summary>

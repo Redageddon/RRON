@@ -1,8 +1,8 @@
-﻿using System;
-using FastMember;
-
-namespace RRON
+﻿namespace RRON
 {
+    using System;
+    using FastMember;
+
     /// <summary>
     ///     The class responsible for serializing or deserializing objects.
     /// </summary>
