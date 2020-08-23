@@ -2,12 +2,19 @@
 
 namespace RRON
 {
+    /// <summary>
+    ///     A limited string reader based on spans.
+    /// </summary>
     public ref struct ValueStringReader
     {
         private readonly ReadOnlySpan<char> value;
         private readonly int length;
         private int pos;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ValueStringReader"/> struct.
+        /// </summary>
+        /// <param name="value"> The string being read. </param>
         public ValueStringReader(string value)
         {
             this.length = value.Length;
@@ -15,6 +22,10 @@ namespace RRON
             this.pos = 0;
         }
 
+        /// <summary>
+        ///     Reads a new line.
+        /// </summary>
+        /// <returns> A new line in the form of a span. </returns>
         public ReadOnlySpan<char> ReadLine()
         {
             var i = this.pos;

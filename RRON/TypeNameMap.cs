@@ -4,6 +4,9 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace RRON
 {
+    /// <summary>
+    ///     Caches a mapping of type names to their type.
+    /// </summary>
     public class TypeNameMap
     {
         private static readonly MemoryCacheEntryOptions CacheEntryOptions = new MemoryCacheEntryOptions()
@@ -23,7 +26,12 @@ namespace RRON
             }
         }
 
-        internal static TypeNameMap GetOrCreate(Type type)
+        /// <summary>
+        ///     Gets a map based upon a type.
+        /// </summary>
+        /// <param name="type"> The type being created for. </param>
+        /// <returns> A map based upon <param name="type"/>. </returns>
+        public static TypeNameMap GetOrCreate(Type type)
         {
             if (!MemoryCache.TryGetValue(type, out TypeNameMap cacheEntry))
             {

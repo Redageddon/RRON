@@ -84,7 +84,7 @@ namespace RRON
                 return Enum.Parse(type, value, true);
             }
 
-            return TypeDescriptor.GetConverter(type).ConvertFromString(value);
+            return TypeDescriptor.GetConverter(type).ConvertFromString(value) ?? throw new InvalidOperationException();
         }
 
         internal static object ConvertCollection(this IReadOnlyList<object> source, Type containedType, Type collectionType)

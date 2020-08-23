@@ -4,6 +4,9 @@ using FastMember;
 
 namespace RRON
 {
+    /// <summary>
+    ///     The class responsible for deserializing rron data.
+    /// </summary>
     public class RronDeserializer
     {
         private const char Opening = '[';
@@ -13,12 +16,21 @@ namespace RRON
         private readonly ObjectAccessor accessor;
         private readonly TypeNameMap map;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RronDeserializer"/> class.
+        /// </summary>
+        /// <param name="accessor"> The accessor being acted upon. </param>
+        /// <param name="map"> The type name cache being pulled from. </param>
         public RronDeserializer(ObjectAccessor accessor, TypeNameMap map)
         {
             this.accessor = accessor;
             this.map = map;
         }
 
+        /// <summary>
+        ///     Reads the rron data and sets the object accessor accordingly.
+        /// </summary>
+        /// <param name="valueStringReader"> The span version string reader that reads rron data. </param>
         public void DataRead(ValueStringReader valueStringReader)
         {
             ReadOnlySpan<char> currentLine;

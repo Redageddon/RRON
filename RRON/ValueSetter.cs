@@ -50,8 +50,8 @@ namespace RRON
         }
 
         internal static Type GetContainedType(this Type propertyType) =>
-            propertyType.IsArray
+            (propertyType.IsArray
                 ? propertyType.GetElementType()
-                : propertyType.GetGenericArguments()[0];
+                : propertyType.GetGenericArguments()[0]) ?? throw new ArgumentNullException();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +8,7 @@ using System.Reflection;
 namespace RRON
 {
     /// <summary>
-    ///     The class responsible for serializing to rron.
+    ///     The class responsible for serializing an object to an rron data string.
     /// </summary>
     public class RronSerializer
     {
@@ -25,8 +24,6 @@ namespace RRON
         public RronSerializer(object instance, string[] ignoreOptions)
         {
             this.instance = instance;
-            ignoreOptions ??= new string[0];
-
             this.sortedProperties = this.instance
                                         .GetType()
                                         .GetProperties()
@@ -44,7 +41,7 @@ namespace RRON
             {
                 var name = property.Name;
                 var propertyType = property.PropertyType;
-                var propertyValue = property.GetValue(this.instance) ?? throw new NoNullAllowedException();
+                var propertyValue = property.GetValue(this.instance);
 
                 if (IsASingle(propertyType))
                 {
@@ -53,7 +50,7 @@ namespace RRON
                 else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
                 {
                     var containedType = propertyType.GetContainedType();
-                    var enumerableValue = ((IEnumerable)propertyValue)?.OfType<object>() ?? throw new NoNullAllowedException();
+                    var enumerableValue = ((IEnumerable)propertyValue).OfType<object>();
 
                     if (IsASingle(containedType))
                     {
