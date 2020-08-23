@@ -18,6 +18,8 @@ namespace RronTests.Tests
         [Test]
         public void Singles()
         {
+            Assert.AreEqual(0, this.testClass.BaseSingle);
+            
             Assert.AreEqual(true, this.testClass.Bool);
             Assert.AreEqual(1, this.testClass.Byte);
             Assert.AreEqual(2, this.testClass.Sbyte);
@@ -36,8 +38,10 @@ namespace RronTests.Tests
         }
 
         [Test]
-        public void Classes()
+        public void Complexes()
         {
+            Assert.AreEqual(new Vector2(10, 20), this.testClass.BaseComplex);
+            
             Assert.AreEqual(14.0f, this.testClass.Struct.X);
             Assert.AreEqual(15.0f, this.testClass.Struct.Y);
 
@@ -48,6 +52,9 @@ namespace RronTests.Tests
         [Test]
         public void Collections()
         {
+            Assert.AreEqual(10, this.testClass.BaseCollection[0]);
+            Assert.AreEqual(20, this.testClass.BaseCollection[1]);
+            
             Assert.AreEqual(18, this.testClass.IntArray[0]);
             Assert.AreEqual(19, this.testClass.IntArray[1]);
 
@@ -64,6 +71,9 @@ namespace RronTests.Tests
         [Test]
         public void ComplexCollections()
         {
+            Assert.AreEqual(new Vector2(10, 20), this.testClass.BaseComplexCollection[0]);
+            Assert.AreEqual(new Vector2(30, 40), this.testClass.BaseComplexCollection[1]);
+            
             Assert.AreEqual(25.0, this.testClass.StructArray[0].X);
             Assert.AreEqual(26.0, this.testClass.StructArray[0].Y);
             Assert.AreEqual(27.0, this.testClass.StructArray[1].X);

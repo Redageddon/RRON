@@ -43,7 +43,16 @@ namespace RronTests
     }
 
     [Serializable]
-    public class TestClass
+    public class Base
+    {
+        public int BaseSingle { get; set; }
+        public int[] BaseCollection { get; set; }
+        public Vector2 BaseComplex { get; set; }
+        public Vector2[] BaseComplexCollection { get; set; }
+    }
+
+    [Serializable]
+    public class TestClass : Base
     {
         public bool Bool { get; set; }
 

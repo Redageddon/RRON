@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
@@ -14,6 +15,10 @@ namespace RronTests.Tests
         {
             var settings = new TestClass
             {
+                BaseSingle = 0,
+                BaseCollection = new []{ 10, 20 },
+                BaseComplex = new Vector2(10, 20),
+                BaseComplexCollection = new[]{new Vector2(10, 20), new Vector2(30, 40)},
                 Bool = true,
                 Byte = 1,
                 Sbyte = 2,
@@ -59,6 +64,9 @@ namespace RronTests.Tests
 
             this.test = RronConvert.SerializeObject(settings);
         }
+
+        [Test]
+        public void DataWrite() => Console.WriteLine(this.test);
 
         [Test]
         public void MatchesFile() => Assert.AreEqual(File.ReadAllText("data.rron"), this.test);

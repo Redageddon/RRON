@@ -1,3 +1,15 @@
+BaseSingle: 0
+
+[BaseCollection]
+10, 20
+
+[BaseComplex: X, Y]
+10, 20
+
+[[BaseComplexCollection: X, Y]
+10, 20
+30, 40
+]
 Bool: True
 Byte: 1
 Sbyte: 2
