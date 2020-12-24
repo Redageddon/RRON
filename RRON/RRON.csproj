@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Nullable>Enable</Nullable>
-        <LangVersion>8</LangVersion>
+        <LangVersion>Latest</LangVersion>
         <RootNamespace>RRON</RootNamespace>
         <AssemblyName>RRON</AssemblyName>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Rubiksmaster02</Company>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <PackageVersion>4.0.0</PackageVersion>
+        <PackageVersion>5.0.0</PackageVersion>
         <Title>RRON</Title>
         <Authors>Rubiksmaster02</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -21,7 +21,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
         <PackageReference Include="Collections.Pooled" Version="1.0.82" />
         <PackageReference Include="FastMember" Version="1.5.0" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.7" />

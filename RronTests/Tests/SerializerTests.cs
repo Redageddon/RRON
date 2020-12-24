@@ -51,14 +51,14 @@ namespace RronTests.Tests
                 StructArray = new[] { new Vector2(25, 26), new Vector2(27, 28) },
                 StructList = new List<Vector2>
                 {
-                    new Vector2(29, 30),
-                    new Vector2(31, 32),
+                    new(29, 30),
+                    new(31, 32),
                 },
                 ClassArray = new[] { new InClass(33, 34), new InClass(35, 36) },
                 ClassList = new List<InClass>
                 {
-                    new InClass(37, 38),
-                    new InClass(39, 40),
+                    new(37, 38),
+                    new(39, 40),
                 },
             };
 

@@ -71,17 +71,17 @@
             }
         }
 
-        private static (string, IReadOnlyList<string>, IReadOnlyList<IReadOnlyList<string>>) GetComplexCollectionStrings(ref ValueStringReader valueStringReader, ReadOnlySpan<char> currentLine, int indexOfColon)
+        private static (string, string[], IReadOnlyList<string[]>) GetComplexCollectionStrings(ref ValueStringReader valueStringReader, ReadOnlySpan<char> currentLine, int indexOfColon)
         {
             var (name, propertyNames) = GetComplexHeaderStrings(currentLine.Slice(1), indexOfColon - 1);
-            var propertyValues = GetComplexCollectionValuesStrings(ref valueStringReader, propertyNames.Count);
+            var propertyValues = GetComplexCollectionValuesStrings(ref valueStringReader, propertyNames.Length);
 
             return (name, propertyNames, propertyValues);
         }
 
-        private static IReadOnlyList<IReadOnlyList<string>> GetComplexCollectionValuesStrings(ref ValueStringReader valueStringReader, int splitCount)
+        private static IReadOnlyList<string[]> GetComplexCollectionValuesStrings(ref ValueStringReader valueStringReader, int splitCount)
         {
-            var tempPropertyValues = new List<IReadOnlyList<string>>();
+            var tempPropertyValues = new List<string[]>();
 
             ReadOnlySpan<char> currentLine;
             while ((currentLine = valueStringReader.ReadLine())[0] != Closing)
@@ -92,15 +92,15 @@
             return tempPropertyValues;
         }
 
-        private static (string, IReadOnlyList<string>, IReadOnlyList<string>) GetComplexStrings(ReadOnlySpan<char> currentLine, ReadOnlySpan<char> nextLine, int indexOfColon)
+        private static (string, string[], string[]) GetComplexStrings(ReadOnlySpan<char> currentLine, ReadOnlySpan<char> nextLine, int indexOfColon)
         {
             var (name, propertyNames) = GetComplexHeaderStrings(currentLine, indexOfColon);
-            var propertyValues = nextLine.Split(commaCount: propertyNames.Count);
+            var propertyValues = nextLine.Split(commaCount: propertyNames.Length);
 
             return (name, propertyNames, propertyValues);
         }
 
-        private static (string, IReadOnlyList<string>) GetComplexHeaderStrings(ReadOnlySpan<char> currentLine, int indexOfColon)
+        private static (string, string[]) GetComplexHeaderStrings(ReadOnlySpan<char> currentLine, int indexOfColon)
         {
             var name = currentLine.Slice(0, indexOfColon - 1).ToString();
             var propertyNames = currentLine.Slice(indexOfColon + 1, currentLine.Length - indexOfColon - 1).Split();
@@ -108,7 +108,7 @@
             return (name, propertyNames);
         }
 
-        private static (string, IReadOnlyList<string>) GetCollectionStrings(ReadOnlySpan<char> currentLine, ReadOnlySpan<char> nextLine)
+        private static (string, string[]) GetCollectionStrings(ReadOnlySpan<char> currentLine, ReadOnlySpan<char> nextLine)
         {
             var name = currentLine.Slice(0, currentLine.Length).ToString();
             var values = nextLine.Split();

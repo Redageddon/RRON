@@ -16,7 +16,7 @@
         /// <param name="skipWhitespace"> If you want to skip whitespace if you only want raw values. </param>
         /// <param name="commaCount"> If you already know the amount that is going to be split into. </param>
         /// <returns> A collection of strings. </returns>
-        internal static IReadOnlyList<string> Split(this ReadOnlySpan<char> stringAsSpan, char separator = ',', bool skipWhitespace = true, int commaCount = 0)
+        internal static string[] Split(this ReadOnlySpan<char> stringAsSpan, char separator = ',', bool skipWhitespace = true, int commaCount = 0)
         {
             if (commaCount == 0)
             {
@@ -32,7 +32,7 @@
                 commaCount++;
             }
 
-            var output = new string[commaCount];
+            string[] output = new string[commaCount];
             commaCount = 0;
             var currentIndex = 0;
 

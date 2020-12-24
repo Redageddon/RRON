@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
     using System.ComponentModel;
 
     internal static class Converters
@@ -84,43 +83,53 @@
                 return Enum.Parse(type, value, true);
             }
 
-            return TypeDescriptor.GetConverter(type).ConvertFromString(value) ?? throw new InvalidOperationException();
+            return TypeDescriptor.GetConverter(type).ConvertFromString(value)!;
         }
 
-        internal static object ConvertCollection(this IReadOnlyList<object> source, Type containedType, Type collectionType)
+        internal static object ConvertCollection(this object[] source, Type containedType, Type collectionType)
         {
-            if (source is IReadOnlyList<string> itemsAsStrings)
-            {
-                var tempList = new List<object>();
-
-                foreach (var str in itemsAsStrings)
-                {
-                    tempList.Add(containedType.ConvertString(str));
-                }
-
-                source = tempList;
-            }
+            source = source.ConvertStrings(containedType);
 
             if (collectionType.IsArray)
             {
-                var array = Array.CreateInstance(containedType, source.Count);
+                var array = Array.CreateInstance(containedType, source.Length);
 
-                for (var i = 0; i < source.Count; i++)
+                for (var i = 0; i < source.Length; i++)
                 {
                     array.SetValue(source[i], i);
                 }
 
                 return array;
             }
-
-            var list = (IList)Activator.CreateInstance(collectionType);
-
-            foreach (var item in source)
+            else
             {
-                list.Add(item);
+                var list = (IList)Activator.CreateInstance(collectionType)!;
+
+                // ReSharper disable once ForCanBeConvertedToForeach
+                for (var i = 0; i < source.Length; i++)
+                {
+                    list.Add(source[i]);
+                }
+
+                return list;
+            }
+        }
+
+        internal static object[] ConvertStrings(this object[] source, Type containedType)
+        {
+            if (source is string[] itemsAsStrings)
+            {
+                var tempList = new object[itemsAsStrings.Length];
+
+                for (var i = 0; i < itemsAsStrings.Length; i++)
+                {
+                    tempList[i] = containedType.ConvertString(itemsAsStrings[i]);
+                }
+
+                return tempList;
             }
 
-            return list;
+            return source;
         }
     }
 }

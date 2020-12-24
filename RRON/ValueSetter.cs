@@ -8,16 +8,14 @@
     {
         internal static object GetComplexCollection(
             Type propertyType,
-            IReadOnlyList<string> propertyNames,
-            IReadOnlyList<IReadOnlyList<string>> propertyValues)
+            string[] propertyNames,
+            IReadOnlyList<string[]> propertyValues)
         {
             var containedType = propertyType.GetContainedType();
 
-            var propertyValuesCount = propertyValues.Count;
+            var classCollection = new object[propertyValues.Count];
 
-            var classCollection = new object[propertyValuesCount];
-
-            for (var i = 0; i < propertyValuesCount; i++)
+            for (var i = 0; i < propertyValues.Count; i++)
             {
                 classCollection[i] = containedType.CreateComplex(propertyNames, propertyValues[i]);
             }
@@ -25,10 +23,10 @@
             return classCollection.ConvertCollection(containedType, propertyType);
         }
 
-        internal static object GetCollection(Type propertyType, IReadOnlyList<string> propertyValues) =>
+        internal static object GetCollection(Type propertyType, string[] propertyValues) =>
             propertyValues.ConvertCollection(propertyType.GetContainedType(), propertyType);
 
-        internal static object GetComplex(Type propertyType, IReadOnlyList<string> propertyNames, IReadOnlyList<string> propertyValues) =>
+        internal static object GetComplex(Type propertyType, string[] propertyNames, string[] propertyValues) =>
             propertyType.CreateComplex(propertyNames, propertyValues);
 
         internal static object GetSingle(Type propertyType, string value) =>
@@ -37,13 +35,13 @@
         internal static Type GetContainedType(this Type propertyType) =>
             (propertyType.IsArray
                 ? propertyType.GetElementType()
-                : propertyType.GetGenericArguments()[0]) ?? throw new ArgumentNullException();
+                : propertyType.GetGenericArguments()[0])!;
 
-        private static object CreateComplex(this Type propertyType, IReadOnlyList<string> propertyNames, IReadOnlyList<string> propertyValues)
+        private static object CreateComplex(this Type propertyType, string[] propertyNames, string[] propertyValues)
         {
             var semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType));
 
-            for (var i = 0; i < propertyNames.Count; i++)
+            for (var i = 0; i < propertyNames.Length; i++)
             {
                 var propertyNameAtIndex = propertyNames[i];
 
@@ -51,7 +49,7 @@
                 semiAccessor[propertyNameAtIndex] = semiProperty.PropertyType.ConvertString(propertyValues[i]);
             }
 
-            return semiAccessor.Target;
+            return semiAccessor.Target!;
         }
     }
 }

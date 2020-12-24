@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Data;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -47,10 +48,10 @@
                 {
                     this.WriteSingle(name, property);
                 }
-                else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
+                else if (propertyValue is IEnumerable enumValue)
                 {
                     var containedType = propertyType.GetContainedType();
-                    var enumerableValue = ((IEnumerable)propertyValue).OfType<object>();
+                    var enumerableValue = enumValue.OfType<object>();
 
                     if (IsASingle(containedType))
                     {

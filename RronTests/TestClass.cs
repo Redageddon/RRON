@@ -90,18 +90,18 @@ namespace RronTests
 
         public int[] IntArray { get; set; }
 
-        public List<int> IntList { get; set; } = new List<int>();
+        public List<int> IntList { get; set; } = new();
 
         public Enum[] EnumArray { get; set; }
 
-        public List<Enum> EnumList { get; set; } = new List<Enum>();
+        public List<Enum> EnumList { get; set; } = new();
 
         public Vector2[] StructArray { get; set; }
 
-        public List<Vector2> StructList { get; set; } = new List<Vector2>();
+        public List<Vector2> StructList { get; set; } = new();
 
         public InClass[] ClassArray { get; set; }
 
-        public List<InClass> ClassList { get; set; } = new List<InClass>();
+        public List<InClass> ClassList { get; set; } = new();
     }
 }

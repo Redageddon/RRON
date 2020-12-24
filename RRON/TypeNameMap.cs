@@ -1,6 +1,7 @@
 ﻿namespace RRON
 {
     using System;
+    using System.Data;
     using Collections.Pooled;
     using Microsoft.Extensions.Caching.Memory;
 
@@ -10,18 +11,19 @@
     public class TypeNameMap
     {
         private static readonly MemoryCacheEntryOptions CacheEntryOptions = new MemoryCacheEntryOptions()
-                                                                            .SetSize(1)
-                                                                            .SetPriority(CacheItemPriority.High)
-                                                                            .SetSlidingExpiration(TimeSpan.FromSeconds(3))
-                                                                            .SetAbsoluteExpiration(TimeSpan.FromSeconds(15));
+                                                                            .SetSize(1)?
+                                                                            .SetPriority(CacheItemPriority.High)?
+                                                                            .SetSlidingExpiration(TimeSpan.FromSeconds(3))?
+                                                                            .SetAbsoluteExpiration(TimeSpan.FromSeconds(15))!;
 
-        private static readonly MemoryCache MemoryCache = new MemoryCache(new MemoryCacheOptions { SizeLimit = 16 });
-        private readonly PooledDictionary<string, Type> cache = new PooledDictionary<string, Type>();
+        private static readonly MemoryCache MemoryCache = new (new MemoryCacheOptions { SizeLimit = 16 });
+        private readonly PooledDictionary<string, Type> cache = new ();
 
         private TypeNameMap(Type type)
         {
-            foreach (var propertyInfo in type.GetProperties())
+            for (var i = 0; i < type.GetProperties().Length; i++)
             {
+                var propertyInfo = type.GetProperties()[i];
                 this.cache.Add(propertyInfo.Name, propertyInfo.PropertyType);
             }
         }
@@ -39,9 +41,9 @@
                 MemoryCache.Set(type, cacheEntry, CacheEntryOptions);
             }
 
-            return cacheEntry;
+            return cacheEntry!;
         }
 
-        internal Type GetTypeByName(string name) => this.cache[name];
+        internal Type GetTypeByName(string name) => this.cache[name] ?? throw new NoNullAllowedException();
     }
 }
