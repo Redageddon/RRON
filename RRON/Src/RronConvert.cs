@@ -16,7 +16,7 @@
         /// <returns> A string in the format of rron data. </returns>
         public static string SerializeObject(object value, string[]? ignoreOptions = null)
         {
-            var serializer = new RronSerializer(value, ignoreOptions ?? new string[0]);
+            var serializer = new RronSerializer(value, ignoreOptions ?? Array.Empty<string>());
 
             return serializer.Serialize();
         }

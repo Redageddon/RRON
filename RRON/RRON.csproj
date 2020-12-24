@@ -10,10 +10,13 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Rubiksmaster02</Company>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <PackageVersion>5.0.0</PackageVersion>
+        <PackageVersion>1.0.0</PackageVersion>
         <Title>RRON</Title>
         <Authors>Rubiksmaster02</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Copyright>MIT</Copyright>
+        <PackageLicenseUrl></PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/Redageddon/RRON</RepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

@@ -44,6 +44,6 @@
             return cacheEntry!;
         }
 
-        internal Type GetTypeByName(string name) => this.cache[name] ?? throw new NoNullAllowedException();
+        internal Type GetTypeByName(string name) => this.cache[name];
     }
 }

@@ -30,7 +30,7 @@
 
             if (type == typeof(char))
             {
-                return char.Parse(value);
+                return value[0];
             }
 
             if (type == typeof(decimal))

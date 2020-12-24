@@ -7,7 +7,7 @@
     /// <summary>
     ///     The class responsible for deserializing rron data.
     /// </summary>
-    public class RronDeserializer
+    public readonly struct RronDeserializer
     {
         private const char Opening = '[';
         private const char Closing = ']';
@@ -17,7 +17,7 @@
         private readonly TypeNameMap map;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="RronDeserializer"/> class.
+        ///     Initializes a new instance of the <see cref="RronDeserializer"/> struct.
         /// </summary>
         /// <param name="accessor"> The accessor being acted upon. </param>
         /// <param name="map"> The type name cache being pulled from. </param>
