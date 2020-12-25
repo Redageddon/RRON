@@ -1,7 +1,6 @@
-﻿namespace RRON
+﻿namespace RRON.Deserialize
 {
     using System;
-    using System.Data;
     using Collections.Pooled;
     using Microsoft.Extensions.Caching.Memory;
 

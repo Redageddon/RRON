@@ -1,7 +1,6 @@
-﻿namespace RRON
+﻿namespace RRON.Deserialize
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     ///      Houses Split.
@@ -55,6 +54,49 @@
             }
 
             output[commaCount] = stringAsSpan.Slice(currentIndex).ToString();
+
+            return output;
+        }
+
+        internal static object[] SplitWithType(this ReadOnlySpan<char> stringAsSpan, Type type, char separator = ',', bool skipWhitespace = true, int commaCount = 0)
+        {
+            if (commaCount == 0)
+            {
+                // ReSharper disable once ForCanBeConvertedToForeach
+                for (var i = 0; i < stringAsSpan.Length; i++)
+                {
+                    if (stringAsSpan[i] == separator)
+                    {
+                        commaCount++;
+                    }
+                }
+
+                commaCount++;
+            }
+
+            object[] output = new object[commaCount];
+            commaCount = 0;
+            var currentIndex = 0;
+
+            for (var i = 0; i < stringAsSpan.Length; i++)
+            {
+                if (stringAsSpan[i] == separator)
+                {
+                    output[commaCount] = type.ConvertSpan(stringAsSpan.Slice(currentIndex, i - currentIndex));
+                    currentIndex = ++i;
+                    commaCount++;
+                }
+
+                if (skipWhitespace)
+                {
+                    while (char.IsWhiteSpace(stringAsSpan[i]))
+                    {
+                        currentIndex = ++i;
+                    }
+                }
+            }
+
+            output[commaCount] = type.ConvertSpan(stringAsSpan.Slice(currentIndex).ToString());
 
             return output;
         }

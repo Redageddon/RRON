@@ -1,13 +1,13 @@
-﻿namespace RRON
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using RRON.Deserialize;
 
+namespace RRON.Serialize
+{
     /// <summary>
     ///     The class responsible for serializing an object to an rron data string.
     /// </summary>

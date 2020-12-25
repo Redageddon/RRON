@@ -15,8 +15,8 @@
         <Authors>Rubiksmaster02</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Copyright>MIT</Copyright>
-        <PackageLicenseUrl></PackageLicenseUrl>
         <RepositoryUrl>https://github.com/Redageddon/RRON</RepositoryUrl>
+        <NoWarn>SA1009</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

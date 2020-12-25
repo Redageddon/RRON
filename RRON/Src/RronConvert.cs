@@ -1,4 +1,7 @@
-﻿namespace RRON
+﻿using RRON.Deserialize;
+using RRON.Serialize;
+
+namespace RRON
 {
     using System;
     using FastMember;
