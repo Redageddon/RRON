@@ -6,7 +6,7 @@ using RRON;
 
 namespace RronTests
 {
-    public class BanchmarkTest
+    public class BenchmarkTest
     {
         [Test]
         public void GetBenchmark() => BenchmarkRunner.Run<Benchmark>();
@@ -16,8 +16,8 @@ namespace RronTests
     public class Benchmark
     {
         private readonly string text = File.ReadAllText("data.rron");
-
+        
         [Benchmark]
-        public void Mark() => RronConvert.DeserializeObject<TestClass>(this.text);
+        public void Mark() => RronConvert.DeserializeObject<TestClass>(text);
     }
 }

@@ -15,10 +15,10 @@
         ///     Initializes a new instance of the <see cref="ValueStringReader"/> struct.
         /// </summary>
         /// <param name="value"> The string being read. </param>
-        public ValueStringReader(string value)
+        public ValueStringReader(ReadOnlySpan<char> value)
         {
             this.length = value.Length;
-            this.value = value.AsSpan();
+            this.value = value;
             this.pos = 0;
         }
 

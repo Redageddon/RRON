@@ -6,7 +6,6 @@
 
     internal static class ValueSetter
     {
-        // Partial string parsing happening in here to decrease allocations
         internal static object GetComplexCollection(
             Type propertyType,
             string[] propertyNames,
@@ -19,8 +18,8 @@
             if (propertyType.IsArray)
             {
                 var i = 0;
-                var array = Array.CreateInstance(containedType, propertyNamesLength);
 
+                var array = Array.CreateInstance(containedType, propertyNamesLength);
                 while ((currentLine = valueStringReader.ReadLine())[0] != ']')
                 {
                     var values = currentLine.Split(commaCount: propertyNamesLength);
@@ -32,8 +31,6 @@
             else
             {
                 var list = (IList)Activator.CreateInstance(propertyType)!;
-
-                // ReSharper disable once ForCanBeConvertedToForeach
                 while ((currentLine = valueStringReader.ReadLine())[0] != ']')
                 {
                     var values = currentLine.Split(commaCount: propertyNamesLength);
