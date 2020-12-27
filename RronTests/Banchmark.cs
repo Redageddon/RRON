@@ -18,6 +18,6 @@ namespace RronTests
         private readonly string text = File.ReadAllText("data.rron");
         
         [Benchmark]
-        public void Mark() => RronConvert.DeserializeObject<TestClass>(text);
+        public void Mark() => RronConvert.DeserializeObject<TestClass>(this.text!);
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace RRON
-{
-    using System;
+﻿using RRON.SpanAddons;
+using System;
 
+namespace RRON
+{ 
     /// <summary>
     ///     A limited string reader based on spans.
     /// </summary>
@@ -59,6 +60,48 @@
             }
 
             return null;
+        }
+
+        public unsafe ValueStringReaderEnumerator ReadToBlockEnd
+        {
+            get
+            {
+                fixed (int* a = &this.pos)
+                {
+                    return new ValueStringReaderEnumerator(this, a);
+                }
+            }
+        }
+
+        public ref struct ValueStringReaderEnumerator
+        {
+            private ValueStringReader reader;
+            private readonly unsafe int* pointer;
+
+            public unsafe ValueStringReaderEnumerator(ValueStringReader reader, int* ptr)
+            {
+                this.reader = reader;
+                this.Current = default;
+                this.pointer = ptr;
+            }
+
+            public ValueStringReaderEnumerator GetEnumerator() => this;
+
+            public unsafe bool MoveNext()
+            {
+                var currentLine = this.reader.ReadLine();
+                
+                *this.pointer = this.reader.pos;
+                if (currentLine[0] != ']')
+                {
+                    this.Current = currentLine.Split();
+                    return true;
+                }
+
+                return false;
+            }
+
+            public SplitEnumerator Current { get; private set; }
         }
     }
 }

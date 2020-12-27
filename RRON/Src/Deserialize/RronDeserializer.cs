@@ -1,4 +1,7 @@
-﻿namespace RRON.Deserialize
+﻿using System.Linq;
+using RRON.SpanAddons;
+
+namespace RRON.Deserialize
 {
     using System;
     using System.Collections.Generic;
@@ -56,13 +59,13 @@
                     {
                         currentLine = currentLine.Slice(1);
                         var name = GetName(currentLine, indexOfColon - 2);
-                        var propertyNames = GetPropertyNames(currentLine, indexOfColon - 1);
-                        this.accessor[name] = ValueSetter.GetComplexCollection(this.map.GetTypeByName(name), propertyNames, ref valueStringReader);
+                        var nameEnumerator = GetPropertyNameEnumerator(currentLine, indexOfColon - 1);
+                        this.accessor[name] = ValueSetter.GetComplexCollection(nameEnumerator, this.map.GetTypeByName(name), currentLine.Count(',') + 1, ref valueStringReader);
                     }
                     else
                     {
                         var name = GetName(currentLine, indexOfColon - 1);
-                        this.accessor[name] = ValueSetter.GetComplex(this.map.GetTypeByName(name), currentLine, valueStringReader.ReadLine());
+                        this.accessor[name] = ValueSetter.GetComplex(this.map.GetTypeByName(name), currentLine.Slice(indexOfColon).Trim(), valueStringReader.ReadLine());
                     }
                 }
                 else
@@ -74,7 +77,7 @@
             }
         }
 
-        private static string[] GetPropertyNames(ReadOnlySpan<char> currentLine, int indexOfColon) =>
+        private static SplitEnumerator GetPropertyNameEnumerator(ReadOnlySpan<char> currentLine, int indexOfColon) =>
             currentLine.Slice(indexOfColon + 1, currentLine.Length - indexOfColon - 1).Split();
 
         private static string GetName(ReadOnlySpan<char> currentLine, int offset) =>
