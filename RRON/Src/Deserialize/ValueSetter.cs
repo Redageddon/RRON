@@ -88,12 +88,13 @@ namespace RRON.Deserialize
         private static object CreateComplex(this Type propertyType, SplitEnumerator propertyNames, SplitEnumerator valueEnumerator)
         {
             var semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType)!);
-
+            var typeMap = TypeNameMap.GetOrCreate(propertyType);
+            
             foreach (var readOnlySpan in valueEnumerator)
             {
                 propertyNames.MoveNext();
                 var currentName = propertyNames.Current.ToString();
-                var type = propertyType.GetProperty(currentName)!.PropertyType;
+                var type = typeMap.GetTypeByName(currentName);
                 semiAccessor[currentName] = type.ConvertSpan(readOnlySpan);
             }
 

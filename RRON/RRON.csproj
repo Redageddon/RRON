@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <OutputType>Library</OutputType>
+        <OutputType>Exe</OutputType>
         <Nullable>Enable</Nullable>
         <LangVersion>Latest</LangVersion>
         <RootNamespace>RRON</RootNamespace>
@@ -25,11 +25,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Collections.Pooled" Version="1.0.82" />
         <PackageReference Include="FastMember" Version="1.5.0" />
-        <PackageReference Include="JetBrains.Profiler.Api" Version="1.1.7" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.7" />
-        <PackageReference Include="System.Memory" Version="4.5.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="data.rron">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

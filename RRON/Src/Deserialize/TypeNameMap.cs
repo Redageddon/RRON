@@ -1,28 +1,24 @@
-﻿namespace RRON.Deserialize
+﻿using System.Collections;
+
+namespace RRON.Deserialize
 {
     using System;
-    using Collections.Pooled;
-    using Microsoft.Extensions.Caching.Memory;
 
     /// <summary>
     ///     Caches a mapping of type names to their type.
     /// </summary>
-    public class TypeNameMap
+    public class TypeNameMap : IDisposable
     {
-        private static readonly MemoryCacheEntryOptions CacheEntryOptions = new MemoryCacheEntryOptions()
-                                                                            .SetSize(1)?
-                                                                            .SetPriority(CacheItemPriority.High)?
-                                                                            .SetSlidingExpiration(TimeSpan.FromSeconds(3))?
-                                                                            .SetAbsoluteExpiration(TimeSpan.FromSeconds(15))!;
-
-        private static readonly MemoryCache MemoryCache = new (new MemoryCacheOptions { SizeLimit = 16 });
-        private readonly PooledDictionary<string, Type> cache = new ();
+        private static readonly Hashtable MemoryCache = new();
+        private readonly Hashtable cache = new();
 
         private TypeNameMap(Type type)
         {
-            for (var i = 0; i < type.GetProperties().Length; i++)
+            var properties = type.GetProperties();
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < properties.Length; i++)
             {
-                var propertyInfo = type.GetProperties()[i];
+                var propertyInfo = properties[i];
                 this.cache.Add(propertyInfo.Name, propertyInfo.PropertyType);
             }
         }
@@ -34,15 +30,21 @@
         /// <returns> A map based upon <param name="type"/>. </returns>
         public static TypeNameMap GetOrCreate(Type type)
         {
-            if (!MemoryCache.TryGetValue(type, out TypeNameMap cacheEntry))
+            TypeNameMap entry;
+            if (!MemoryCache.ContainsKey(type))
             {
-                cacheEntry = new TypeNameMap(type);
-                MemoryCache.Set(type, cacheEntry, CacheEntryOptions);
+                MemoryCache.Add(type, entry = new TypeNameMap(type));
+            }
+            else
+            {
+                entry = (TypeNameMap)MemoryCache[type]!;
             }
 
-            return cacheEntry!;
+            return entry;
         }
 
-        internal Type GetTypeByName(string name) => this.cache[name]!;
+        internal Type GetTypeByName(string name) => (Type)this.cache[name]!;
+
+        public void Dispose() => MemoryCache.Clear();
     }
 }
