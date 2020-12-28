@@ -1,7 +1,6 @@
-﻿using RRON.SpanAddons;
-using System;
+﻿using System;
 
-namespace RRON
+namespace RRON.SpanAddons
 { 
     /// <summary>
     ///     A limited string reader based on spans.
@@ -59,9 +58,13 @@ namespace RRON
                 return result;
             }
 
-            return null;
+            return ReadOnlySpan<char>.Empty;
         }
 
+        /// <summary>
+        ///     Reads to the ends of a complex block.
+        /// </summary>
+        /// <returns> An iterator of all lines of the block. </returns>
         public unsafe ValueStringReaderEnumerator ReadToBlockEnd
         {
             get
@@ -73,6 +76,9 @@ namespace RRON
             }
         }
 
+        /// <summary>
+        ///     A class that iterates through all lines in a complex block.
+        /// </summary>
         public ref struct ValueStringReaderEnumerator
         {
             private ValueStringReader reader;
@@ -92,13 +98,13 @@ namespace RRON
                 var currentLine = this.reader.ReadLine();
                 
                 *this.pointer = this.reader.pos;
-                if (currentLine[0] != ']')
+                if (currentLine[0] == ']')
                 {
-                    this.Current = currentLine.Split();
-                    return true;
+                    return false;
                 }
 
-                return false;
+                this.Current = currentLine.Split();
+                return true;
             }
 
             public SplitEnumerator Current { get; private set; }

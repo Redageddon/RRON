@@ -64,7 +64,7 @@ namespace RRON.Serialize
                 }
                 else
                 {
-                    this.WriteComplex(name, propertyType, propertyValue);
+                    this.WriteComplex(name, propertyType, propertyValue!);
                 }
             }
 

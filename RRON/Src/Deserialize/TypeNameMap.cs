@@ -43,6 +43,6 @@
             return cacheEntry!;
         }
 
-        internal Type GetTypeByName(string name) => this.cache[name];
+        internal Type GetTypeByName(string name) => this.cache[name]!;
     }
 }

@@ -1,5 +1,7 @@
-﻿using RRON.Deserialize;
+﻿using System.Diagnostics.CodeAnalysis;
+using RRON.Deserialize;
 using RRON.Serialize;
+using RRON.SpanAddons;
 
 namespace RRON
 {
@@ -30,7 +32,7 @@ namespace RRON
         /// <param name="value"> The rron data being deserialized. </param>
         /// <typeparam name="T"> The compile time type to be serialized to. </typeparam>
         /// <returns> A new <typeparam name="T"/> based on <param name="value"/>. </returns>
-        public static T DeserializeObject<T>(string value) => (T)DeserializeObject(value, typeof(T));
+        public static T DeserializeObject<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]T>(string value) => (T)DeserializeObject(value, typeof(T));
         
         /// <summary>
         ///     Deserializes an object, by its generic type, from rron data.
@@ -38,7 +40,7 @@ namespace RRON
         /// <param name="value"> The rron data being deserialized. </param>
         /// <typeparam name="T"> The compile time type to be serialized to. </typeparam>
         /// <returns> A new <typeparam name="T"/> based on <param name="value"/>. </returns>
-        public static T DeserializeObject<T>(ReadOnlySpan<char> value) => (T)DeserializeObject(value, typeof(T));
+        public static T DeserializeObject<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(ReadOnlySpan<char> value) => (T)DeserializeObject(value, typeof(T));
 
         /// <summary>
         ///     Deserializes an object, by its type, from rron data.
@@ -57,7 +59,7 @@ namespace RRON
         /// <returns> A new object of type <param name="type"/>. </returns>
         public static object DeserializeObject(ReadOnlySpan<char> value, Type type)
         {
-            var accessor = ObjectAccessor.Create(Activator.CreateInstance(type));
+            var accessor = ObjectAccessor.Create(Activator.CreateInstance(type)!)!;
             var typeNameMap = TypeNameMap.GetOrCreate(type);
 
             var valueStringReader = new ValueStringReader(value);
@@ -65,7 +67,7 @@ namespace RRON
 
             rronDeserializer.DataRead(valueStringReader);
 
-            return accessor.Target;
+            return accessor.Target!;
         }
     }
 }

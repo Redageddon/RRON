@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using RRON.SpanAddons;
+﻿using RRON.SpanAddons;
 
 namespace RRON.Deserialize
 {
     using System;
-    using System.Collections.Generic;
     using FastMember;
 
     /// <summary>
@@ -13,7 +11,6 @@ namespace RRON.Deserialize
     public readonly struct RronDeserializer
     {
         private const char Opening = '[';
-        private const char Closing = ']';
         private const int Offset = 2;
 
         private readonly ObjectAccessor accessor;
@@ -38,7 +35,7 @@ namespace RRON.Deserialize
         {
             ReadOnlySpan<char> currentLine;
 
-            while ((currentLine = valueStringReader.ReadLine()) != null)
+            while ((currentLine = valueStringReader.ReadLine()) != ReadOnlySpan<char>.Empty)
             {
                 if (currentLine.IsEmpty)
                 {

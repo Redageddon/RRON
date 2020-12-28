@@ -40,14 +40,14 @@ namespace RRON.Deserialize
             }
         }
         
-        private static object ConvertCollection(this TypeSplitEnumerator source, Type containedType, Type collectionType, int count)
+        private static object ConvertCollection(this TypeSplitEnumerator typeEnumerator, Type containedType, Type collectionType, int count)
         {
             if (collectionType.IsArray)
             {
                 var array = Array.CreateInstance(containedType, count);
 
                 var i = 0;
-                foreach (var o in source)
+                foreach (var o in typeEnumerator)
                 {
                     array.SetValue(o, i++);
                 }
@@ -57,7 +57,7 @@ namespace RRON.Deserialize
 
             var list = (IList)Activator.CreateInstance(collectionType)!;
 
-            foreach (var o in source)
+            foreach (var o in typeEnumerator)
             {
                 list.Add(o);
             }

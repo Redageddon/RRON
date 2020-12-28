@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using RRON.Deserialize;
 
 namespace RRON.SpanAddons
 {
@@ -11,16 +10,18 @@ namespace RRON.SpanAddons
     {
         public static int Count(this ReadOnlySpan<char> value, char selector)
         {
-            var i = 0;
-            foreach (var c in value)
+            var count = 0;
+
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < value.Length; i++)
             {
-                if (c.Equals(selector))
+                if (value[i].Equals(selector))
                 {
-                    i++;
+                    count++;
                 }
             }
 
-            return i;
+            return count;
         }
         
         public static SplitEnumerator Split(this ReadOnlySpan<char> value) => new(value);

@@ -11,7 +11,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Rubiksmaster02</Company>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.0.2</PackageVersion>
         <Title>RRON</Title>
         <Authors>Rubiksmaster02</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
