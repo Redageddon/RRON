@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <OutputType>Exe</OutputType>
+        <OutputType>Library</OutputType>
         <Nullable>Enable</Nullable>
         <LangVersion>Latest</LangVersion>
         <RootNamespace>RRON</RootNamespace>
@@ -11,28 +11,16 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Rubiksmaster02</Company>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <PackageVersion>1.0.2</PackageVersion>
+        <PackageVersion>1.1.0</PackageVersion>
         <Title>RRON</Title>
         <Authors>Rubiksmaster02</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Copyright>MIT</Copyright>
         <RepositoryUrl>https://github.com/Redageddon/RRON</RepositoryUrl>
-        <NoWarn>SA1009</NoWarn>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="FastMember" Version="1.5.0" />
-        <PackageReference Include="JetBrains.Profiler.Api" Version="1.1.7" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="data.rron">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
 </Project>

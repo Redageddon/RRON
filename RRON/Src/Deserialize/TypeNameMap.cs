@@ -10,7 +10,7 @@ namespace RRON.Deserialize
     public class TypeNameMap
     {
         private static readonly Hashtable MemoryCache = new();
-        private readonly Hashtable cache = new();
+        private readonly Hashtable typeCache = new();
 
         private TypeNameMap(Type type)
         {
@@ -19,7 +19,7 @@ namespace RRON.Deserialize
             for (var i = 0; i < properties.Length; i++)
             {
                 var propertyInfo = properties[i];
-                this.cache.Add(propertyInfo.Name, propertyInfo.PropertyType);
+                this.typeCache.Add(propertyInfo.Name, propertyInfo.PropertyType);
             }
         }
 
@@ -43,6 +43,6 @@ namespace RRON.Deserialize
             return entry;
         }
 
-        internal Type GetTypeByName(string name) => (Type)this.cache[name]!;
+        internal Type GetTypeByName(string name) => (Type)this.typeCache[name]!;
     }
 }
