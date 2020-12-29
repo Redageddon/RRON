@@ -7,7 +7,7 @@ namespace RRON.Deserialize
     /// <summary>
     ///     Caches a mapping of type names to their type.
     /// </summary>
-    public class TypeNameMap : IDisposable
+    public class TypeNameMap
     {
         private static readonly Hashtable MemoryCache = new();
         private readonly Hashtable cache = new();
@@ -44,7 +44,5 @@ namespace RRON.Deserialize
         }
 
         internal Type GetTypeByName(string name) => (Type)this.cache[name]!;
-
-        public void Dispose() => MemoryCache.Clear();
     }
 }

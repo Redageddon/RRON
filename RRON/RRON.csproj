@@ -26,6 +26,7 @@
 
     <ItemGroup>
         <PackageReference Include="FastMember" Version="1.5.0" />
+        <PackageReference Include="JetBrains.Profiler.Api" Version="1.1.7" />
     </ItemGroup>
 
     <ItemGroup>

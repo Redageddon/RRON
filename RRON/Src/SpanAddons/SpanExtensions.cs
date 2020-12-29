@@ -109,5 +109,17 @@ namespace RRON.SpanAddons
             
             return TypeDescriptor.GetConverter(type).ConvertFromString(stringedValue)!;
         }
+
+        public static int GetValueHash<T>(this Span<T> value)
+        {
+            var hash = new HashCode();
+
+            foreach (var instance in value)
+            {
+                hash.Add(instance);
+            }
+
+            return hash.ToHashCode();
+        }
     }
 }
