@@ -1,12 +1,12 @@
 BaseSingle: 0
 
-[BaseCollection]
+[BaseCollection(2)]
 10, 20
 
 [BaseComplex: X, Y]
 10, 20
 
-[[BaseComplexCollection: X, Y]
+[[BaseComplexCollection(2): X, Y]
 10, 20
 30, 40
 ]
@@ -32,34 +32,34 @@ Enum: A
 [Class: I, E]
 16, 17
 
-[IntArray]
+[IntArray(2)]
 18, 19
 
-[IntList]
+[IntList(2)]
 20, 21
 
-[EnumArray]
+[EnumArray(2)]
 A, B
 
-[EnumList]
+[EnumList(2)]
 C, D
 
-[[StructArray: X, Y]
+[[StructArray(2): X, Y]
 25, 26
 27, 28
 ]
 
-[[StructList: X, Y]
+[[StructList(2): X, Y]
 29, 30
 31, 32
 ]
 
-[[ClassArray: I, E]
+[[ClassArray(2): I, E]
 33, 34
 35, 36
 ]
 
-[[ClassList: I, E]
+[[ClassList(2): I, E]
 37, 38
 39, 40
 ]
