@@ -57,6 +57,8 @@ namespace RronTests
     [Serializable]
     public class TestClass : Base
     {
+        public bool? NullableBool { get; set; }
+
         public bool Bool { get; set; }
 
         public byte Byte { get; set; }

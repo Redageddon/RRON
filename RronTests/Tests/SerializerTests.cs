@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
@@ -13,6 +12,7 @@ namespace RronTests.Tests
         {
             TestClass basicTests = new()
             {
+                NullableBool = true,
                 BaseSingle = 0,
                 Bool = true,
                 Byte = 1,

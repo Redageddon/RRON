@@ -76,8 +76,8 @@ namespace RronTests.Tests
         [Test]
         public void Singles()
         {
+            Assert.AreEqual(true, this.testClass.NullableBool);
             Assert.AreEqual(0, this.testClass.BaseSingle);
-
             Assert.AreEqual(true, this.testClass.Bool);
             Assert.AreEqual(1, this.testClass.Byte);
             Assert.AreEqual(2, this.testClass.Sbyte);

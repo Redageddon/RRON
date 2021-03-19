@@ -1,4 +1,5 @@
 BaseSingle: 0
+NullableBool: True
 Bool: True
 Byte: 1
 Sbyte: 2

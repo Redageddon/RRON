@@ -57,6 +57,14 @@ namespace RRON.Serialize
                     continue;
                 }
 
+                Type? probableNullableType = Nullable.GetUnderlyingType(propertyType);
+
+                if (probableNullableType != null)
+                {
+                    propertyValue = propertyType.GetProperty("Value")!.GetValue(propertyValue)!;
+                    propertyType = probableNullableType;
+                }
+
                 if (IsBasic(propertyType))
                 {
                     this.rronWriter.WriteBasic(name, propertyValue);
