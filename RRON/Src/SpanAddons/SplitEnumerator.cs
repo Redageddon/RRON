@@ -2,6 +2,11 @@
 
 namespace RRON.SpanAddons
 {
+    /// <summary>
+    ///     Splits a <see cref="ReadOnlySpan{T}"/> where T is <see cref="char"/>, by a comma.
+    ///     <see cref="ReadOnlySpan{T}"/>s cannot be passed as a collection, so the closest thing to a <see cref="ReadOnlySpan{T}"/> collection is an
+    ///     enumerator with a foreach loop.
+    /// </summary>
     public ref struct SplitEnumerator
     {
         private ReadOnlySpan<char> value;
