@@ -1,43 +1,44 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using RRON.Deserialize;
+using RRON.Extensions;
 
 namespace RRON.Serialize
 {
     /// <summary>
     ///     The class responsible for serializing an object to an rron data string.
     /// </summary>
-    public class RronSerializer
+    public class RronSerializer<T>
+        where T : notnull
     {
-        private readonly object instance;
+        private readonly T instance;
         private readonly IEnumerable<PropertyInfo> sortedProperties;
-        private readonly TextWriter textWriter = new StringWriter();
+        private readonly RronWriter rronWriter = new();
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="RronSerializer"/> class.
+        ///     Initializes a new instance of the <see cref="RronSerializer{T}"/> class.
         /// </summary>
         /// <param name="instance"> The object the values are pulled from. </param>
         /// <param name="ignoreOptions"> The properties by name being skipped. </param>
-        public RronSerializer(object instance, string[] ignoreOptions)
+        public RronSerializer(T instance, string[] ignoreOptions)
         {
             this.instance = instance;
 
-            this.sortedProperties = this.instance
-                                        .GetType()
-                                        .GetProperties()
+            Type type = instance is object
+                ? instance.GetType()
+                : typeof(T);
+
+            this.sortedProperties = type.GetProperties()
                                         .Where(e => !ignoreOptions.Contains(e.Name))
                                         .OrderBy(info => info.MetadataToken);
         }
 
-        private static string GetComplexHeader(string name, Type propertyType) =>
-            $"[{name}: {string.Join(", ", propertyType.GetProperties().Select(e => e.Name))}]";
-
-        private static bool IsASingle(Type propertyType) =>
-            propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string) || propertyType == typeof(decimal);
+        private static bool IsBasic(Type propertyType) => propertyType.IsPrimitive
+                                                       || propertyType.IsEnum
+                                                       || propertyType == typeof(string)
+                                                       || propertyType == typeof(decimal);
 
         /// <summary>
         ///     Serializes an object into rron data.
@@ -49,62 +50,32 @@ namespace RRON.Serialize
             {
                 string name = property.Name;
                 Type propertyType = property.PropertyType;
-                object? propertyValue = property.GetValue(this.instance);
+                object propertyValue = property.GetValue(this.instance) ?? string.Empty;
 
-                if (IsASingle(propertyType))
+                if (IsBasic(propertyType))
                 {
-                    this.WriteSingle(name, property);
+                    this.rronWriter.WriteBasic(name, propertyValue);
                 }
-                else if (propertyValue is IEnumerable enumValue)
+                else if (propertyValue is IEnumerable enumerable)
                 {
                     Type containedType = propertyType.GetContainedType();
-                    IEnumerable<object> enumerableValue = enumValue.OfType<object>();
 
-                    if (IsASingle(containedType))
+                    if (IsBasic(containedType))
                     {
-                        this.WriteCollection(name, enumerableValue);
+                        this.rronWriter.WriteBasicCollection(name, enumerable);
                     }
                     else
                     {
-                        this.WriteComplexCollection(name, enumerableValue, containedType);
+                        this.rronWriter.WriteComplexCollection(name, enumerable, containedType);
                     }
                 }
                 else
                 {
-                    this.WriteComplex(name, propertyType, propertyValue!);
+                    this.rronWriter.WriteComplex(name, propertyType, propertyValue);
                 }
             }
 
-            return this.textWriter.ToString()?.Trim() ?? string.Empty;
+            return this.rronWriter.ToString();
         }
-
-        private void WriteCollection(string name, IEnumerable<object> propertyValue)
-        {
-            this.textWriter.WriteLine();
-            this.textWriter.WriteLine($"[{name}]");
-            this.textWriter.WriteLine(string.Join(", ", propertyValue.Select(e => e.ToString())));
-        }
-
-        private void WriteComplex(string name, Type propertyType, object propertyValue)
-        {
-            this.textWriter.WriteLine();
-            this.textWriter.WriteLine(GetComplexHeader(name, propertyType));
-            this.textWriter.WriteLine(string.Join(", ", propertyType.GetProperties().Select(e => e.GetValue(propertyValue))));
-        }
-
-        private void WriteComplexCollection(string name, IEnumerable<object> propertyValue, Type containedType)
-        {
-            this.textWriter.WriteLine();
-            this.textWriter.Write("[");
-            this.textWriter.WriteLine(GetComplexHeader(name, containedType));
-
-            IEnumerable<string> values = propertyValue
-                .Select(e => string.Join(", ", containedType.GetProperties().Select(f => f.GetValue(e))));
-
-            this.textWriter.WriteLine(string.Join(Environment.NewLine, values));
-            this.textWriter.WriteLine("]");
-        }
-
-        private void WriteSingle(string name, PropertyInfo property) => this.textWriter.WriteLine($"{name}: {property.GetValue(this.instance)}");
     }
 }
