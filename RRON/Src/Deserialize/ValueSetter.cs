@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using FastMember;
+using RRON.Extensions;
 using RRON.SpanAddons;
 
 namespace RRON.Deserialize
 {
     internal static class ValueSetter
     {
-        private static object ConvertCollection(this TypeSplitEnumerator typeEnumerator, Type containedType, Type collectionType, int count)
+        private static object ConvertCollection(this SplitEnumerator typeEnumerator, Type containedType, Type collectionType, int count)
         {
             if (collectionType.IsArray)
             {
@@ -16,9 +17,9 @@ namespace RRON.Deserialize
 
                 int i = 0;
 
-                foreach (object? o in typeEnumerator)
+                foreach (ReadOnlySpan<char> span in typeEnumerator)
                 {
-                    array.SetValue(o, i++);
+                    array.SetValue(containedType.ConvertSpan(span), i++);
                 }
 
                 return array;
@@ -26,76 +27,76 @@ namespace RRON.Deserialize
 
             IList list = (IList)Activator.CreateInstance(collectionType)!;
 
-            foreach (object? o in typeEnumerator)
+            foreach (ReadOnlySpan<char> span in typeEnumerator)
             {
-                list.Add(o);
+                list.Add(containedType.ConvertSpan(span));
             }
 
             return list;
         }
 
-        private static object CreateComplex(this Type propertyType, SplitEnumerator propertyNames, SplitEnumerator valueEnumerator)
+        private static object CreateComplex(this Type propertyType, SplitEnumerator propertyNameEnumerator, SplitEnumerator valueEnumerator)
         {
             ObjectAccessor? semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType)!);
             Dictionary<string, Type> typeMap = TypeNameMap.GetOrCreate(propertyType);
 
             foreach (ReadOnlySpan<char> readOnlySpan in valueEnumerator)
             {
-                propertyNames.MoveNext();
-                string currentName = propertyNames.Current.ToString();
+                propertyNameEnumerator.MoveNext();
+                string currentName = propertyNameEnumerator.Current.ToString();
                 semiAccessor[currentName] = typeMap[currentName].ConvertSpan(readOnlySpan);
             }
 
             return semiAccessor.Target!;
         }
 
-        internal static object GetCollection(Type propertyType, ReadOnlySpan<char> propertyValues)
+        internal static object GetCollection(Type propertyType, ReadOnlySpan<char> propertyValues, int count)
         {
             Type containedType = propertyType.GetContainedType();
 
             return propertyValues
-                   .SplitWithType(containedType)
-                   .ConvertCollection(containedType, propertyType, propertyValues.Count(',') + 1);
+                   .GetSplitEnumerator()
+                   .ConvertCollection(containedType, propertyType, count);
         }
 
         internal static object GetComplex(Type propertyType, ReadOnlySpan<char> propertyNames, ReadOnlySpan<char> propertyValues) =>
             propertyType.CreateComplex(propertyNames.GetSplitEnumerator(), propertyValues.GetSplitEnumerator());
 
-        internal static object GetComplexCollection(SplitEnumerator propertyNames,
+        internal static object GetComplexCollection(ReadOnlySpan<char> propertyNames,
                                                     Type propertyType,
-                                                    int propertyTotal,
-                                                    ref ValueStringReader valueStringReader)
+                                                    ref ValueStringReader valueStringReader,
+                                                    int count)
         {
+            SplitEnumerator propertyNameEnumerator = propertyNames.GetSplitEnumerator();
             Type containedType = propertyType.GetContainedType();
 
             if (propertyType.IsArray)
             {
-                int i = 0;
+                Array array = Array.CreateInstance(containedType, count);
 
-                Array array = Array.CreateInstance(containedType, propertyTotal);
-
-                foreach (SplitEnumerator splitEnumerator in valueStringReader.ReadToBlockEnd)
+                for (int i = 0; i < count; i++)
                 {
-                    array.SetValue(containedType.CreateComplex(propertyNames, splitEnumerator), i++);
+                    array.SetValue(containedType.CreateComplex(propertyNameEnumerator, valueStringReader.ReadLine().GetSplitEnumerator()), i);
                 }
+
+                // Skips over the last closing bracket
+                valueStringReader.ReadLine();
 
                 return array;
             }
 
             IList list = (IList)Activator.CreateInstance(propertyType)!;
 
-            foreach (SplitEnumerator splitEnumerator in valueStringReader.ReadToBlockEnd)
+            for (int i = 0; i < count; i++)
             {
-                list.Add(containedType.CreateComplex(propertyNames, splitEnumerator));
+                list.Add(containedType.CreateComplex(propertyNameEnumerator, valueStringReader.ReadLine().GetSplitEnumerator()));
             }
+
+            // Skips over the last closing bracket
+            valueStringReader.ReadLine();
 
             return list;
         }
-
-        internal static Type GetContainedType(this Type propertyType) =>
-            (propertyType.IsArray
-                ? propertyType.GetElementType()
-                : propertyType.GetGenericArguments()[0])!;
 
         internal static object GetSingle(Type propertyType, ReadOnlySpan<char> value) => propertyType.ConvertSpan(value);
     }
