@@ -11,7 +11,8 @@ namespace RRON.Deserialize
     public readonly struct RronDeserializer
     {
         private const char Opening = '[';
-        private const int Offset = 2;
+        private const char OpeningCollectionCount = '(';
+        private const char ClosingCollectionCount = ')';
 
         private readonly ObjectAccessor accessor;
         private readonly Dictionary<string, Type> map;
@@ -43,48 +44,58 @@ namespace RRON.Deserialize
                 }
 
                 int indexOfColon = currentLine.IndexOf(':');
+                int preColonIndex = indexOfColon - 1;
+                int postColonIndex = indexOfColon + 2;
 
                 if (currentLine[0] == Opening)
                 {
-                    currentLine = currentLine[1..^(Offset - 1)];
+                    currentLine = currentLine[1..^1];
 
                     if (indexOfColon == -1)
                     {
-                        string name = GetName(currentLine, currentLine.Length);
-                        this.accessor[name] = ValueSetter.GetCollection(this.map[name], valueStringReader.ReadLine());
+                        // line is BasicCollection
+                        (string name, int count) = GetCollectionNameAndCount(currentLine);
+                        this.accessor[name] = ValueSetter.GetCollection(this.map[name], valueStringReader.ReadLine(), count);
                     }
                     else if (currentLine[0] == Opening)
                     {
+                        // line is ComplexCollection
                         currentLine = currentLine[1..];
-                        string name = GetName(currentLine, indexOfColon - 2);
-                        SplitEnumerator nameEnumerator = GetPropertyNameEnumerator(currentLine, indexOfColon - 1);
+                        (string name, int count) = GetCollectionNameAndCount(currentLine);
 
-                        this.accessor[name] = ValueSetter.GetComplexCollection(nameEnumerator,
+                        this.accessor[name] = ValueSetter.GetComplexCollection(currentLine[indexOfColon..],
                                                                                this.map[name],
-                                                                               currentLine.Count(',') + 1,
-                                                                               ref valueStringReader);
+                                                                               ref valueStringReader,
+                                                                               count);
                     }
                     else
                     {
-                        string name = GetName(currentLine, indexOfColon - 1);
+                        // line is Complex
+                        string name = GetNonCollectionName(currentLine, preColonIndex);
 
                         this.accessor[name] = ValueSetter.GetComplex(this.map[name],
-                                                                     currentLine[indexOfColon..].Trim(),
+                                                                     currentLine[indexOfColon..].TrimStart(),
                                                                      valueStringReader.ReadLine());
                     }
                 }
                 else
                 {
-                    string name = GetName(currentLine, indexOfColon);
-                    ReadOnlySpan<char> value = currentLine[(indexOfColon + Offset)..];
+                    // line is Basic
+                    string name = GetNonCollectionName(currentLine, indexOfColon);
+                    ReadOnlySpan<char> value = currentLine[postColonIndex..];
                     this.accessor[name] = ValueSetter.GetSingle(this.map[name], value);
                 }
             }
         }
 
-        private static SplitEnumerator GetPropertyNameEnumerator(ReadOnlySpan<char> currentLine, int indexOfColon) =>
-            currentLine.Slice(indexOfColon + 1, currentLine.Length - indexOfColon - 1).GetSplitEnumerator();
+        private static string GetNonCollectionName(ReadOnlySpan<char> currentLine, int indexOfColon) => currentLine[..indexOfColon].ToString();
 
-        private static string GetName(ReadOnlySpan<char> currentLine, int offset) => currentLine[..offset].ToString();
+        private static (string name, int count) GetCollectionNameAndCount(ReadOnlySpan<char> currentLine)
+        {
+            int collectionCountStart = currentLine.IndexOf(OpeningCollectionCount);
+            int collectionCountEnd = currentLine.IndexOf(ClosingCollectionCount);
+
+            return (currentLine[..collectionCountStart].ToString(), int.Parse(currentLine[(collectionCountStart + 1)..collectionCountEnd]));
+        }
     }
 }
