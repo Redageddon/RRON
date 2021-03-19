@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using RRON.SpanAddons;
 
-namespace RRON.SpanAddons
+namespace RRON.Extensions
 {
     /// <summary>
-    ///     Houses all extension methods for a ReadOnlySpan{char}
+    ///     Houses all extension methods.
     /// </summary>
-    public static class SpanExtensions
+    public static partial class Extensions
     {
         public static object ConvertSpan(this Type type, ReadOnlySpan<char> value)
         {
@@ -106,7 +107,5 @@ namespace RRON.SpanAddons
         }
 
         public static SplitEnumerator GetSplitEnumerator(this ReadOnlySpan<char> value) => new(value);
-
-        public static TypeSplitEnumerator SplitWithType(this ReadOnlySpan<char> value, Type type) => new(value, type);
     }
 }
