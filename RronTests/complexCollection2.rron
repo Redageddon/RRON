@@ -1,0 +1,29 @@
+[[BaseComplexCollection(3): X, Y]
+1, 2
+2, 4
+3, 6
+]
+
+[[StructArray(3): X, Y]
+1, 2
+2, 4
+3, 6
+]
+
+[[StructList(3): X, Y]
+1, 2
+2, 4
+3, 6
+]
+
+[[ClassArray(3): I, E]
+1, 2
+2, 4
+3, 6
+]
+
+[[ClassList(3): I, E]
+1, 2
+2, 4
+3, 6
+]

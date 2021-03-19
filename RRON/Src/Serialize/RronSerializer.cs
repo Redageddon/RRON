@@ -31,8 +31,8 @@ namespace RRON.Serialize
                 : typeof(T);
 
             this.sortedProperties = type.GetProperties()
-                                        .Where(e => !ignoreOptions.Contains(e.Name))
-                                        .OrderBy(info => info.MetadataToken);
+                                        .Where(propertyInfo => !ignoreOptions.Contains(propertyInfo.Name))
+                                        .OrderBy(propertyInfo => propertyInfo.MetadataToken);
         }
 
         private static bool IsBasic(Type propertyType) => propertyType.IsPrimitive
@@ -50,7 +50,12 @@ namespace RRON.Serialize
             {
                 string name = property.Name;
                 Type propertyType = property.PropertyType;
-                object propertyValue = property.GetValue(this.instance) ?? string.Empty;
+                object? propertyValue = property.GetValue(this.instance);
+
+                if (propertyValue is null)
+                {
+                    continue;
+                }
 
                 if (IsBasic(propertyType))
                 {
@@ -75,7 +80,7 @@ namespace RRON.Serialize
                 }
             }
 
-            return this.rronWriter.ToString();
+            return this.rronWriter.ToString().Trim();
         }
     }
 }

@@ -8,23 +8,12 @@ namespace RronTests.Tests
 {
     public class SerializerTests
     {
-        private string test;
-
         [Test]
-        public void DataWrite() => Console.WriteLine(this.test);
-
-        [Test]
-        public void MatchesFile() => Assert.AreEqual(File.ReadAllText("data.rron"), this.test);
-
-        [SetUp]
-        public void Setup()
+        public void BasicTests()
         {
-            TestClass settings = new()
+            TestClass basicTests = new()
             {
                 BaseSingle = 0,
-                BaseCollection = new[] { 10, 20 },
-                BaseComplex = new Vector2(10, 20),
-                BaseComplexCollection = new[] { new Vector2(10, 20), new Vector2(30, 40) },
                 Bool = true,
                 Byte = 1,
                 Sbyte = 2,
@@ -40,8 +29,55 @@ namespace RronTests.Tests
                 Ushort = 12,
                 String = "13",
                 Enum = Enum.A,
+            };
+
+            string actual = RronConvert.SerializeObject(basicTests, new[]
+            {
+                nameof(TestClass.BaseComplex),
+                nameof(TestClass.Struct),
+            });
+
+            Assert.AreEqual(File.ReadAllText("basic.rron"), actual);
+        }
+
+        [Test]
+        public void ComplexTests()
+        {
+            TestClass complexTests = new()
+            {
+                BaseComplex = new Vector2(10, 20),
                 Struct = new Vector2(14.0f, 15.0f),
                 Class = new InClass(16, 17),
+            };
+
+            string actual = RronConvert.SerializeObject(complexTests, new[]
+            {
+                nameof(TestClass.BaseSingle),
+                nameof(TestClass.Bool),
+                nameof(TestClass.Byte),
+                nameof(TestClass.Sbyte),
+                nameof(TestClass.Char),
+                nameof(TestClass.Decimal),
+                nameof(TestClass.Double),
+                nameof(TestClass.Float),
+                nameof(TestClass.Int),
+                nameof(TestClass.Uint),
+                nameof(TestClass.Long),
+                nameof(TestClass.Ulong),
+                nameof(TestClass.Short),
+                nameof(TestClass.Ushort),
+                nameof(TestClass.Enum),
+            });
+
+            Assert.AreEqual(File.ReadAllText("complex.rron"), actual);
+        }
+
+        [Test]
+        public void BasicCollectionTests()
+        {
+            TestClass collectionTests = new()
+            {
+                BaseCollection = new[] { 10, 20 },
                 IntArray = new[] { 18, 19 },
                 IntList = new List<int>
                 {
@@ -54,13 +90,45 @@ namespace RronTests.Tests
                     Enum.C,
                     Enum.D,
                 },
-                StructArray = new[] { new Vector2(25, 26), new Vector2(27, 28) },
+            };
+
+            string actual = RronConvert.SerializeObject(collectionTests, new[]
+            {
+                nameof(TestClass.BaseSingle),
+                nameof(TestClass.Bool),
+                nameof(TestClass.Byte),
+                nameof(TestClass.Sbyte),
+                nameof(TestClass.Char),
+                nameof(TestClass.Decimal),
+                nameof(TestClass.Double),
+                nameof(TestClass.Float),
+                nameof(TestClass.Int),
+                nameof(TestClass.Uint),
+                nameof(TestClass.Long),
+                nameof(TestClass.Ulong),
+                nameof(TestClass.Short),
+                nameof(TestClass.Ushort),
+                nameof(TestClass.Enum),
+                nameof(TestClass.BaseComplex),
+                nameof(TestClass.Struct),
+            });
+
+            Assert.AreEqual(File.ReadAllText("basicCollection.rron"), actual);
+        }
+
+        [Test]
+        public void ComplexCollectionTests()
+        {
+            TestClass complexCollectionTests1 = new()
+            {
+                BaseComplexCollection = new Vector2[] { new(10, 20), new(30, 40) },
+                StructArray = new Vector2[] { new(25, 26), new(27, 28) },
                 StructList = new List<Vector2>
                 {
                     new(29, 30),
                     new(31, 32),
                 },
-                ClassArray = new[] { new InClass(33, 34), new InClass(35, 36) },
+                ClassArray = new InClass[] { new(33, 34), new(35, 36) },
                 ClassList = new List<InClass>
                 {
                     new(37, 38),
@@ -68,7 +136,84 @@ namespace RronTests.Tests
                 },
             };
 
-            this.test = RronConvert.SerializeObject(settings);
+            TestClass complexCollectionTests2 = new()
+            {
+                BaseComplexCollection = new Vector2[]
+                {
+                    new(1, 2),
+                    new(2, 4),
+                    new(3, 6),
+                },
+                StructArray = new Vector2[]
+                {
+                    new(1, 2),
+                    new(2, 4),
+                    new(3, 6),
+                },
+                StructList = new List<Vector2>
+                {
+                    new(1, 2),
+                    new(2, 4),
+                    new(3, 6),
+                },
+                ClassArray = new InClass[]
+                {
+                    new(1, 2),
+                    new(2, 4),
+                    new(3, 6),
+                },
+                ClassList = new List<InClass>
+                {
+                    new(1, 2),
+                    new(2, 4),
+                    new(3, 6),
+                },
+            };
+
+            string actual1 = RronConvert.SerializeObject(complexCollectionTests1, new[]
+            {
+                nameof(TestClass.BaseSingle),
+                nameof(TestClass.Bool),
+                nameof(TestClass.Byte),
+                nameof(TestClass.Sbyte),
+                nameof(TestClass.Char),
+                nameof(TestClass.Decimal),
+                nameof(TestClass.Double),
+                nameof(TestClass.Float),
+                nameof(TestClass.Int),
+                nameof(TestClass.Uint),
+                nameof(TestClass.Long),
+                nameof(TestClass.Ulong),
+                nameof(TestClass.Short),
+                nameof(TestClass.Ushort),
+                nameof(TestClass.Enum),
+                nameof(TestClass.BaseComplex),
+                nameof(TestClass.Struct),
+            });
+
+            string actual2 = RronConvert.SerializeObject(complexCollectionTests2, new[]
+            {
+                nameof(TestClass.BaseSingle),
+                nameof(TestClass.Bool),
+                nameof(TestClass.Byte),
+                nameof(TestClass.Sbyte),
+                nameof(TestClass.Char),
+                nameof(TestClass.Decimal),
+                nameof(TestClass.Double),
+                nameof(TestClass.Float),
+                nameof(TestClass.Int),
+                nameof(TestClass.Uint),
+                nameof(TestClass.Long),
+                nameof(TestClass.Ulong),
+                nameof(TestClass.Short),
+                nameof(TestClass.Ushort),
+                nameof(TestClass.Enum),
+                nameof(TestClass.BaseComplex),
+                nameof(TestClass.Struct),
+            });
+
+            Assert.AreEqual(File.ReadAllText("complexCollection1.rron"), actual1);
+            Assert.AreEqual(File.ReadAllText("complexCollection2.rron"), actual2);
         }
     }
 }

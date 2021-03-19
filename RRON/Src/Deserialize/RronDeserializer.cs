@@ -55,6 +55,7 @@ namespace RRON.Deserialize
                     {
                         // line is BasicCollection
                         (string name, int count) = GetCollectionNameAndCount(currentLine);
+
                         this.accessor[name] = ValueSetter.GetCollection(this.map[name], valueStringReader.ReadLine(), count);
                     }
                     else if (currentLine[0] == Opening)
@@ -71,7 +72,7 @@ namespace RRON.Deserialize
                     else
                     {
                         // line is Complex
-                        string name = GetNonCollectionName(currentLine, preColonIndex);
+                        string name = currentLine[..preColonIndex].ToString();
 
                         this.accessor[name] = ValueSetter.GetComplex(this.map[name],
                                                                      currentLine[indexOfColon..].TrimStart(),
@@ -81,14 +82,12 @@ namespace RRON.Deserialize
                 else
                 {
                     // line is Basic
-                    string name = GetNonCollectionName(currentLine, indexOfColon);
-                    ReadOnlySpan<char> value = currentLine[postColonIndex..];
-                    this.accessor[name] = ValueSetter.GetSingle(this.map[name], value);
+                    string name = currentLine[..indexOfColon].ToString();
+
+                    this.accessor[name] = ValueSetter.GetSingle(this.map[name], currentLine[postColonIndex..]);
                 }
             }
         }
-
-        private static string GetNonCollectionName(ReadOnlySpan<char> currentLine, int indexOfColon) => currentLine[..indexOfColon].ToString();
 
         private static (string name, int count) GetCollectionNameAndCount(ReadOnlySpan<char> currentLine)
         {

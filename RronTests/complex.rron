@@ -1,0 +1,8 @@
+[BaseComplex: X, Y]
+10, 20
+
+[Struct: X, Y]
+14, 15
+
+[Class: I, E]
+16, 17

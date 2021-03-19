@@ -1,0 +1,14 @@
+[BaseCollection(2)]
+10, 20
+
+[IntArray(2)]
+18, 19
+
+[IntList(2)]
+20, 21
+
+[EnumArray(2)]
+A, B
+
+[EnumList(2)]
+C, D

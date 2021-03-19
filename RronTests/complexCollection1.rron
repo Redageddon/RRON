@@ -1,0 +1,24 @@
+[[BaseComplexCollection(2): X, Y]
+10, 20
+30, 40
+]
+
+[[StructArray(2): X, Y]
+25, 26
+27, 28
+]
+
+[[StructList(2): X, Y]
+29, 30
+31, 32
+]
+
+[[ClassArray(2): I, E]
+33, 34
+35, 36
+]
+
+[[ClassList(2): I, E]
+37, 38
+39, 40
+]
