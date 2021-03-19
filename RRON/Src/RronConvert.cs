@@ -42,9 +42,10 @@ namespace RRON
         /// <param name="value">The object being serialized.</param>
         /// <param name="ignoreOptions">The property names being skipped in serialization.</param>
         /// <returns>A string in the format of rron data.</returns>
-        public static string SerializeObject(object value, string[]? ignoreOptions = null)
+        public static string SerializeObject<T>(T value, string[]? ignoreOptions = null)
+            where T : notnull
         {
-            RronSerializer serializer = new(value, ignoreOptions ?? Array.Empty<string>());
+            RronSerializer<T> serializer = new(value, ignoreOptions ?? Array.Empty<string>());
 
             return serializer.Serialize();
         }
