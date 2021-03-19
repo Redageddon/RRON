@@ -15,7 +15,7 @@ namespace RronTests
     [Serializable]
     public class InClass
     {
-        public InClass() { }
+        public InClass() {}
 
         public InClass(int i, int e)
         {
@@ -27,7 +27,7 @@ namespace RronTests
 
         public int E { get; set; }
     }
-    
+
     [Serializable]
     public struct Vector2
     {
@@ -46,8 +46,11 @@ namespace RronTests
     public class Base
     {
         public int BaseSingle { get; set; }
+
         public int[] BaseCollection { get; set; }
+
         public Vector2 BaseComplex { get; set; }
+
         public Vector2[] BaseComplexCollection { get; set; }
     }
 

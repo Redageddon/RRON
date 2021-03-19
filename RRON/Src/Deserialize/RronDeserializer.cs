@@ -1,10 +1,10 @@
-﻿using RRON.SpanAddons;
+﻿using System;
+using System.Collections.Generic;
+using FastMember;
+using RRON.SpanAddons;
 
 namespace RRON.Deserialize
 {
-    using System;
-    using FastMember;
-
     /// <summary>
     ///     The class responsible for deserializing rron data.
     /// </summary>
@@ -14,14 +14,14 @@ namespace RRON.Deserialize
         private const int Offset = 2;
 
         private readonly ObjectAccessor accessor;
-        private readonly TypeNameMap map;
+        private readonly Dictionary<string, Type> map;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RronDeserializer"/> struct.
         /// </summary>
         /// <param name="accessor"> The accessor being acted upon. </param>
         /// <param name="map"> The type name cache being pulled from. </param>
-        public RronDeserializer(ObjectAccessor accessor, TypeNameMap map)
+        public RronDeserializer(ObjectAccessor accessor, Dictionary<string, Type> map)
         {
             this.accessor = accessor;
             this.map = map;
@@ -42,42 +42,49 @@ namespace RRON.Deserialize
                     continue;
                 }
 
-                var indexOfColon = currentLine.IndexOf(':');
+                int indexOfColon = currentLine.IndexOf(':');
 
                 if (currentLine[0] == Opening)
                 {
-                    currentLine = currentLine.Slice(1, currentLine.Length - Offset);
+                    currentLine = currentLine[1..^(Offset - 1)];
+
                     if (indexOfColon == -1)
                     {
-                        var name = GetName(currentLine, currentLine.Length);
-                        this.accessor[name] = ValueSetter.GetCollection(this.map.GetTypeByName(name), valueStringReader.ReadLine());
+                        string name = GetName(currentLine, currentLine.Length);
+                        this.accessor[name] = ValueSetter.GetCollection(this.map[name], valueStringReader.ReadLine());
                     }
                     else if (currentLine[0] == Opening)
                     {
-                        currentLine = currentLine.Slice(1);
-                        var name = GetName(currentLine, indexOfColon - 2);
-                        var nameEnumerator = GetPropertyNameEnumerator(currentLine, indexOfColon - 1);
-                        this.accessor[name] = ValueSetter.GetComplexCollection(nameEnumerator, this.map.GetTypeByName(name), currentLine.Count(',') + 1, ref valueStringReader);
+                        currentLine = currentLine[1..];
+                        string name = GetName(currentLine, indexOfColon - 2);
+                        SplitEnumerator nameEnumerator = GetPropertyNameEnumerator(currentLine, indexOfColon - 1);
+
+                        this.accessor[name] = ValueSetter.GetComplexCollection(nameEnumerator,
+                                                                               this.map[name],
+                                                                               currentLine.Count(',') + 1,
+                                                                               ref valueStringReader);
                     }
                     else
                     {
-                        var name = GetName(currentLine, indexOfColon - 1);
-                        this.accessor[name] = ValueSetter.GetComplex(this.map.GetTypeByName(name), currentLine.Slice(indexOfColon).Trim(), valueStringReader.ReadLine());
+                        string name = GetName(currentLine, indexOfColon - 1);
+
+                        this.accessor[name] = ValueSetter.GetComplex(this.map[name],
+                                                                     currentLine[indexOfColon..].Trim(),
+                                                                     valueStringReader.ReadLine());
                     }
                 }
                 else
                 {
-                    var name = GetName(currentLine, indexOfColon);
-                    var value = currentLine.Slice(indexOfColon + Offset);
-                    this.accessor[name] = ValueSetter.GetSingle(this.map.GetTypeByName(name), value);
+                    string name = GetName(currentLine, indexOfColon);
+                    ReadOnlySpan<char> value = currentLine[(indexOfColon + Offset)..];
+                    this.accessor[name] = ValueSetter.GetSingle(this.map[name], value);
                 }
             }
         }
 
         private static SplitEnumerator GetPropertyNameEnumerator(ReadOnlySpan<char> currentLine, int indexOfColon) =>
-            currentLine.Slice(indexOfColon + 1, currentLine.Length - indexOfColon - 1).Split();
+            currentLine.Slice(indexOfColon + 1, currentLine.Length - indexOfColon - 1).GetSplitEnumerator();
 
-        private static string GetName(ReadOnlySpan<char> currentLine, int offset) =>
-            currentLine.Slice(0, offset).ToString();
+        private static string GetName(ReadOnlySpan<char> currentLine, int offset) => currentLine[..offset].ToString();
     }
 }

@@ -9,11 +9,11 @@
         <AssemblyName>RRON</AssemblyName>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Company>Rubiksmaster02</Company>
+        <Company>Redageddon</Company>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageVersion>1.1.0</PackageVersion>
         <Title>RRON</Title>
-        <Authors>Rubiksmaster02</Authors>
+        <Authors>Redageddon</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Copyright>MIT</Copyright>
         <RepositoryUrl>https://github.com/Redageddon/RRON</RepositoryUrl>

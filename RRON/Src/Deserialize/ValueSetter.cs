@@ -1,53 +1,22 @@
-﻿using RRON.SpanAddons;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using FastMember;
+using RRON.SpanAddons;
 
 namespace RRON.Deserialize
 {
-    using System;
-    using System.Collections;
-    using FastMember;
-
     internal static class ValueSetter
     {
-        internal static object GetComplexCollection(
-            SplitEnumerator propertyNames,
-            Type propertyType,
-            int propertyTotal,
-            ref ValueStringReader valueStringReader)
-        {
-            var containedType = propertyType.GetContainedType();
-
-            if (propertyType.IsArray)
-            {
-                var i = 0;
-
-                var array = Array.CreateInstance(containedType, propertyTotal);
-                foreach (var splitEnumerator in valueStringReader.ReadToBlockEnd)
-                {
-                    array.SetValue(containedType.CreateComplex(propertyNames, splitEnumerator), i++);
-                }
-
-                return array;
-            }
-            else
-            {
-                var list = (IList)Activator.CreateInstance(propertyType)!;
-                foreach (var splitEnumerator in valueStringReader.ReadToBlockEnd)
-                {
-                    list.Add(containedType.CreateComplex(propertyNames, splitEnumerator));
-                }
-
-                return list;
-            }
-        }
-        
         private static object ConvertCollection(this TypeSplitEnumerator typeEnumerator, Type containedType, Type collectionType, int count)
         {
             if (collectionType.IsArray)
             {
-                var array = Array.CreateInstance(containedType, count);
+                Array array = Array.CreateInstance(containedType, count);
 
-                var i = 0;
-                foreach (var o in typeEnumerator)
+                int i = 0;
+
+                foreach (object? o in typeEnumerator)
                 {
                     array.SetValue(o, i++);
                 }
@@ -55,14 +24,29 @@ namespace RRON.Deserialize
                 return array;
             }
 
-            var list = (IList)Activator.CreateInstance(collectionType)!;
+            IList list = (IList)Activator.CreateInstance(collectionType)!;
 
-            foreach (var o in typeEnumerator)
+            foreach (object? o in typeEnumerator)
             {
                 list.Add(o);
             }
 
             return list;
+        }
+
+        private static object CreateComplex(this Type propertyType, SplitEnumerator propertyNames, SplitEnumerator valueEnumerator)
+        {
+            ObjectAccessor? semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType)!);
+            Dictionary<string, Type> typeMap = TypeNameMap.GetOrCreate(propertyType);
+
+            foreach (ReadOnlySpan<char> readOnlySpan in valueEnumerator)
+            {
+                propertyNames.MoveNext();
+                string currentName = propertyNames.Current.ToString();
+                semiAccessor[currentName] = typeMap[currentName].ConvertSpan(readOnlySpan);
+            }
+
+            return semiAccessor.Target!;
         }
 
         internal static object GetCollection(Type propertyType, ReadOnlySpan<char> propertyValues)
@@ -75,30 +59,44 @@ namespace RRON.Deserialize
         }
 
         internal static object GetComplex(Type propertyType, ReadOnlySpan<char> propertyNames, ReadOnlySpan<char> propertyValues) =>
-            propertyType.CreateComplex(propertyNames.Split(), propertyValues.Split());
+            propertyType.CreateComplex(propertyNames.GetSplitEnumerator(), propertyValues.GetSplitEnumerator());
 
-        internal static object GetSingle(Type propertyType, ReadOnlySpan<char> value) =>
-            propertyType.ConvertSpan(value);
+        internal static object GetComplexCollection(SplitEnumerator propertyNames,
+                                                    Type propertyType,
+                                                    int propertyTotal,
+                                                    ref ValueStringReader valueStringReader)
+        {
+            Type containedType = propertyType.GetContainedType();
+
+            if (propertyType.IsArray)
+            {
+                int i = 0;
+
+                Array array = Array.CreateInstance(containedType, propertyTotal);
+
+                foreach (SplitEnumerator splitEnumerator in valueStringReader.ReadToBlockEnd)
+                {
+                    array.SetValue(containedType.CreateComplex(propertyNames, splitEnumerator), i++);
+                }
+
+                return array;
+            }
+
+            IList list = (IList)Activator.CreateInstance(propertyType)!;
+
+            foreach (SplitEnumerator splitEnumerator in valueStringReader.ReadToBlockEnd)
+            {
+                list.Add(containedType.CreateComplex(propertyNames, splitEnumerator));
+            }
+
+            return list;
+        }
 
         internal static Type GetContainedType(this Type propertyType) =>
             (propertyType.IsArray
                 ? propertyType.GetElementType()
                 : propertyType.GetGenericArguments()[0])!;
 
-        private static object CreateComplex(this Type propertyType, SplitEnumerator propertyNames, SplitEnumerator valueEnumerator)
-        {
-            var semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType)!);
-            var typeMap = TypeNameMap.GetOrCreate(propertyType);
-            
-            foreach (var readOnlySpan in valueEnumerator)
-            {
-                propertyNames.MoveNext();
-                var currentName = propertyNames.Current.ToString();
-                var type = typeMap.GetTypeByName(currentName);
-                semiAccessor[currentName] = type.ConvertSpan(readOnlySpan);
-            }
-
-            return semiAccessor.Target!;
-        }
+        internal static object GetSingle(Type propertyType, ReadOnlySpan<char> value) => propertyType.ConvertSpan(value);
     }
 }

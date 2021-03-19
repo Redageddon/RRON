@@ -12,7 +12,7 @@ namespace RRON.SpanAddons
             this.Current = default;
         }
 
-        public SplitEnumerator GetEnumerator() => this;
+        public readonly SplitEnumerator GetEnumerator() => this;
 
         public bool MoveNext()
         {
@@ -20,8 +20,8 @@ namespace RRON.SpanAddons
             {
                 return false;
             }
-            
-            var index = this.value.IndexOf(',');
+
+            int index = this.value.IndexOf(',');
 
             if (index == -1)
             {
@@ -31,11 +31,12 @@ namespace RRON.SpanAddons
                 return true;
             }
 
-            this.Current = this.value.Slice(0, index);
+            this.Current = this.value[..index];
 
-            while (char.IsWhiteSpace(this.value[++index])) { }
+            // skips all whitespace
+            while (char.IsWhiteSpace(this.value[++index])) {}
 
-            this.value = this.value.Slice(index);
+            this.value = this.value[index..];
 
             return true;
         }

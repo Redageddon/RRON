@@ -18,19 +18,26 @@ namespace RRON.Serialize
         private readonly TextWriter textWriter = new StringWriter();
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="RronSerializer" /> class.
+        ///     Initializes a new instance of the <see cref="RronSerializer"/> class.
         /// </summary>
         /// <param name="instance"> The object the values are pulled from. </param>
         /// <param name="ignoreOptions"> The properties by name being skipped. </param>
         public RronSerializer(object instance, string[] ignoreOptions)
         {
             this.instance = instance;
+
             this.sortedProperties = this.instance
                                         .GetType()
                                         .GetProperties()
                                         .Where(e => !ignoreOptions.Contains(e.Name))
                                         .OrderBy(info => info.MetadataToken);
         }
+
+        private static string GetComplexHeader(string name, Type propertyType) =>
+            $"[{name}: {string.Join(", ", propertyType.GetProperties().Select(e => e.Name))}]";
+
+        private static bool IsASingle(Type propertyType) =>
+            propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string) || propertyType == typeof(decimal);
 
         /// <summary>
         ///     Serializes an object into rron data.
@@ -40,9 +47,9 @@ namespace RRON.Serialize
         {
             foreach (var property in this.sortedProperties)
             {
-                var name = property.Name;
-                var propertyType = property.PropertyType;
-                var propertyValue = property.GetValue(this.instance);
+                string name = property.Name;
+                Type propertyType = property.PropertyType;
+                object? propertyValue = property.GetValue(this.instance);
 
                 if (IsASingle(propertyType))
                 {
@@ -50,8 +57,8 @@ namespace RRON.Serialize
                 }
                 else if (propertyValue is IEnumerable enumValue)
                 {
-                    var containedType = propertyType.GetContainedType();
-                    var enumerableValue = enumValue.OfType<object>();
+                    Type containedType = propertyType.GetContainedType();
+                    IEnumerable<object> enumerableValue = enumValue.OfType<object>();
 
                     if (IsASingle(containedType))
                     {
@@ -70,17 +77,6 @@ namespace RRON.Serialize
 
             return this.textWriter.ToString()?.Trim() ?? string.Empty;
         }
-
-        private static string GetComplexHeader(string name, Type propertyType) => $"[{name}: {string.Join(", ", propertyType.GetProperties().Select(e => e.Name))}]";
-
-        private static bool IsASingle(Type propertyType) =>
-            propertyType.IsPrimitive ||
-            propertyType.IsEnum ||
-            propertyType == typeof(string) ||
-            propertyType == typeof(decimal);
-
-        private void WriteSingle(string name, PropertyInfo property) =>
-            this.textWriter.WriteLine($"{name}: {property.GetValue(this.instance)}");
 
         private void WriteCollection(string name, IEnumerable<object> propertyValue)
         {
@@ -102,11 +98,13 @@ namespace RRON.Serialize
             this.textWriter.Write("[");
             this.textWriter.WriteLine(GetComplexHeader(name, containedType));
 
-            var values = propertyValue
+            IEnumerable<string> values = propertyValue
                 .Select(e => string.Join(", ", containedType.GetProperties().Select(f => f.GetValue(e))));
 
             this.textWriter.WriteLine(string.Join(Environment.NewLine, values));
             this.textWriter.WriteLine("]");
         }
+
+        private void WriteSingle(string name, PropertyInfo property) => this.textWriter.WriteLine($"{name}: {property.GetValue(this.instance)}");
     }
 }

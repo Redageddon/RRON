@@ -14,7 +14,7 @@ namespace RRON.SpanAddons
             this.type = type;
         }
 
-        public TypeSplitEnumerator GetEnumerator() => this;
+        public readonly TypeSplitEnumerator GetEnumerator() => this;
 
         public bool MoveNext()
         {
@@ -23,7 +23,8 @@ namespace RRON.SpanAddons
                 return false;
             }
 
-            var index = this.value.IndexOf(',');
+            int index = this.value.IndexOf(',');
+
             if (index == -1)
             {
                 this.Current = this.type.ConvertSpan(this.value);
@@ -32,11 +33,11 @@ namespace RRON.SpanAddons
                 return true;
             }
 
-            this.Current = this.type.ConvertSpan(this.value.Slice(0, index));
+            this.Current = this.type.ConvertSpan(this.value[..index]);
 
-            while (char.IsWhiteSpace(this.value[++index])) { }
+            while (char.IsWhiteSpace(this.value[++index])) {}
 
-            this.value = this.value.Slice(index);
+            this.value = this.value[index..];
 
             return true;
         }

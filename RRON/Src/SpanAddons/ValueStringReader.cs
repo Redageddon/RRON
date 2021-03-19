@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace RRON.SpanAddons
-{ 
+{
     /// <summary>
     ///     A limited string reader based on spans.
     /// </summary>
@@ -28,20 +28,21 @@ namespace RRON.SpanAddons
         /// <returns> A new line in the form of a span. </returns>
         public ReadOnlySpan<char> ReadLine()
         {
-            var i = this.pos;
+            int i = this.pos;
+
             for (; i < this.length; i++)
             {
-                var currentChar = this.value[i];
+                char currentChar = this.value[i];
 
-                if (currentChar == '\r' ||
-                    currentChar == '\n')
+                if (currentChar == '\r'
+                 || currentChar == '\n')
                 {
-                    var result = this.value.Slice(this.pos, i - this.pos);
+                    ReadOnlySpan<char> result = this.value.Slice(this.pos, i - this.pos);
                     this.pos = 1 + i;
 
-                    if (currentChar == '\r' &&
-                        this.pos < this.length &&
-                        this.value[this.pos] == '\n')
+                    if (currentChar == '\r'
+                     && this.pos < this.length
+                     && this.value[this.pos] == '\n')
                     {
                         this.pos++;
                     }
@@ -52,7 +53,7 @@ namespace RRON.SpanAddons
 
             if (i > this.pos)
             {
-                var result = this.value.Slice(this.pos, i - this.pos);
+                ReadOnlySpan<char> result = this.value.Slice(this.pos, i - this.pos);
                 this.pos = i;
 
                 return result;
@@ -71,7 +72,7 @@ namespace RRON.SpanAddons
             {
                 fixed (int* a = &this.pos)
                 {
-                    return new ValueStringReaderEnumerator(this, a);
+                    return new ValueStringReaderEnumerator(ref this, a);
                 }
             }
         }
@@ -84,26 +85,28 @@ namespace RRON.SpanAddons
             private ValueStringReader reader;
             private readonly unsafe int* pointer;
 
-            public unsafe ValueStringReaderEnumerator(ValueStringReader reader, int* ptr)
+            public unsafe ValueStringReaderEnumerator(ref ValueStringReader reader, int* ptr)
             {
                 this.reader = reader;
                 this.Current = default;
                 this.pointer = ptr;
             }
 
-            public ValueStringReaderEnumerator GetEnumerator() => this;
+            public readonly ValueStringReaderEnumerator GetEnumerator() => this;
 
             public unsafe bool MoveNext()
             {
-                var currentLine = this.reader.ReadLine();
-                
+                ReadOnlySpan<char> currentLine = this.reader.ReadLine();
+
                 *this.pointer = this.reader.pos;
+
                 if (currentLine[0] == ']')
                 {
                     return false;
                 }
 
-                this.Current = currentLine.Split();
+                this.Current = currentLine.GetSplitEnumerator();
+
                 return true;
             }
 
