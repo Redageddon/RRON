@@ -30,12 +30,11 @@ namespace RRON.SpanAddons
         {
             int i = this.pos;
 
-            for (; i < this.length; i++)
+            while (i < this.length)
             {
                 char currentChar = this.value[i];
 
-                if (currentChar == '\r'
-                 || currentChar == '\n')
+                if (currentChar is '\r' or '\n')
                 {
                     ReadOnlySpan<char> result = this.value.Slice(this.pos, i - this.pos);
                     this.pos = 1 + i;
@@ -49,6 +48,8 @@ namespace RRON.SpanAddons
 
                     return result;
                 }
+
+                i++;
             }
 
             if (i > this.pos)
@@ -60,57 +61,6 @@ namespace RRON.SpanAddons
             }
 
             return ReadOnlySpan<char>.Empty;
-        }
-
-        /// <summary>
-        ///     Reads to the ends of a complex block.
-        /// </summary>
-        /// <returns> An iterator of all lines of the block. </returns>
-        public unsafe ValueStringReaderEnumerator ReadToBlockEnd
-        {
-            get
-            {
-                fixed (int* a = &this.pos)
-                {
-                    return new ValueStringReaderEnumerator(ref this, a);
-                }
-            }
-        }
-
-        /// <summary>
-        ///     A class that iterates through all lines in a complex block.
-        /// </summary>
-        public ref struct ValueStringReaderEnumerator
-        {
-            private ValueStringReader reader;
-            private readonly unsafe int* pointer;
-
-            public unsafe ValueStringReaderEnumerator(ref ValueStringReader reader, int* ptr)
-            {
-                this.reader = reader;
-                this.Current = default;
-                this.pointer = ptr;
-            }
-
-            public readonly ValueStringReaderEnumerator GetEnumerator() => this;
-
-            public unsafe bool MoveNext()
-            {
-                ReadOnlySpan<char> currentLine = this.reader.ReadLine();
-
-                *this.pointer = this.reader.pos;
-
-                if (currentLine[0] == ']')
-                {
-                    return false;
-                }
-
-                this.Current = currentLine.GetSplitEnumerator();
-
-                return true;
-            }
-
-            public SplitEnumerator Current { get; private set; }
         }
     }
 }
