@@ -13,17 +13,17 @@ namespace RRON.Extensions
         {
             if (type == typeof(bool))
             {
-                return bool.Parse(value);
+                return ParseBool(value);
             }
 
             if (type == typeof(byte))
             {
-                return byte.Parse(value);
+                return ParseByte(value);
             }
 
             if (type == typeof(sbyte))
             {
-                return sbyte.Parse(value);
+                return ParseSByte(value);
             }
 
             if (type == typeof(char))
@@ -48,32 +48,32 @@ namespace RRON.Extensions
 
             if (type == typeof(int))
             {
-                return int.Parse(value);
+                return ParseInt32(value);
             }
 
             if (type == typeof(uint))
             {
-                return uint.Parse(value);
+                return ParseUInt32(value);
             }
 
             if (type == typeof(long))
             {
-                return long.Parse(value);
+                return ParseInt64(value);
             }
 
             if (type == typeof(ulong))
             {
-                return ulong.Parse(value);
+                return ParseUInt64(value);
             }
 
             if (type == typeof(short))
             {
-                return short.Parse(value);
+                return ParseInt16(value);
             }
 
             if (type == typeof(ushort))
             {
-                return ushort.Parse(value);
+                return ParseUInt16(value);
             }
 
             string stringedValue = value.ToString();
@@ -89,21 +89,6 @@ namespace RRON.Extensions
             }
 
             return TypeDescriptor.GetConverter(type).ConvertFromString(stringedValue)!;
-        }
-
-        public static int Count(this ReadOnlySpan<char> value, char selector)
-        {
-            int count = 0;
-
-            foreach (char c in value)
-            {
-                if (c == selector)
-                {
-                    count++;
-                }
-            }
-
-            return count;
         }
 
         public static SplitEnumerator GetSplitEnumerator(this ReadOnlySpan<char> value) => new(value);

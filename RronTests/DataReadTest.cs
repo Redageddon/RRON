@@ -6,11 +6,12 @@ namespace RronTests
 {
     internal class DataReadTest
     {
+        private readonly string text = File.ReadAllText("data.rron");
+
         [Test]
         public void DataRead()
         {
-            string text = File.ReadAllText("data.rron");
-            RronConvert.DeserializeObject<TestClass>(text);
+            RronConvert.DeserializeObject<TestClass>(this.text);
         }
     }
 }
