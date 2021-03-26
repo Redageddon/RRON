@@ -34,11 +34,6 @@ namespace RRON.Serialize
                                         .OrderBy(propertyInfo => propertyInfo.MetadataToken);
         }
 
-        private static bool IsBasic(Type propertyType) => propertyType.IsPrimitive
-                                                       || propertyType.IsEnum
-                                                       || propertyType == typeof(string)
-                                                       || propertyType == typeof(decimal);
-
         /// <summary>
         ///     Serializes an object into rron data.
         /// </summary>
@@ -89,5 +84,10 @@ namespace RRON.Serialize
 
             return this.rronWriter.ToString().Trim();
         }
+
+        private static bool IsBasic(Type propertyType) => propertyType.IsPrimitive
+                                                       || propertyType.IsEnum
+                                                       || propertyType == typeof(string)
+                                                       || propertyType == typeof(decimal);
     }
 }

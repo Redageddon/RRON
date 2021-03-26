@@ -11,7 +11,7 @@ namespace RRON.Serialize
     {
         private const string Separator = ", ";
 
-        public void WriteBasic(string name, object? propertyValue) => this.WriteLine($"{name}: {propertyValue}");
+        public void WriteBasic(string name, object? propertyValue) => this.WriteLine($"{name}: {CustomToString(propertyValue)}");
 
         public void WriteBasicCollection(string name, IEnumerable propertyValue)
         {
@@ -21,7 +21,8 @@ namespace RRON.Serialize
             {
                 foreach (object o in propertyValue)
                 {
-                    yield return o.ToString() ?? string.Empty;
+                    yield return CustomToString(o);
+
                     collectionSize++;
                 }
             }
@@ -71,8 +72,48 @@ namespace RRON.Serialize
         {
             foreach (PropertyInfo propertyInfo in propertyType.GetProperties())
             {
-                yield return propertyInfo.GetValue(value)?.ToString() ?? string.Empty;
+                yield return CustomToString(propertyInfo.GetValue(value));
             }
+        }
+
+        private static string CustomToString(object? value)
+        {
+            string s = string.Empty;
+
+            if (value is null)
+            {
+                return s;
+            }
+            else if (value is float f)
+            {
+                s = f.ToString("F6");
+            }
+            else if (value is double d)
+            {
+                s = d.ToString("F12");
+            }
+            else if (value is decimal m)
+            {
+                s = m.ToString("F18");
+            }
+            else
+            {
+                return value.ToString() ?? s;
+            }
+
+            int trailingZeroCount = 0;
+
+            for (int i = 0; i < s.Length && s[^(i + 1)] == '0'; i++)
+            {
+                trailingZeroCount++;
+            }
+
+            if (s[^(trailingZeroCount + 1)] == '.')
+            {
+                trailingZeroCount++;
+            }
+
+            return s[..^trailingZeroCount];
         }
     }
 }
