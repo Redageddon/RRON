@@ -29,7 +29,7 @@ namespace RRON.Deserialize.Converters
 
             if (type == typeof(decimal))
             {
-                return decimal.Parse(value);
+                return value.ParseDecimal();
             }
 
             if (type == typeof(double))
