@@ -5,15 +5,15 @@ namespace RRON.Deserialize.Converters
 {
     public static partial class Converter
     {
-        public static Enum[] ConvertEnumArray(this SplitEnumerator typeEnumerator, int count, Type enumType)
+        public static decimal[] ConvertDecimalArray(this SplitEnumerator typeEnumerator, int count)
         {
-            Enum[] array = new Enum[count];
+            decimal[] array = new decimal[count];
 
             int i = 0;
 
             foreach (ReadOnlySpan<char> span in typeEnumerator)
             {
-                array[i++] = span.ParseEnum(enumType);
+                array[i++] = span.ParseDecimal();
             }
 
             return array;

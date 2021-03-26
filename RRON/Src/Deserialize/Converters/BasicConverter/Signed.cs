@@ -34,6 +34,29 @@ namespace RRON.Deserialize.Converters
             1E12D,
         };
 
+        private static readonly decimal[] B10Xm =
+        {
+            1E0M,
+            1E1M,
+            1E2M,
+            1E3M,
+            1E4M,
+            1E5M,
+            1E6M,
+            1E7M,
+            1E8M,
+            1E9M,
+            1E10m,
+            1E11m,
+            1E12m,
+            1E13m,
+            1E14m,
+            1E15m,
+            1E16m,
+            1E17m,
+            1E18m,
+        };
+
         public static long ParseInt64(this ReadOnlySpan<char> value)
         {
             int i = 0;
@@ -148,6 +171,41 @@ namespace RRON.Deserialize.Converters
             }
 
             return integerValue + (decimalValue / B10Xd[decimalPlaceCount]);
+        }
+
+        // why a decimal would ever be used in rhythm games is beyond me
+        public static decimal ParseDecimal(this ReadOnlySpan<char> value)
+        {
+            int i = 0;
+            bool isNegative = false;
+
+            if (value[0] == '-')
+            {
+                isNegative = true;
+                i++;
+            }
+
+            int integerValue = 0;
+            int decimalValue = 0;
+            int decimalPlaceCount = 0;
+
+            for (; i < value.Length && value[i] != '.'; i++)
+            {
+                integerValue = (integerValue * 10) + (value[i] - '0');
+            }
+
+            for (i++; i < value.Length && decimalPlaceCount < FloatingPointPrecision * 3; i++)
+            {
+                decimalValue = (decimalValue * 10) + (value[i] - '0');
+                decimalPlaceCount++;
+            }
+
+            if (isNegative)
+            {
+                return -(integerValue + (decimalValue / B10Xm[decimalPlaceCount]));
+            }
+
+            return integerValue + (decimalValue / B10Xm[decimalPlaceCount]);
         }
     }
 }

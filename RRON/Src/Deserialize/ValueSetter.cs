@@ -29,7 +29,7 @@ namespace RRON.Deserialize
             Type containedType = propertyType.GetContainedType();
 
             return propertyType.IsArray
-                ? propertyValues.GetSplitEnumerator().ConvertArray(containedType, propertyType, count)
+                ? propertyValues.GetSplitEnumerator().ConvertArray(containedType, count)
                 : propertyValues.GetSplitEnumerator().ConvertList(containedType, propertyType, count);
         }
 
