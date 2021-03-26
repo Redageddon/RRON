@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using FastMember;
 using RRON.Deserialize;
 using RRON.Serialize;
@@ -13,6 +14,11 @@ namespace RRON
     /// </summary>
     public static class RronConvert
     {
+        static RronConvert()
+        {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+        }
+
         /// <summary>
         ///     Deserializes an object, by its type, from rron data.
         /// </summary>
