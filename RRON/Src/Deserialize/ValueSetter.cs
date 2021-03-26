@@ -2,39 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using FastMember;
-using RRON.Extensions;
+using RRON.Deserialize.Converters;
 using RRON.SpanAddons;
 
 namespace RRON.Deserialize
 {
     internal static class ValueSetter
     {
-        private static object ConvertCollection(this SplitEnumerator typeEnumerator, Type containedType, Type collectionType, int count)
-        {
-            if (collectionType.IsArray)
-            {
-                Array array = Array.CreateInstance(containedType, count);
-
-                int i = 0;
-
-                foreach (ReadOnlySpan<char> span in typeEnumerator)
-                {
-                    array.SetValue(containedType.ConvertSpan(span), i++);
-                }
-
-                return array;
-            }
-
-            IList list = (IList)Activator.CreateInstance(collectionType)!;
-
-            foreach (ReadOnlySpan<char> span in typeEnumerator)
-            {
-                list.Add(containedType.ConvertSpan(span));
-            }
-
-            return list;
-        }
-
         private static object CreateComplex(this Type propertyType, SplitEnumerator propertyNameEnumerator, SplitEnumerator valueEnumerator)
         {
             ObjectAccessor? semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType)!);
@@ -54,9 +28,9 @@ namespace RRON.Deserialize
         {
             Type containedType = propertyType.GetContainedType();
 
-            return propertyValues
-                   .GetSplitEnumerator()
-                   .ConvertCollection(containedType, propertyType, count);
+            return propertyType.IsArray
+                ? propertyValues.GetSplitEnumerator().ConvertArray(containedType, propertyType, count)
+                : propertyValues.GetSplitEnumerator().ConvertList(containedType, propertyType, count);
         }
 
         internal static object GetComplex(Type propertyType, ReadOnlySpan<char> propertyNames, ReadOnlySpan<char> propertyValues) =>

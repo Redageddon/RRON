@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace RRON.Extensions
+namespace RRON.Deserialize.Converters
 {
-    public static partial class Extensions
+    public static partial class Converter
     {
-        public static bool ParseBool(ReadOnlySpan<char> value)
+        public static bool ParseBool(this ReadOnlySpan<char> value)
         {
             // true or yes
             if (value.Length is 4 or 3)

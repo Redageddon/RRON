@@ -1,9 +1,12 @@
 ﻿using System;
+using RRON.SpanAddons;
 
-namespace RRON.Extensions
+namespace RRON
 {
-    public static partial class Extensions
+    public static class Extensions
     {
+        public static SplitEnumerator GetSplitEnumerator(this ReadOnlySpan<char> value) => new(value);
+
         internal static Type GetContainedType(this Type propertyType) =>
             (propertyType.IsArray
                 ? propertyType.GetElementType()

@@ -1,29 +1,25 @@
 ﻿using System;
 using System.ComponentModel;
-using RRON.SpanAddons;
 
-namespace RRON.Extensions
+namespace RRON.Deserialize.Converters
 {
-    /// <summary>
-    ///     Houses all extension methods.
-    /// </summary>
-    public static partial class Extensions
+    public static partial class Converter
     {
         public static object ConvertSpan(this Type type, ReadOnlySpan<char> value)
         {
             if (type == typeof(bool))
             {
-                return ParseBool(value);
+                return value.ParseBool();
             }
 
             if (type == typeof(byte))
             {
-                return ParseByte(value);
+                return value.ParseByte();
             }
 
             if (type == typeof(sbyte))
             {
-                return ParseSByte(value);
+                return value.ParseSByte();
             }
 
             if (type == typeof(char))
@@ -38,42 +34,42 @@ namespace RRON.Extensions
 
             if (type == typeof(double))
             {
-                return double.Parse(value);
+                return value.ParseDouble();
             }
 
             if (type == typeof(float))
             {
-                return float.Parse(value);
+                return value.ParseSingle();
             }
 
             if (type == typeof(int))
             {
-                return ParseInt32(value);
+                return value.ParseInt32();
             }
 
             if (type == typeof(uint))
             {
-                return ParseUInt32(value);
+                return value.ParseUInt32();
             }
 
             if (type == typeof(long))
             {
-                return ParseInt64(value);
+                return value.ParseInt64();
             }
 
             if (type == typeof(ulong))
             {
-                return ParseUInt64(value);
+                return value.ParseUInt64();
             }
 
             if (type == typeof(short))
             {
-                return ParseInt16(value);
+                return value.ParseInt16();
             }
 
             if (type == typeof(ushort))
             {
-                return ParseUInt16(value);
+                return value.ParseUInt16();
             }
 
             string stringedValue = value.ToString();
@@ -90,7 +86,5 @@ namespace RRON.Extensions
 
             return TypeDescriptor.GetConverter(type).ConvertFromString(stringedValue)!;
         }
-
-        public static SplitEnumerator GetSplitEnumerator(this ReadOnlySpan<char> value) => new(value);
     }
 }
