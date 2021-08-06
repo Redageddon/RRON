@@ -1,11 +1,9 @@
-RRON: Row represented object notation
-A custom serialiser I am making for Rhythm games.
+RRON: Rhythm represented object notation
+A custom serialiser/deserializer for representing Rhythm game data.
 it is meant to get rid of the overhead that json provides, but isnt meant to be a catch all, like json (so it doesnt work for every object)
-it is meant for things like settings and beatmap storage
+it is meant for things like settings and beatmaps
 
-RRON is a scanner parser, but i am planning on making it scannerless
-
-Property:
+Simple:
 ```
 Name: value
 ```
