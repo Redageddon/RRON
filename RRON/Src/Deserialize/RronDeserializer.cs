@@ -53,14 +53,14 @@ namespace RRON.Deserialize
 
                     if (indexOfColon == -1)
                     {
-                        // line is BasicCollection
+                        // line is Simple Collection
                         (string name, int count) = GetCollectionNameAndCount(currentLine);
 
                         this.accessor[name] = ValueSetter.GetCollection(this.map[name], valueStringReader.ReadLine(), count);
                     }
                     else if (currentLine[0] == Opening)
                     {
-                        // line is ComplexCollection
+                        // line is Complex Collection
                         currentLine = currentLine[1..];
                         (string name, int count) = GetCollectionNameAndCount(currentLine);
 
@@ -81,10 +81,10 @@ namespace RRON.Deserialize
                 }
                 else
                 {
-                    // line is Basic
+                    // line is Simple
                     string name = currentLine[..indexOfColon].ToString();
 
-                    this.accessor[name] = ValueSetter.GetSingle(this.map[name], currentLine[postColonIndex..]);
+                    this.accessor[name] = ValueSetter.GetSimple(this.map[name], currentLine[postColonIndex..]);
                 }
             }
         }

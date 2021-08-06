@@ -72,6 +72,6 @@ namespace RRON.Deserialize
             return list;
         }
 
-        internal static object GetSingle(Type propertyType, ReadOnlySpan<char> value) => propertyType.ConvertSpan(value);
+        internal static object GetSimple(Type propertyType, ReadOnlySpan<char> value) => propertyType.ConvertSpan(value);
     }
 }
