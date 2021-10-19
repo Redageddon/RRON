@@ -6,25 +6,16 @@ namespace RRON.Deserialize.Converters
     {
         public static bool ParseBool(this ReadOnlySpan<char> value)
         {
-            // true or yes
-            if (value.Length is 4 or 3)
+            switch (value.Length)
             {
-                return true;
-            }
-
-            // false or no
-            if (value.Length is 5 or 2)
-            {
-                return false;
-            }
-
-            switch (value[0])
-            {
-                case 'T':
-                case 't':
-                case 'Y':
-                case 'y':
-                case '1': return true;
+                case 1 when value[0] is 'T' or 't' or 'Y' or 'y' or '1':
+                case 3 when char.ToLower(value[0]) == 'y' &&
+                            char.ToLower(value[1]) == 'e' &&
+                            char.ToLower(value[2]) == 's':
+                case 4 when char.ToLower(value[0]) == 't' &&
+                            char.ToLower(value[1]) == 'r' &&
+                            char.ToLower(value[2]) == 'u' &&
+                            char.ToLower(value[3]) == 'e': return true;
                 default: return false;
             }
         }
