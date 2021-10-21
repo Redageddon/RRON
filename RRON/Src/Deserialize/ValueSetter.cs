@@ -36,7 +36,7 @@ namespace RRON.Deserialize
         internal static object GetComplex(Type propertyType, ReadOnlySpan<char> propertyNames, ReadOnlySpan<char> propertyValues) =>
             propertyType.CreateComplex(propertyNames.GetSplitEnumerator(), propertyValues.GetSplitEnumerator());
 
-        internal static object GetComplexCollection(ReadOnlySpan<char> propertyNames,
+        internal static object GetComplexCollection(in ReadOnlySpan<char> propertyNames,
                                                     Type propertyType,
                                                     ref ValueStringReader valueStringReader,
                                                     int count)

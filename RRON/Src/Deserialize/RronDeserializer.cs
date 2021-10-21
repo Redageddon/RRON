@@ -89,7 +89,7 @@ namespace RRON.Deserialize
             }
         }
 
-        private static (string name, int count) GetCollectionNameAndCount(ReadOnlySpan<char> currentLine)
+        private static (string name, int count) GetCollectionNameAndCount(in ReadOnlySpan<char> currentLine)
         {
             int collectionCountStart = currentLine.IndexOf(OpeningCollectionCount);
             int collectionCountEnd = currentLine.IndexOf(ClosingCollectionCount);

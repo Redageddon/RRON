@@ -15,7 +15,7 @@ namespace RRON.SpanAddons
         ///     Initializes a new instance of the <see cref="ValueStringReader"/> struct.
         /// </summary>
         /// <param name="value"> The string being read. </param>
-        public ValueStringReader(ReadOnlySpan<char> value)
+        public ValueStringReader(in ReadOnlySpan<char> value)
         {
             this.length = value.Length;
             this.value = value;

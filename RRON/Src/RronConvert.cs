@@ -26,7 +26,7 @@ namespace RRON
         /// <param name="obj">An instance of the type.</param>
         /// <returns>A new object of type <typeparamref name="T"/>.</returns>
         public static T DeserializeObject<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
-            T>(ReadOnlySpan<char> value, T? obj = default)
+            T>(in ReadOnlySpan<char> value, T? obj = default)
             where T : new()
         {
             obj ??= new T();

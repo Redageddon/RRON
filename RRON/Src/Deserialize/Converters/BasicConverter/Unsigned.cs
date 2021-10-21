@@ -4,7 +4,7 @@ namespace RRON.Deserialize.Converters
 {
     public static partial class Converter
     {
-        public static ulong ParseUInt64(this ReadOnlySpan<char> parse)
+        public static ulong ParseUInt64(this in ReadOnlySpan<char> parse)
         {
             ulong totalValue = 0;
 
@@ -16,7 +16,7 @@ namespace RRON.Deserialize.Converters
             return totalValue;
         }
 
-        public static uint ParseUInt32(this ReadOnlySpan<char> parse)
+        public static uint ParseUInt32(this in ReadOnlySpan<char> parse)
         {
             uint totalValue = 0;
 
@@ -28,8 +28,8 @@ namespace RRON.Deserialize.Converters
             return totalValue;
         }
 
-        public static ushort ParseUInt16(this ReadOnlySpan<char> parse) => (ushort)ParseUInt32(parse);
+        public static ushort ParseUInt16(this in ReadOnlySpan<char> parse) => (ushort)ParseUInt32(parse);
 
-        public static byte ParseByte(this ReadOnlySpan<char> parse) => (byte)ParseUInt32(parse);
+        public static byte ParseByte(this in ReadOnlySpan<char> parse) => (byte)ParseUInt32(parse);
     }
 }

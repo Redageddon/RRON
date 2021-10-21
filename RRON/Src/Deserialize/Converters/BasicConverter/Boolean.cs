@@ -4,7 +4,7 @@ namespace RRON.Deserialize.Converters
 {
     public static partial class Converter
     {
-        public static bool ParseBool(this ReadOnlySpan<char> value)
+        public static bool ParseBool(this in ReadOnlySpan<char> value)
         {
             switch (value.Length)
             {

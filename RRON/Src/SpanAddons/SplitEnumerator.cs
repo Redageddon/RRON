@@ -11,7 +11,7 @@ namespace RRON.SpanAddons
     {
         private ReadOnlySpan<char> value;
 
-        public SplitEnumerator(ReadOnlySpan<char> value)
+        public SplitEnumerator(in ReadOnlySpan<char> value)
         {
             this.value = value;
             this.Current = default;

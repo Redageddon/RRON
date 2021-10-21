@@ -60,7 +60,7 @@ namespace RRON.Deserialize.Converters
             1E18m,
         };
 
-        public static long ParseInt64(this ReadOnlySpan<char> value)
+        public static long ParseInt64(this in ReadOnlySpan<char> value)
         {
             int i = 0;
             long result = 0;
@@ -80,7 +80,7 @@ namespace RRON.Deserialize.Converters
             return result * isNegative;
         }
 
-        public static int ParseInt32(this ReadOnlySpan<char> value)
+        public static int ParseInt32(this in ReadOnlySpan<char> value)
         {
             int i = 0;
             int result = 0;
@@ -100,18 +100,18 @@ namespace RRON.Deserialize.Converters
             return result * isNegative;
         }
 
-        public static short ParseInt16(this ReadOnlySpan<char> parse) => (short)ParseInt32(parse);
+        public static short ParseInt16(this in ReadOnlySpan<char> parse) => (short)ParseInt32(parse);
 
-        public static sbyte ParseSByte(this ReadOnlySpan<char> parse) => (sbyte)ParseInt32(parse);
+        public static sbyte ParseSByte(this in ReadOnlySpan<char> parse) => (sbyte)ParseInt32(parse);
 
-        public static float ParseSingle(this ReadOnlySpan<char> value)
+        public static float ParseSingle(this in ReadOnlySpan<char> value)
         {
             ParseInternal(value, SinglePrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
 
             return (integerValue + (decimalValue / B10Xf[decimalPlaceCount])) * isNegative;
         }
 
-        public static double ParseDouble(this ReadOnlySpan<char> value)
+        public static double ParseDouble(this in ReadOnlySpan<char> value)
         {
             ParseInternal(value, DoublePrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
 
@@ -119,7 +119,7 @@ namespace RRON.Deserialize.Converters
         }
 
         // why a decimal would ever be used in rhythm games is beyond me
-        public static decimal ParseDecimal(this ReadOnlySpan<char> value)
+        public static decimal ParseDecimal(this in ReadOnlySpan<char> value)
         {
             ParseInternal(value, DecimalPrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
 
@@ -127,7 +127,7 @@ namespace RRON.Deserialize.Converters
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void ParseInternal(ReadOnlySpan<char> value, int precision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative)
+        private static void ParseInternal(in ReadOnlySpan<char> value, int precision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative)
         {
             integerValue = 0;
             decimalValue = 0;

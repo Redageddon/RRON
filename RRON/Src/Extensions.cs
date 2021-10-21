@@ -5,7 +5,7 @@ namespace RRON
 {
     public static class Extensions
     {
-        public static SplitEnumerator GetSplitEnumerator(this ReadOnlySpan<char> value) => new(value);
+        public static SplitEnumerator GetSplitEnumerator(this in ReadOnlySpan<char> value) => new(value);
 
         internal static Type GetContainedType(this Type propertyType) =>
             (propertyType.IsArray
