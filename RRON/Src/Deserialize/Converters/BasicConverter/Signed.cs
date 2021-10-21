@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace RRON.Deserialize.Converters
 {
     public static partial class Converter
     {
-        public const int FloatingPointPrecision = 6;
+        private const int SinglePrecision = 6;
+        private const int DoublePrecision = SinglePrecision * 2;
+        private const int DecimalPrecision = SinglePrecision * 3;
 
         private static readonly float[] B10Xf =
         {
@@ -61,44 +64,40 @@ namespace RRON.Deserialize.Converters
         {
             int i = 0;
             long result = 0;
-            bool isNegative = false;
+            int isNegative = 1;
 
             if (value[0] == '-')
             {
-                isNegative = true;
+                isNegative = -1;
                 i++;
             }
 
-            for (; i < value.Length; i++)
+            while (i < value.Length)
             {
-                result = (result * 10) + (value[i] - '0');
+                result = (result * 10) + value[i++] - '0';
             }
 
-            return isNegative
-                ? -result
-                : result;
+            return result * isNegative;
         }
 
         public static int ParseInt32(this ReadOnlySpan<char> value)
         {
             int i = 0;
             int result = 0;
-            bool isNegative = false;
+            int isNegative = 1;
 
             if (value[0] == '-')
             {
-                isNegative = true;
+                isNegative = -1;
                 i++;
             }
 
-            for (; i < value.Length; i++)
+            while (i < value.Length)
             {
-                result = (result * 10) + (value[i] - '0');
+                result = (result * 10) + value[i++] - '0';
             }
 
-            return isNegative
-                ? -result
-                : result;
+            return result * isNegative;
         }
 
         public static short ParseInt16(this ReadOnlySpan<char> parse) => (short)ParseInt32(parse);
@@ -107,105 +106,51 @@ namespace RRON.Deserialize.Converters
 
         public static float ParseSingle(this ReadOnlySpan<char> value)
         {
-            int i = 0;
-            bool isNegative = false;
+            ParseInternal(value, SinglePrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
 
-            if (value[0] == '-')
-            {
-                isNegative = true;
-                i++;
-            }
-
-            int integerValue = 0;
-            int decimalValue = 0;
-            int decimalPlaceCount = 0;
-
-            for (; i < value.Length && value[i] != '.'; i++)
-            {
-                integerValue = (integerValue * 10) + (value[i] - '0');
-            }
-
-            for (i++; i < value.Length && decimalPlaceCount < FloatingPointPrecision; i++)
-            {
-                decimalValue = (decimalValue * 10) + (value[i] - '0');
-                decimalPlaceCount++;
-            }
-
-            if (isNegative)
-            {
-                return -(integerValue + (decimalValue / B10Xf[decimalPlaceCount]));
-            }
-
-            return integerValue + (decimalValue / B10Xf[decimalPlaceCount]);
+            return (integerValue + (decimalValue / B10Xf[decimalPlaceCount])) * isNegative;
         }
 
         public static double ParseDouble(this ReadOnlySpan<char> value)
         {
-            int i = 0;
-            bool isNegative = false;
+            ParseInternal(value, DoublePrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
 
-            if (value[0] == '-')
-            {
-                isNegative = true;
-                i++;
-            }
-
-            int integerValue = 0;
-            int decimalValue = 0;
-            int decimalPlaceCount = 0;
-
-            for (; i < value.Length && value[i] != '.'; i++)
-            {
-                integerValue = (integerValue * 10) + (value[i] - '0');
-            }
-
-            for (i++; i < value.Length && decimalPlaceCount < FloatingPointPrecision * 2; i++)
-            {
-                decimalValue = (decimalValue * 10) + (value[i] - '0');
-                decimalPlaceCount++;
-            }
-
-            if (isNegative)
-            {
-                return -(integerValue + (decimalValue / B10Xd[decimalPlaceCount]));
-            }
-
-            return integerValue + (decimalValue / B10Xd[decimalPlaceCount]);
+            return (integerValue + (decimalValue / B10Xd[decimalPlaceCount])) * isNegative;
         }
 
         // why a decimal would ever be used in rhythm games is beyond me
         public static decimal ParseDecimal(this ReadOnlySpan<char> value)
         {
+            ParseInternal(value, DecimalPrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
+
+            return (integerValue + (decimalValue / B10Xm[decimalPlaceCount])) * isNegative;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void ParseInternal(ReadOnlySpan<char> value, int precision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative)
+        {
+            integerValue = 0;
+            decimalValue = 0;
+            decimalPlaceCount = 0;
+            isNegative = 1;
+
             int i = 0;
-            bool isNegative = false;
 
             if (value[0] == '-')
             {
-                isNegative = true;
+                isNegative = -1;
                 i++;
             }
 
-            int integerValue = 0;
-            int decimalValue = 0;
-            int decimalPlaceCount = 0;
-
-            for (; i < value.Length && value[i] != '.'; i++)
+            while (i < value.Length && value[i] != '.')
             {
-                integerValue = (integerValue * 10) + (value[i] - '0');
+                integerValue = (integerValue * 10) + value[i++] - '0';
             }
 
-            for (i++; i < value.Length && decimalPlaceCount < FloatingPointPrecision * 3; i++)
+            for (i++; i < value.Length && decimalPlaceCount < precision; i++, decimalPlaceCount++)
             {
-                decimalValue = (decimalValue * 10) + (value[i] - '0');
-                decimalPlaceCount++;
+                decimalValue = (decimalValue * 10) + value[i] - '0';
             }
-
-            if (isNegative)
-            {
-                return -(integerValue + (decimalValue / B10Xm[decimalPlaceCount]));
-            }
-
-            return integerValue + (decimalValue / B10Xm[decimalPlaceCount]);
         }
     }
 }
