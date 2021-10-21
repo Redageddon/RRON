@@ -23,28 +23,28 @@ namespace RronTests.Tests.InternalTests
         [Test]
         public void ParseInt32()
         {
-            Assert.AreEqual(0L, "0".AsSpan().ParseInt64());
-            Assert.AreEqual(1L, "1".AsSpan().ParseInt64());
-            Assert.AreEqual(1L, "0000000001".AsSpan().ParseInt64());
+            Assert.AreEqual(0, "0".AsSpan().ParseInt64());
+            Assert.AreEqual(1, "1".AsSpan().ParseInt64());
+            Assert.AreEqual(1, "0000000001".AsSpan().ParseInt64());
             Assert.AreEqual(int.MaxValue, int.MaxValue.ToString().AsSpan().ParseInt64());
 
-            Assert.AreEqual(0L, "-0".AsSpan().ParseInt64());
-            Assert.AreEqual(-1L, "-1".AsSpan().ParseInt64());
-            Assert.AreEqual(-1L, "-0000000001".AsSpan().ParseInt64());
+            Assert.AreEqual(0, "-0".AsSpan().ParseInt64());
+            Assert.AreEqual(-1, "-1".AsSpan().ParseInt64());
+            Assert.AreEqual(-1, "-0000000001".AsSpan().ParseInt64());
             Assert.AreEqual(int.MinValue, int.MinValue.ToString().AsSpan().ParseInt64());
         }
 
         [Test]
         public void ParseSByte()
         {
-            Assert.AreEqual(0L, "0".AsSpan().ParseInt64());
-            Assert.AreEqual(1L, "1".AsSpan().ParseInt64());
-            Assert.AreEqual(1L, "0000000001".AsSpan().ParseInt64());
+            Assert.AreEqual(0, "0".AsSpan().ParseInt64());
+            Assert.AreEqual(1, "1".AsSpan().ParseInt64());
+            Assert.AreEqual(1, "0000000001".AsSpan().ParseInt64());
             Assert.AreEqual(sbyte.MaxValue, sbyte.MaxValue.ToString().AsSpan().ParseInt64());
 
-            Assert.AreEqual(0L, "-0".AsSpan().ParseInt64());
-            Assert.AreEqual(-1L, "-1".AsSpan().ParseInt64());
-            Assert.AreEqual(-1L, "-0000000001".AsSpan().ParseInt64());
+            Assert.AreEqual(0, "-0".AsSpan().ParseInt64());
+            Assert.AreEqual(-1, "-1".AsSpan().ParseInt64());
+            Assert.AreEqual(-1, "-0000000001".AsSpan().ParseInt64());
             Assert.AreEqual(sbyte.MinValue, sbyte.MinValue.ToString().AsSpan().ParseInt64());
         }
 
@@ -130,6 +130,33 @@ namespace RronTests.Tests.InternalTests
             Assert.IsTrue("TRuE".AsSpan().ParseBool());
             Assert.IsTrue("TRUe".AsSpan().ParseBool());
             Assert.IsTrue("TRUE".AsSpan().ParseBool());
+        }
+
+        [Test]
+        public void ParseUInt64()
+        {
+            Assert.AreEqual(0UL, "0".AsSpan().ParseUInt64());
+            Assert.AreEqual(1UL, "1".AsSpan().ParseUInt64());
+            Assert.AreEqual(1UL, "0000000001".AsSpan().ParseUInt64());
+            Assert.AreEqual(ulong.MaxValue, ulong.MaxValue.ToString().AsSpan().ParseUInt64());
+        }
+
+        [Test]
+        public void ParseUInt32()
+        {
+            Assert.AreEqual(0U, "0".AsSpan().ParseUInt64());
+            Assert.AreEqual(1U, "1".AsSpan().ParseUInt64());
+            Assert.AreEqual(1U, "0000000001".AsSpan().ParseUInt64());
+            Assert.AreEqual(uint.MaxValue, uint.MaxValue.ToString().AsSpan().ParseUInt64());
+        }
+
+        [Test]
+        public void ParseByte()
+        {
+            Assert.AreEqual(0UL, "0".AsSpan().ParseUInt64());
+            Assert.AreEqual(1UL, "1".AsSpan().ParseUInt64());
+            Assert.AreEqual(1UL, "0000000001".AsSpan().ParseUInt64());
+            Assert.AreEqual(byte.MaxValue, byte.MaxValue.ToString().AsSpan().ParseUInt64());
         }
     }
 }
