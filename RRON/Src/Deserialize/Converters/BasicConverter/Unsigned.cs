@@ -16,20 +16,10 @@ namespace RRON.Deserialize.Converters
             return totalValue;
         }
 
-        public static uint ParseUInt32(this in ReadOnlySpan<char> parse)
-        {
-            uint totalValue = 0;
+        public static uint ParseUInt32(this in ReadOnlySpan<char> parse) => (uint)ParseUInt64(parse);
 
-            foreach (char t in parse)
-            {
-                totalValue = (totalValue * 10) + t - '0';
-            }
+        public static ushort ParseUInt16(this in ReadOnlySpan<char> parse) => (ushort)ParseUInt64(parse);
 
-            return totalValue;
-        }
-
-        public static ushort ParseUInt16(this in ReadOnlySpan<char> parse) => (ushort)ParseUInt32(parse);
-
-        public static byte ParseByte(this in ReadOnlySpan<char> parse) => (byte)ParseUInt32(parse);
+        public static byte ParseByte(this in ReadOnlySpan<char> parse) => (byte)ParseUInt64(parse);
     }
 }
