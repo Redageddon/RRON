@@ -88,14 +88,14 @@ namespace RRON.Deserialize.Converters
 
         public static float ParseSingle(this in ReadOnlySpan<char> value)
         {
-            ParseInternal(value, SinglePrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
+            ParseInternal(value, SinglePrecision, out int integerValue, out ulong decimalValue, out int decimalPlaceCount, out int isNegative);
 
             return (integerValue + (decimalValue / B10Xf[decimalPlaceCount])) * isNegative;
         }
 
         public static double ParseDouble(this in ReadOnlySpan<char> value)
         {
-            ParseInternal(value, DoublePrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
+            ParseInternal(value, DoublePrecision, out int integerValue, out ulong decimalValue, out int decimalPlaceCount, out int isNegative);
 
             return (integerValue + (decimalValue / B10Xd[decimalPlaceCount])) * isNegative;
         }
@@ -103,13 +103,13 @@ namespace RRON.Deserialize.Converters
         // why a decimal would ever be used in rhythm games is beyond me
         public static decimal ParseDecimal(this in ReadOnlySpan<char> value)
         {
-            ParseInternal(value, DecimalPrecision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative);
+            ParseInternal(value, DecimalPrecision, out int integerValue, out ulong decimalValue, out int decimalPlaceCount, out int isNegative);
 
             return (integerValue + (decimalValue / B10Xm[decimalPlaceCount])) * isNegative;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void ParseInternal(in ReadOnlySpan<char> value, int precision, out int integerValue, out int decimalValue, out int decimalPlaceCount, out int isNegative)
+        private static void ParseInternal(in ReadOnlySpan<char> value, int precision, out int integerValue, out ulong decimalValue, out int decimalPlaceCount, out int isNegative)
         {
             integerValue = 0;
             decimalValue = 0;
