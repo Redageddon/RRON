@@ -10,9 +10,7 @@ namespace RRON.Deserialize.Converters
 
             foreach (char t in parse)
             {
-                totalValue *= 10;
-                totalValue += t;
-                totalValue -= '0';
+                totalValue = (totalValue * 10) + t - '0';
             }
 
             return totalValue;
@@ -24,16 +22,14 @@ namespace RRON.Deserialize.Converters
 
             foreach (char t in parse)
             {
-                totalValue *= 10;
-                totalValue += t;
-                totalValue -= '0';
+                totalValue = (totalValue * 10) + t - '0';
             }
 
             return totalValue;
         }
 
-        public static ushort ParseUInt16(this ReadOnlySpan<char> parse) => (ushort)ParseInt32(parse);
+        public static ushort ParseUInt16(this ReadOnlySpan<char> parse) => (ushort)ParseUInt32(parse);
 
-        public static byte ParseByte(this ReadOnlySpan<char> parse) => (byte)ParseInt32(parse);
+        public static byte ParseByte(this ReadOnlySpan<char> parse) => (byte)ParseUInt32(parse);
     }
 }
