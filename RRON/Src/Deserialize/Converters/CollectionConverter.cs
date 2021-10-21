@@ -152,6 +152,11 @@ namespace RRON.Deserialize.Converters
                 return typeEnumerator.ConvertUInt32List(count);
             }
 
+            if (containedType == typeof(string))
+            {
+                return typeEnumerator.ConvertStringList(count);
+            }
+
             IList list = (IList)Activator.CreateInstance(collectionType, count)!;
 
             foreach (ReadOnlySpan<char> span in typeEnumerator)
