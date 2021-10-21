@@ -73,6 +73,11 @@ namespace RRON.Deserialize.Converters
                 return typeEnumerator.ConvertUInt32Array(count);
             }
 
+            if (containedType == typeof(string))
+            {
+                return typeEnumerator.ConvertStringArray(count);
+            }
+
             Array array = Array.CreateInstance(containedType, count);
 
             int i = 0;
