@@ -95,5 +95,41 @@ namespace RronTests.Tests.InternalTests
             Assert.AreEqual(-0.012345678901234567M, -0.012345678901234567M.ToString().AsSpan().ParseDecimal());
             Assert.AreEqual(-111111.012345678901234567M, -111111.012345678901234567M.ToString().AsSpan().ParseDecimal());
         }
+
+        [Test]
+        public void ParseBoolean()
+        {
+            Assert.IsTrue("t".AsSpan().ParseBool());
+            Assert.IsTrue("T".AsSpan().ParseBool());
+            Assert.IsTrue("Y".AsSpan().ParseBool());
+            Assert.IsTrue("y".AsSpan().ParseBool());
+            Assert.IsTrue("1".AsSpan().ParseBool());
+
+            Assert.IsTrue("yes".AsSpan().ParseBool());
+            Assert.IsTrue("yeS".AsSpan().ParseBool());
+            Assert.IsTrue("yEs".AsSpan().ParseBool());
+            Assert.IsTrue("yES".AsSpan().ParseBool());
+            Assert.IsTrue("Yes".AsSpan().ParseBool());
+            Assert.IsTrue("YeS".AsSpan().ParseBool());
+            Assert.IsTrue("YEs".AsSpan().ParseBool());
+            Assert.IsTrue("YES".AsSpan().ParseBool());
+
+            Assert.IsTrue("true".AsSpan().ParseBool());
+            Assert.IsTrue("truE".AsSpan().ParseBool());
+            Assert.IsTrue("trUe".AsSpan().ParseBool());
+            Assert.IsTrue("trUE".AsSpan().ParseBool());
+            Assert.IsTrue("tRue".AsSpan().ParseBool());
+            Assert.IsTrue("tRuE".AsSpan().ParseBool());
+            Assert.IsTrue("tRUe".AsSpan().ParseBool());
+            Assert.IsTrue("tRUE".AsSpan().ParseBool());
+            Assert.IsTrue("True".AsSpan().ParseBool());
+            Assert.IsTrue("TruE".AsSpan().ParseBool());
+            Assert.IsTrue("TrUe".AsSpan().ParseBool());
+            Assert.IsTrue("TrUE".AsSpan().ParseBool());
+            Assert.IsTrue("TRue".AsSpan().ParseBool());
+            Assert.IsTrue("TRuE".AsSpan().ParseBool());
+            Assert.IsTrue("TRUe".AsSpan().ParseBool());
+            Assert.IsTrue("TRUE".AsSpan().ParseBool());
+        }
     }
 }
