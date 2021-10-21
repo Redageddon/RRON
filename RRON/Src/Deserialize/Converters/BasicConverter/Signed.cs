@@ -80,29 +80,11 @@ namespace RRON.Deserialize.Converters
             return result * isNegative;
         }
 
-        public static int ParseInt32(this in ReadOnlySpan<char> value)
-        {
-            int i = 0;
-            int result = 0;
-            int isNegative = 1;
+        public static int ParseInt32(this in ReadOnlySpan<char> parse) => (int)ParseInt64(parse);
 
-            if (value[0] == '-')
-            {
-                isNegative = -1;
-                i++;
-            }
+        public static short ParseInt16(this in ReadOnlySpan<char> parse) => (short)ParseInt64(parse);
 
-            while (i < value.Length)
-            {
-                result = (result * 10) + value[i++] - '0';
-            }
-
-            return result * isNegative;
-        }
-
-        public static short ParseInt16(this in ReadOnlySpan<char> parse) => (short)ParseInt32(parse);
-
-        public static sbyte ParseSByte(this in ReadOnlySpan<char> parse) => (sbyte)ParseInt32(parse);
+        public static sbyte ParseSByte(this in ReadOnlySpan<char> parse) => (sbyte)ParseInt64(parse);
 
         public static float ParseSingle(this in ReadOnlySpan<char> value)
         {
