@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using FastMember;
 using RRON.Deserialize.Converters;
 using RRON.SpanAddons;
@@ -12,7 +12,7 @@ namespace RRON.Deserialize
         private static object CreateComplex(this Type propertyType, SplitEnumerator propertyNameEnumerator, SplitEnumerator valueEnumerator)
         {
             ObjectAccessor? semiAccessor = ObjectAccessor.Create(Activator.CreateInstance(propertyType)!);
-            Dictionary<string, Type> typeMap = TypeNameMap.GetOrCreate(propertyType);
+            ReadOnlyDictionary<string, Type> typeMap = TypeNameMap.GetOrCreate(propertyType);
 
             foreach (ReadOnlySpan<char> readOnlySpan in valueEnumerator)
             {

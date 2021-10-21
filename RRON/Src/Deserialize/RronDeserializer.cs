@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using FastMember;
 using RRON.SpanAddons;
 
@@ -15,14 +15,14 @@ namespace RRON.Deserialize
         private const char ClosingCollectionCount = ')';
 
         private readonly ObjectAccessor accessor;
-        private readonly Dictionary<string, Type> map;
+        private readonly ReadOnlyDictionary<string, Type> map;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RronDeserializer"/> struct.
         /// </summary>
         /// <param name="accessor"> The accessor being acted upon. </param>
         /// <param name="map"> The type name cache being pulled from. </param>
-        public RronDeserializer(ObjectAccessor accessor, Dictionary<string, Type> map)
+        public RronDeserializer(ObjectAccessor accessor, ReadOnlyDictionary<string, Type> map)
         {
             this.accessor = accessor;
             this.map = map;

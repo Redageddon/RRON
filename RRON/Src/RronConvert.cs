@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using FastMember;
@@ -32,7 +32,7 @@ namespace RRON
             obj ??= new T();
 
             ObjectAccessor accessor = ObjectAccessor.Create(obj);
-            Dictionary<string, Type> typeNameMap = TypeNameMap<T>.Map;
+            ReadOnlyDictionary<string, Type> typeNameMap = TypeNameMap<T>.Map;
 
             ValueStringReader valueStringReader = new(value);
             RronDeserializer rronDeserializer = new(accessor, typeNameMap);

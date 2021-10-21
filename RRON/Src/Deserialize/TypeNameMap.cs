@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -10,24 +11,26 @@ namespace RRON.Deserialize
     /// </summary>
     public static class TypeNameMap
     {
-        public static Dictionary<string, Type> GetOrCreate(Type type)
+        public static ReadOnlyDictionary<string, Type> GetOrCreate(Type type)
         {
-            if (!TypeMap.TryGetValue(type, out Dictionary<string, Type>? dictionary))
+            if (!TypeMap.TryGetValue(type, out ReadOnlyDictionary<string, Type>? dictionary))
             {
-                dictionary = new Dictionary<string, Type>();
+                PropertyInfo[] properties = type.GetProperties();
+                Dictionary<string, Type> tempDictionary = new(properties.Length);
 
-                foreach (PropertyInfo propertyInfo in type.GetProperties())
+                foreach (PropertyInfo propertyInfo in properties)
                 {
-                    dictionary.Add(propertyInfo.Name, propertyInfo.PropertyType);
+                    tempDictionary.Add(propertyInfo.Name, propertyInfo.PropertyType);
                 }
 
+                dictionary = new ReadOnlyDictionary<string, Type>(tempDictionary);
                 TypeMap.Add(type, dictionary);
             }
 
             return dictionary;
         }
 
-        private static Dictionary<Type, Dictionary<string, Type>> TypeMap { get; } = new();
+        private static Dictionary<Type, ReadOnlyDictionary<string, Type>> TypeMap { get; } = new();
     }
 
     /// <summary>
@@ -38,12 +41,17 @@ namespace RRON.Deserialize
     {
         static TypeNameMap()
         {
-            foreach (PropertyInfo propertyInfo in typeof(T).GetProperties())
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            Dictionary<string, Type> map = new(properties.Length);
+
+            foreach (PropertyInfo propertyInfo in properties)
             {
-                Map.Add(propertyInfo.Name, propertyInfo.PropertyType);
+                map.Add(propertyInfo.Name, propertyInfo.PropertyType);
             }
+
+            Map = new ReadOnlyDictionary<string, Type>(map);
         }
 
-        public static Dictionary<string, Type> Map { get; } = new();
+        public static ReadOnlyDictionary<string, Type> Map { get; }
     }
 }
